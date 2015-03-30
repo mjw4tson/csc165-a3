@@ -199,13 +199,12 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		
 		camera1.setLocation(camera1.getLocation());
 		
-		// moveSkybox(); //TODO skybox
+		moveSkybox(camera1); 
 		
 		Iterator<SceneNode> iterator = getGameWorld().iterator();
 		SceneNode s;
 		
 		Point3D locP1 = new Point3D(player1.getLocalTranslation().getCol(3));
-		Point3D locP2 = new Point3D(player2.getLocalTranslation().getCol(3));
 		
 		while (iterator.hasNext()) {
 			s = iterator.next();

@@ -180,25 +180,25 @@ public class InputHandler {
 		
 	}
 	
-	private void setupPlayerTwo(TreasureHunt bg) {
+	private void setupController(TreasureHunt bg) {
 		// Controls for the first player, using mouse and keyboard.
-		SetSpeedAction setSpeed = new SetSpeedAction(bg.player2);
-		SetLockedAction setLocked = new SetLockedAction(bg.player2);
+		SetSpeedAction setSpeed = new SetSpeedAction(bg.player1);
+		SetLockedAction setLocked = new SetLockedAction(bg.player1);
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.player2, Direction.LEFT, setSpeed,
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.player1, Direction.LEFT, setSpeed,
 				bg.hillTerrain);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.player2, Direction.RIGHT, setSpeed,
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.player1, Direction.RIGHT, setSpeed,
 				bg.hillTerrain);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.player2, Direction.FORWARD, setSpeed,
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.player1, Direction.FORWARD, setSpeed,
 				bg.hillTerrain);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.player2, Direction.BACKWARD,
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.player1, Direction.BACKWARD,
 				setSpeed, bg.hillTerrain);
 		
 		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1,
-				setLocked, bg.player2);
+				setLocked, bg.player1);
 		
 		OrbitUpDownAction orbitUpDown = new OrbitUpDownAction(true, false, bg.cc1, setLocked,
-				bg.player2);
+				bg.player1);
 		
 		ZoomAction zoomOutP2 = new ZoomAction(bg.cc1, true, 2);
 		ZoomAction zoomInP2 = new ZoomAction(bg.cc1, false, 2);
