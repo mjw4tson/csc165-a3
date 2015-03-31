@@ -3,9 +3,6 @@ package engine.scene.shape;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import engine.event.CrashEvent;
-import sage.event.IEventListener;
-import sage.event.IGameEvent;
 import sage.scene.TriMesh;
 
 /**
@@ -28,8 +25,6 @@ public class CustomPyramid extends TriMesh{
 	 * The constructor for the CustomPyramid, sets the vertices, triangles, and color.
 	 */
 	public CustomPyramid() {
-		int i;
-
 		FloatBuffer vertBuf = com.jogamp.common.nio.Buffers.newDirectFloatBuffer(vrts);
 		IntBuffer triangleBuf = com.jogamp.common.nio.Buffers.newDirectIntBuffer(triangles);
 		colorBuf = com.jogamp.common.nio.Buffers.newDirectFloatBuffer(cl);

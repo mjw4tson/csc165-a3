@@ -11,8 +11,10 @@ import games.treasurehunt2015.TreasureHunt;
 
 import java.util.ArrayList;
 
-import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
+import net.java.games.input.Component.Identifier.Axis;
+import net.java.games.input.Component.Identifier.Button;
+import net.java.games.input.Component.Identifier.Key;
 import net.java.games.input.Controller;
 import sage.camera.ICamera;
 import sage.input.IInputManager;
@@ -31,9 +33,7 @@ public class InputHandler {
 	private String					kbName;
 	private String					moName;
 	private ArrayList<Controller>	devices;
-	private Component[]				contComponents;
-	private Controller				gameController;
-	private boolean					finalBuild	= false;
+	private boolean					finalBuild	= true;
 	
 	public InputHandler(IInputManager inmanager) {
 		im = inmanager;
@@ -44,12 +44,6 @@ public class InputHandler {
 		System.out.println("Gamepad - " + gpName);
 		System.out.println("Keyboard - " + kbName);
 		System.out.println("Mouse - " + moName);
-		
-		// Get controller and components.
-		gameController = im.getControllerByName(gpName);
-		if (gameController != null) {
-			contComponents = gameController.getComponents();
-		}
 		
 		// Get all devices.
 		devices = im.getControllers();
@@ -131,51 +125,51 @@ public class InputHandler {
 				bg.player1);
 		
 		// Orbit Up.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.UP, null, orbitUp,
+		this.addControl(null, Key.UP, null, orbitUp,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Orbit Down.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.DOWN, null, orbitDown,
+		this.addControl(null, Key.DOWN, null, orbitDown,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Orbit Right.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.RIGHT, null,
+		this.addControl(null, Key.RIGHT, null,
 				orbitRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Orbit Left.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.LEFT, null, orbitLeft,
+		this.addControl(null, Key.LEFT, null, orbitLeft,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Move forward.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.W, null, mvNodeForward,
+		this.addControl(null, Key.W, null, mvNodeForward,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Move left.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.A, null, mvNodeLeft,
+		this.addControl(null, Key.A, null, mvNodeLeft,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Move right.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.D, null, mvNodeRight,
+		this.addControl(null, Key.D, null, mvNodeRight,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Move backward.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.S, null,
+		this.addControl(null, Key.S, null,
 				mvNodeBackward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Set speed action.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.LSHIFT, null, setSpeed,
+		this.addControl(null, Key.LSHIFT, null, setSpeed,
 				null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
 		
 		// Set Locked action.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.SPACE, null, setLocked,
+		this.addControl(null, Key.SPACE, null, setLocked,
 				null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
 		
 	}
@@ -204,52 +198,52 @@ public class InputHandler {
 		ZoomAction zoomInP2 = new ZoomAction(bg.cc1, false, 2);
 		
 		// Zoom in P1
-		this.addControl(net.java.games.input.Component.Identifier.Button._4, null, null, zoomInP2,
+		this.addControl(Button._4, null, null, zoomInP2,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Zoom out P1
-		this.addControl(net.java.games.input.Component.Identifier.Button._5, null, null, zoomOutP2,
+		this.addControl(Button._5, null, null, zoomOutP2,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Orbit Up and down.
-		this.addControl(net.java.games.input.Component.Identifier.Axis.RY, null, null, orbitUpDown,
+		this.addControl(Axis.RY, null, null, orbitUpDown,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		//Orbit Left and Right.
-		this.addControl(net.java.games.input.Component.Identifier.Axis.RX, null, null,
+		this.addControl(Axis.RX, null, null,
 				orbitLeftRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Move forward.
-		this.addControl(net.java.games.input.Component.Identifier.Axis.Y, null, null,
+		this.addControl(Axis.Y, null, null,
 				mvNodeForward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Move left.
-		this.addControl(net.java.games.input.Component.Identifier.Axis.X, null, null, mvNodeLeft,
+		this.addControl(Axis.X, null, null, mvNodeLeft,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Move right.
-		this.addControl(net.java.games.input.Component.Identifier.Axis.X, null, null, mvNodeRight,
+		this.addControl(Axis.X, null, null, mvNodeRight,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Move backward.
-		this.addControl(net.java.games.input.Component.Identifier.Axis.Y, null, null,
+		this.addControl(Axis.Y, null, null,
 				mvNodeBackward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Set speed action.
-		this.addControl(net.java.games.input.Component.Identifier.Button._0, null, null, setSpeed,
+		this.addControl(Button._0, null, null, setSpeed,
 				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE,
 				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
 		
 		// Set Locked action.
-		this.addControl(net.java.games.input.Component.Identifier.Button._1, null, null, setLocked,
+		this.addControl(Button._1, null, null, setLocked,
 				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE,
 				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
 	}
@@ -257,20 +251,18 @@ public class InputHandler {
 	public IInputManager setupControls(	ICamera camera1,
 										IInputManager im,
 										TreasureHunt bg) {
-		float rotationAmnt = 0.05f;
-		
 		// Game controls
 		QuitGameAction qgAction = new QuitGameAction(bg);
 		
 		// Quit the game.
-		this.addControl(null, net.java.games.input.Component.Identifier.Key.ESCAPE, null, qgAction,
+		this.addControl(null, Key.ESCAPE, null, qgAction,
 				null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
 		
 		setupPlayerOne(bg);
 		
 		
 		/*
-		 * this.addControl(null, net.java.games.input.Component.Identifier.Key.W, null, mvNode, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		 * this.addControl(null, Key.W, null, mvNode, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		 */
 		return im;
 	}

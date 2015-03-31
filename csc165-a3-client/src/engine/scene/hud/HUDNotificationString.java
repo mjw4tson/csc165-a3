@@ -2,7 +2,6 @@ package engine.scene.hud;
 
 import java.util.Random;
 
-import sage.app.BaseGame;
 import sage.scene.HUDString;
 
 /**

@@ -1,26 +1,26 @@
 package games.treasurehunt2015;
 
-import graphicslib3D.Vector3D;
-
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.UUID;
-import java.util.Vector;
 
 import sage.networking.client.GameConnectionClient;
-import sage.scene.shape.Sphere;
+import engine.objects.Avatar;
+import graphicslib3D.Matrix3D;
+import graphicslib3D.Vector3D;
 
 public class TreasureHuntClient extends GameConnectionClient {
     private TreasureHunt game;
     private UUID id;
-    private Vector<Sphere> ghostAvatars;
+    private HashMap<UUID,Avatar> ghostAvatars;
     
     public TreasureHuntClient(InetAddress remAddr, int remPort, ProtocolType pType, TreasureHunt game) throws IOException {
         super(remAddr, remPort, pType);
         
         this.game = game;
         this.id = UUID.randomUUID();
-        this.ghostAvatars = new Vector<Sphere>();
+        this.ghostAvatars = new HashMap<UUID,Avatar>();
     }
     
     @Override
@@ -33,42 +33,65 @@ public class TreasureHuntClient extends GameConnectionClient {
                 case "join":
                     processJoin(msgTokens[1]);
                     break;
+                case "create":
+                	processCreate(UUID.fromString(msgTokens[1]), Float.parseFloat(msgTokens[2]), Float.parseFloat(msgTokens[3]), Float.parseFloat(msgTokens[4]));
+                	break;
                 case "bye":
-                    processBye(msgTokens[1]);
+                    processBye(UUID.fromString(msgTokens[1]));
                     break;
                 case "dsfr":
                     processDsfr(UUID.fromString(msgTokens[1]), Float.parseFloat(msgTokens[2]), Float.parseFloat(msgTokens[3]), Float.parseFloat(msgTokens[4]));
                     break;
                 case "wsds":
                     break;
+
                 case "move":
-                    //processMove(UUID.fromString(msgTokens[1]))
+                    processMove(UUID.fromString(msgTokens[1]), Float.parseFloat(msgTokens[2]), Float.parseFloat(msgTokens[3]), Float.parseFloat(msgTokens[4]));
                     break;
-                    
             }
         }
     }
     
     private void processJoin(String msg) {
+    	System.out.println("Processing join: " + msg);
+    	
         if ("success".equals(msg)) {
-            //game.setIsConnected(true);
-           // sendCreateMessage(game.getPlayerPosition());
+            game.setIsConnected(true);
+            sendCreateMessage(game.getPlayerPosition());
         } else {
-           // game.setIsConnected(false);
+        	game.setIsConnected(false);
         }
     }
     
-    private void processBye(String msg) {
-        UUID ghostID = UUID.fromString(msg);
-        //game.removeGhostAvatar(ghostID);
+    private void processCreate(UUID ghostID, float x, float y, float z) {
+    	System.out.println("Processing create: " + ghostID + "\t" + x + "," + y + "," + z);
+    	Avatar ghost = game.addGhostToGame(x, y, z);
+    	ghostAvatars.put(ghostID, ghost);
+    }
+    
+    private void processBye(UUID ghostID) {
+    	System.out.println("Processing bye: " + ghostID);
+    	Avatar ghost = ghostAvatars.get(ghostID);
+    	
+    	if (ghost != null) 
+    		game.removeGhostFromGame(ghost);
     }
     
     private void processDsfr(UUID ghostID, float x, float y, float z) {
+    	System.out.println("Processing dsfr: " + ghostID + "\t" + x + "," + y + "," + z);
         //game.createGhostAvatar(ghostID, x, y, z);
     }
     
-    private void processMove(String msg) {
-        
+    private void processMove(UUID ghostID, float x, float y, float z) {
+    	System.out.println("Processing move: " + ghostID + "\t" + x + "," + y + "," + z);
+    	
+    	Avatar ghost = ghostAvatars.get(ghostID);
+    	
+    	if (ghost != null) {
+    		Matrix3D translate = new Matrix3D();
+    		translate.translate(x, y, z);
+    		ghost.setLocalTranslation(translate);
+    	}
     }
     
     public void sendCreateMessage(Vector3D pos) {

@@ -133,6 +133,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	private int					serverPort;
 	private ProtocolType		pType;
 	private boolean				isConnected;
+	private static int			ghostCount = 0;
 	
 	/*
 	 * Sets up the initial game.
@@ -163,8 +164,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 			System.out.print("Single player mode (Y/N): ");
 			singlePlayer = s.next();
 		} while (!"Y".equalsIgnoreCase(singlePlayer) && !"N".equalsIgnoreCase(singlePlayer)); 
-		
-		s.close();
 		
 		return "Y".equalsIgnoreCase(singlePlayer);
 	}
@@ -284,7 +283,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		Iterator<SceneNode> iteratorOne = hudGroupTeamOne.getChildren();
 		Iterator<SceneNode> iteratorOneTime = hudGroupTeamOneTime.getChildren();
 
-		
 		SceneNode s2;
 		
 		// Clean up images from previous update
@@ -298,18 +296,13 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 			camera1.removeFromHUD(s2);
 		}
 		
-	
-		
 		int timeTemp = (int) time / 1000;
 		
 		hudGroupTeamOne = hudNumberManager.printValues(scoreP1, -0.850f, -0.88f);
 		hudGroupTeamOneTime = hudNumberManager.printValues(timeTemp, 0.050f, 0.90f);
 
 		iteratorOne = hudGroupTeamOne.getChildren();
-		
-		
 		iteratorOneTime = hudGroupTeamOneTime.getChildren();
-
 		
 		while (iteratorOne.hasNext()) {
 			s2 = iteratorOne.next();
@@ -323,8 +316,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 			s2.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
 			camera1.addToHUD(s2);
 		}
-	
-		
 	}
 	
 	/**
@@ -654,4 +645,15 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		return isConnected;
 	}
 	
+	public Avatar addGhostToGame(float x, float y, float z) {
+		Avatar ghost = new Avatar("Ghost " + ++ghostCount, 1, 20, 20, Color.red);
+		ghost.translate(x, y, z + origin);
+		addGameWorldObject(ghost);
+		
+		return ghost;
+	}
+	
+	public void removeGhostFromGame(Avatar ghost) {
+		removeGameWorldObject(ghost);
+	}
 }
