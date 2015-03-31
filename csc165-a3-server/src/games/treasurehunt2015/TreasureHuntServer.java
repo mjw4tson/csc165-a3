@@ -11,13 +11,16 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
 
     public TreasureHuntServer(int localPort, ProtocolType protocolType) throws IOException {
         super(localPort, protocolType);
+        
+        System.out.println("Listening for clients on port: " + localPort);
     }
     
     @Override
     public void acceptClient(IClientInfo ci, Object o) {
-        String message = (String)o;
-        String[] msgTokens = message.split(",");
+        String msg = (String)o;
+        String[] msgTokens = msg.split(",");
         
+        System.out.println("Accepting client with message: " + msg);
         if (msgTokens.length > 0) {
             if (msgTokens[0].compareTo("join") == 0) {
                 UUID clientID = UUID.fromString(msgTokens[1]);

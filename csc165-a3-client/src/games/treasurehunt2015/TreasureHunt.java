@@ -5,9 +5,13 @@ import java.awt.Cursor;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
+import java.util.Scanner;
+import java.util.Vector;
 
 import sage.app.BaseGame;
 import sage.camera.ICamera;
@@ -17,22 +21,15 @@ import sage.event.EventManager;
 import sage.event.IEventManager;
 import sage.input.IInputManager;
 import sage.input.InputManager;
-import sage.model.loader.ogreXML.OgreXMLParser;
+import sage.networking.IGameConnection.ProtocolType;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.HUDImage;
-import sage.scene.HUDString;
-import sage.scene.Model3DTriMesh;
 import sage.scene.SceneNode;
-import sage.scene.SceneNode.RENDER_MODE;
 import sage.scene.SkyBox;
 import sage.scene.SkyBox.Face;
 import sage.scene.shape.Cube;
-import sage.scene.shape.Cylinder;
-import sage.scene.shape.Line;
 import sage.scene.shape.Pyramid;
-import sage.scene.shape.Rectangle;
-import sage.scene.shape.Sphere;
 import sage.scene.state.BlendState;
 import sage.scene.state.RenderState;
 import sage.scene.state.TextureState;
@@ -40,15 +37,13 @@ import sage.terrain.AbstractHeightMap;
 import sage.terrain.HillHeightMap;
 import sage.terrain.TerrainBlock;
 import sage.texture.Texture;
-import sage.texture.Texture.MagnificationFilter;
-import sage.texture.Texture.MinificationFilter;
-import sage.texture.Texture.WrapMode;
 import sage.texture.TextureManager;
 import sage.util.VersionInfo;
 import engine.event.CrashEvent;
 import engine.graphics.GameDisplaySystem;
 import engine.input.InputHandler;
 import engine.input.action.camera.Camera3PController;
+import engine.objects.Avatar;
 import engine.scene.controller.BounceController;
 import engine.scene.controller.ScaleController;
 import engine.scene.hud.HUDNumber;
@@ -67,23 +62,21 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	
 	// Engine objects.
 	public Camera3PController	cc1;
-	private IDisplaySystem		display;															// The game display.
-	private ICamera				camera1;													// The game camera.
-	private InputHandler		ih;																// Input handler
-	private IInputManager		im;																// The input manager
+	private IDisplaySystem		display;    						// The game display.
+	private ICamera				camera1;						// The game camera.
+	private InputHandler		ih;																	// Input handler
+	private IInputManager		im;																	// The input manager
 	private IEventManager		eventManager;
 	private IRenderer			renderer;
-	private boolean				finalBuild			= false;										// Determines if final build
-	private HUDString			timeString;														// The HUD string for time.
-	private HUDString			scoreString;														// Stores the total score.
-	private float				time				= 0.0f;										// Stores the total time
-	private int					scoreP1				= 0;											// The total score
+	private boolean				finalBuild			= false;											// Determines if final build
+	private float				time				= 0.0f;											// Stores the total time
+	private int					scoreP1				= 0;												// The total score
 	private int					numCrashes			= 0;
 	private Cursor				crossHairCursor;
 	private BlendState			transparencyState;
 	private HUDNumber			hudNumberManager;
 	
-	private static String		directory			= "." + File.separator + "a2" + File.separator;
+	private static String		directory			= "." + File.separator + "bin" + File.separator;
 	
 	// Game World Objects
 	private Axis				worldAxis;
@@ -96,14 +89,14 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	private Cube				cu3;
 	public Cube					cu4;
 	private Cube				cu5;
-	private Rectangle			ground;
 	private TreasureChest		treasureChest;
 	private SkyBox				skybox;
 	public HillHeightMap		myHillHeightMap;
 	public TerrainBlock			hillTerrain;
 	
 	// Players
-	public Sphere				player1;;
+	public Avatar				player1;
+	public Vector<Avatar>		ghostPlayers;
 	
 	// SceneNode Controllers
 	private BounceController	roSNController		= new BounceController();
@@ -125,19 +118,30 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	private Texture				skyBoxTextureFront;
 	private Texture				skyBoxTextureBot;
 	
-	private String				dirEnvironment		= "/images/environment/";
-	private String				dirHud				= "/images/hud/";
-	private String				dirModel			= "/images/models/";
+	private String				dirEnvironment		= "images" + File.separator + "environment" + File.separator;
+	private String				dirHud				= "images" + File.separator + "hud" + File.separator;
+	//private String				dirModel			= "images" + File.separator + "models" + File.separator;
 	
 	// HUD
 	private HUDImage			p1Time;
 	private HUDImage			p1Score;
 	private float				origin				= 65f;
 	
+	// Game Client
+	private TreasureHuntClient  gameClient;
+	private String 				serverAddr;
+	private int					serverPort;
+	private ProtocolType		pType;
+	private boolean				isConnected;
+	
 	/*
 	 * Sets up the initial game.
 	 */
+	@Override
 	public void initGame() {
+		if (!runAsSinglePlayer()) {
+			initGameClient();
+		}
 		
 		configureEnvironment();
 		initGameEntities(); // Populate the game world.
@@ -146,13 +150,61 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		initEventManager(); // Get event manager.
 		cc1 = new Camera3PController(camera1, player1);
 		setupControls(); // Set up the game world controls.
+	}
+
+	/**
+	 * Determine if game is single player
+	 */
+	private boolean runAsSinglePlayer() {
+		Scanner s = new Scanner(System.in);
+		String singlePlayer;
 		
+		do {
+			System.out.print("Single player mode (Y/N): ");
+			singlePlayer = s.next();
+		} while (!"Y".equalsIgnoreCase(singlePlayer) && !"N".equalsIgnoreCase(singlePlayer)); 
+		
+		s.close();
+		
+		return "Y".equalsIgnoreCase(singlePlayer);
+	}
+	
+	/**
+	 * Initializes game client
+	 */
+	private void initGameClient() {
+		Scanner s = new Scanner(System.in);
+		System.out.print("Enter server address: ");
+		serverAddr = s.next();
+		
+		System.out.print("Enter server port: ");
+		serverPort = s.nextInt();
+		s.close();
+		
+		pType = ProtocolType.TCP;
+		
+		try {
+			gameClient = new TreasureHuntClient(InetAddress.getByName(serverAddr), serverPort, pType, this);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if (gameClient != null) {
+			System.out.println("Connected to server, joining...");
+			gameClient.sendJoinMsg();
+		}
 	}
 	
 	/*
 	 * Handles logic for update the game state upon every engine loop iteration..
 	 */
 	public void update(float elapsedTimeMS) {
+		if (gameClient != null) {
+			gameClient.processPackets();
+		}
+		
 		updateGameWorld(elapsedTimeMS);
 		updateSceneNodeControllers();
 		cc1.update(elapsedTimeMS);
@@ -488,7 +540,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		treasureChest.scale(.8f, .4f, .2f);
 		
 		// Add players
-		player1 = new Sphere("Player 1", 1, 20, 20, Color.blue);
+		player1 = new Avatar("Player 1", 1, 20, 20, Color.blue);
 		player1.translate(50, .8f, 10 + origin);
 		
 		addGameWorldObject(player1);
@@ -536,15 +588,25 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		// Set the directory to empty if the build is not final, as everything will be located on a
 		// flat level in this case.
 		if (!finalBuild) {
-			directory = ".";
+			directory = "." + File.separator;
 		}
 	}
 	
 	/*
 	 * Accomplishes an orderly exit
 	 */
+	@Override
 	protected void shutdown() {
 		display.close();
+		
+		if (gameClient != null) {
+			try { 
+				gameClient.sendByeMessage();
+				gameClient.shutdown();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
@@ -576,6 +638,20 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 			cc1.zoomOut(2f);
 		}
 		
+	}
+	
+	public Vector3D getPlayerPosition() {
+        Vector3D position = player1.getWorldTransform().getCol(3);
+        
+        return new Vector3D(position.getX(), position.getY(), position.getZ());
+    }
+	
+	public void setIsConnected(boolean connected) {
+		isConnected = connected;
+	}
+	
+	public boolean isConnected() {
+		return isConnected;
 	}
 	
 }
