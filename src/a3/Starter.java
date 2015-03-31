@@ -1,4 +1,4 @@
-package a2;
+package a3;
 
 import games.treasurehunt2015.TreasureHunt;
 
