@@ -5,13 +5,21 @@ import java.awt.Cursor;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import sage.app.BaseGame;
 import sage.camera.ICamera;
@@ -58,12 +66,12 @@ import graphicslib3D.Vector3D;
  *
  * @author ktajeran
  */
-public class TreasureHunt extends BaseGame implements MouseWheelListener{
+public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	
 	// Engine objects.
 	public Camera3PController	cc1;
-	private IDisplaySystem		display;    						// The game display.
-	private ICamera				camera1;						// The game camera.
+	private IDisplaySystem		display;																// The game display.
+	private ICamera				camera1;																// The game camera.
 	private InputHandler		ih;																	// Input handler
 	private IInputManager		im;																	// The input manager
 	private IEventManager		eventManager;
@@ -80,15 +88,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	
 	// Game World Objects
 	private Axis				worldAxis;
-	private Pyramid				pyr1;
-	private Pyramid				pyr2;
-	private Pyramid				pyr3;
-	private Pyramid				pyr4;
-	private Cube				cu1;
-	private Cube				cu2;
-	private Cube				cu3;
-	public Cube					cu4;
-	private Cube				cu5;
+
 	private TreasureChest		treasureChest;
 	private SkyBox				skybox;
 	public HillHeightMap		myHillHeightMap;
@@ -106,9 +106,8 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	private Group				cuGroup				= new Group("Cube Group");
 	private Group				pyGroup				= new Group("Pyramid Group");
 	private Group				hudGroupTeamOne		= new Group("Team One Group");
-
+	
 	private Group				hudGroupTeamOneTime	= new Group("Team One Group Time");
-
 	
 	// Texture Objects
 	private Texture				skyBoxTextureTop;
@@ -118,9 +117,16 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	private Texture				skyBoxTextureFront;
 	private Texture				skyBoxTextureBot;
 	
-	private String				dirEnvironment		= "images" + File.separator + "environment" + File.separator;
-	private String				dirHud				= "images" + File.separator + "hud" + File.separator;
+	private String				dirEnvironment		= "images" + File.separator + "environment"
+															+ File.separator;
+	private String				dirHud				= "images" + File.separator + "hud"
+															+ File.separator;
+	private String				dirScripts			= "scripts" + File.separator;
+	
 	//private String				dirModel			= "images" + File.separator + "models" + File.separator;
+	
+	// Scripting
+	private ScriptEngine jsEngine;
 	
 	// HUD
 	private HUDImage			p1Time;
@@ -128,12 +134,12 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	private float				origin				= 65f;
 	
 	// Game Client
-	private TreasureHuntClient  gameClient;
-	private String 				serverAddr;
+	private TreasureHuntClient	gameClient;
+	private String				serverAddr;
 	private int					serverPort;
 	private ProtocolType		pType;
 	private boolean				isConnected;
-	private static int			ghostCount = 0;
+	private static int			ghostCount			= 0;
 	
 	/*
 	 * Sets up the initial game.
@@ -152,7 +158,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		cc1 = new Camera3PController(camera1, player1);
 		setupControls(); // Set up the game world controls.
 	}
-
+	
 	/**
 	 * Determine if game is single player
 	 */
@@ -163,7 +169,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		do {
 			System.out.print("Single player mode (Y/N): ");
 			singlePlayer = s.next();
-		} while (!"Y".equalsIgnoreCase(singlePlayer) && !"N".equalsIgnoreCase(singlePlayer)); 
+		} while (!"Y".equalsIgnoreCase(singlePlayer) && !"N".equalsIgnoreCase(singlePlayer));
 		
 		return "Y".equalsIgnoreCase(singlePlayer);
 	}
@@ -183,7 +189,8 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		pType = ProtocolType.TCP;
 		
 		try {
-			gameClient = new TreasureHuntClient(InetAddress.getByName(serverAddr), serverPort, pType, this);
+			gameClient = new TreasureHuntClient(InetAddress.getByName(serverAddr), serverPort,
+					pType, this);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -250,7 +257,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		
 		camera1.setLocation(camera1.getLocation());
 		
-		moveSkybox(camera1); 
+		moveSkybox(camera1);
 		
 		Iterator<SceneNode> iterator = getGameWorld().iterator();
 		SceneNode s;
@@ -273,16 +280,16 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 						this.removeGameWorldObject(gs);
 						CrashEvent newCrash = new CrashEvent(numCrashes);
 						eventManager.triggerEvent(newCrash);
-					} 
+					}
 				}
 			}
 		}
-
+		
 		// Iterate through each hud image and update as necessary
 		
 		Iterator<SceneNode> iteratorOne = hudGroupTeamOne.getChildren();
 		Iterator<SceneNode> iteratorOneTime = hudGroupTeamOneTime.getChildren();
-
+		
 		SceneNode s2;
 		
 		// Clean up images from previous update
@@ -290,7 +297,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 			s2 = iteratorOne.next();
 			camera1.removeFromHUD(s2);
 		}
-
+		
 		while (iteratorOneTime.hasNext()) {
 			s2 = iteratorOneTime.next();
 			camera1.removeFromHUD(s2);
@@ -300,7 +307,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		
 		hudGroupTeamOne = hudNumberManager.printValues(scoreP1, -0.850f, -0.88f);
 		hudGroupTeamOneTime = hudNumberManager.printValues(timeTemp, 0.050f, 0.90f);
-
+		
 		iteratorOne = hudGroupTeamOne.getChildren();
 		iteratorOneTime = hudGroupTeamOneTime.getChildren();
 		
@@ -309,7 +316,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 			s2.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
 			camera1.addToHUD(s2);
 		}
-
 		
 		while (iteratorOneTime.hasNext()) {
 			s2 = iteratorOneTime.next();
@@ -415,7 +421,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	private void buildHUD() {
 		hudNumberManager = new HUDNumber("HUD Number Manager", directory);
 		hudGroupTeamOne = hudNumberManager.printValues(0, -0.9f, -0.90f);
-	
 		
 		// Add P1 Time
 		p1Time = new HUDImage(directory + dirHud + "player1.png");
@@ -434,7 +439,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		p1Score.scale(.1570f, .0575f, .1f);
 		p1Score.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
 		camera1.addToHUD(p1Score);
-	
+		
 	}
 	
 	/**
@@ -467,56 +472,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		skybox.setTexture(Face.North, skyBoxTextureFront);
 		skybox.setTexture(Face.West, skyBoxTextureWest);
 		skybox.setTexture(Face.South, skyBoxTextureBack);
-		addGameWorldObject(skybox); //TODO FIX
-	
-		// Add a pyramid into the game world.
-		pyr1 = new Pyramid(); // white by default
-		pyr1.translate(95, .3f, 30 + origin);
+		addGameWorldObject(skybox); 
 		
-		// Add a pyramid into the game world.
-		pyr2 = new Pyramid(); // white by default
-		pyr2.translate(40, .3f, 68 + origin);
-		
-		// Add a pyramid into the game world.
-		pyr3 = new Pyramid(); // white by default
-		pyr3.translate(50, .3f, 30 + origin);
-		
-		// Add a pyramid into the game world.
-		pyr4 = new Pyramid(); // white by default
-		pyr4.translate(80,.3f, 30 + origin);
-		
-		// Add a cube into the game world.
-		cu1 = new Cube();
-		cu1.translate(37, .3f, 30 + origin);
-		
-		// Add a cube into the game world.
-		cu2 = new Cube();
-		cu2.translate(60, .3f, 75 + origin);
-		
-		// Add a cube into the game world.
-		cu3 = new Cube();
-		cu3.translate(56, .3f, 45 + origin);
-		
-		// Add a cube into the game world.
-		cu4 = new Cube();
-		cu4.translate(75, .3f, 25 + origin);
-		
-		// Add a cube into the game world.
-		cu5 = new Cube();
-		cu5.translate(20, .3f, 5 + origin);
-		
-		// Populate the Cube Group
-		cuGroup.addChild(cu1);
-		cuGroup.addChild(cu2);
-		cuGroup.addChild(cu3);
-		cuGroup.addChild(cu4);
-		cuGroup.addChild(cu5);
-		
-		// Populate the Pyramid Group
-		pyGroup.addChild(pyr1);
-		pyGroup.addChild(pyr2);
-		pyGroup.addChild(pyr3);
-		pyGroup.addChild(pyr4);
+		// Get and build game world objects
+		buildEnvironmentFromScript();
 		
 		// Add SceneNode controllers to each group.
 		scSNController.addControlledNode(pyGroup);
@@ -540,7 +499,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		worldAxis = new Axis(50, Color.red, Color.green, Color.blue);
 		addGameWorldObject(worldAxis);
 	}
-
+	
 	/*
 	 * Initializes the game core systems.
 	 */
@@ -591,7 +550,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		display.close();
 		
 		if (gameClient != null) {
-			try { 
+			try {
 				gameClient.sendByeMessage();
 				gameClient.shutdown();
 			} catch (IOException e) {
@@ -614,16 +573,16 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 	 */
 	protected void render() {
 		renderer.setCamera(camera1);
-		super.render();		
+		super.render();
 	}
-
-	/* 
+	
+	/*
 	 * Handles zooming in the 3P camera for player 1 with the mouse scroll wheel.
 	 */
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int rotations = e.getWheelRotation();
-		if(rotations < 0 ){
+		if (rotations < 0) {
 			cc1.zoomIn(2f);
 		} else {
 			cc1.zoomOut(2f);
@@ -631,11 +590,62 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		
 	}
 	
+	/**
+	 * Method tasked with obtaining a script file and its JS scripting environment. Runs the script afterwards.
+	 */
+	public void buildEnvironmentFromScript() {
+		ScriptEngineManager factory = new ScriptEngineManager();
+		String scriptFileName = directory + dirScripts + "config.js";
+		
+		// Get all script engines on the current platform.
+		List<ScriptEngineFactory> list = factory.getEngineFactories();
+		
+		System.out.println("Script Engine Factories found:");
+		for (ScriptEngineFactory f : list) {
+			System.out.println(" Name = " + f.getEngineName() + " language = "
+					+ f.getLanguageName() + " extensions = " + f.getExtensions());
+		}
+		
+		//Get the JS engine
+		jsEngine = factory.getEngineByName("js");
+		
+		//Run the specified script.
+		
+		this.executeScript(jsEngine, scriptFileName);
+		
+		cuGroup = (Group) jsEngine.get("cubeGroup");
+		pyGroup = (Group) jsEngine.get("pyramidGroup");
+	
+	}
+	
+	/**
+	 * Executes a specified script.
+	 * @param engine - The scripting engine environment to run the script in.
+	 * @param scriptFileName - The file name of the script.
+	 */
+	private void executeScript(	ScriptEngine engine,
+								String scriptFileName) {
+		try {
+			FileReader fileReader = new FileReader(scriptFileName);
+			engine.eval(fileReader); //execute the script statements in the file
+			fileReader.close();
+		} catch (FileNotFoundException e1) {
+			System.out.println(scriptFileName + " not found " + e1);
+		} catch (IOException e2) {
+			System.out.println("IO problem with " + scriptFileName + e2);
+		} catch (ScriptException e3) {
+			System.out.println("ScriptException in " + scriptFileName + e3);
+		} catch (NullPointerException e4) {
+			System.out.println("Null ptr exception in " + scriptFileName + e4);
+		}
+	}
+	
+	
 	public Vector3D getPlayerPosition() {
-        Vector3D position = player1.getWorldTransform().getCol(3);
-        
-        return new Vector3D(position.getX(), position.getY(), position.getZ());
-    }
+		Vector3D position = player1.getWorldTransform().getCol(3);
+		
+		return new Vector3D(position.getX(), position.getY(), position.getZ());
+	}
 	
 	public void setIsConnected(boolean connected) {
 		isConnected = connected;
@@ -645,7 +655,9 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener{
 		return isConnected;
 	}
 	
-	public Avatar addGhostToGame(float x, float y, float z) {
+	public Avatar addGhostToGame(	float x,
+									float y,
+									float z) {
 		Avatar ghost = new Avatar("Ghost " + ++ghostCount, 1, 20, 20, Color.red);
 		ghost.translate(x, y, z + origin);
 		addGameWorldObject(ghost);
