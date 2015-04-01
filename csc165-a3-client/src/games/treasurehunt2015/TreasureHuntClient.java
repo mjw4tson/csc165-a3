@@ -43,6 +43,7 @@ public class TreasureHuntClient extends GameConnectionClient {
                     processDsfr(UUID.fromString(msgTokens[1]), Float.parseFloat(msgTokens[2]), Float.parseFloat(msgTokens[3]), Float.parseFloat(msgTokens[4]));
                     break;
                 case "wsds":
+                	processWsds(UUID.fromString(msgTokens[1]));
                     break;
 
                 case "move":
@@ -58,15 +59,18 @@ public class TreasureHuntClient extends GameConnectionClient {
         if ("success".equals(msg)) {
             game.setIsConnected(true);
             sendCreateMessage(game.getPlayerPosition());
+            sendWantsDetailsMsg();
         } else {
         	game.setIsConnected(false);
         }
     }
     
     private void processCreate(UUID ghostID, float x, float y, float z) {
-    	System.out.println("Processing create: " + ghostID + "\t" + x + "," + y + "," + z);
-    	Avatar ghost = game.addGhostToGame(x, y, z);
-    	ghostAvatars.put(ghostID, ghost);
+    	if (!ghostAvatars.containsKey(ghostID)) {
+	    	System.out.println("Processing create: " + ghostID + "\t" + x + "," + y + "," + z);
+	    	Avatar ghost = game.addGhostToGame(x, y, z);
+	    	ghostAvatars.put(ghostID, ghost);
+    	}
     }
     
     private void processBye(UUID ghostID) {
@@ -78,12 +82,15 @@ public class TreasureHuntClient extends GameConnectionClient {
     }
     
     private void processDsfr(UUID ghostID, float x, float y, float z) {
-    	System.out.println("Processing dsfr: " + ghostID + "\t" + x + "," + y + "," + z);
-        //game.createGhostAvatar(ghostID, x, y, z);
-    }
+    	if (!ghostAvatars.containsKey(ghostID)) {
+	    	System.out.println("Processing create: " + ghostID + "\t" + x + "," + y + "," + z);
+	    	Avatar ghost = game.addGhostToGame(x, y, z);
+	    	ghostAvatars.put(ghostID, ghost);
+    	}
+	}
     
     private void processMove(UUID ghostID, float x, float y, float z) {
-    	System.out.println("Processing move: " + ghostID + "\t" + x + "," + y + "," + z);
+    	//System.out.println("Processing move: " + ghostID + "\t" + x + "," + y + "," + z); Commented due to verbosity
     	
     	Avatar ghost = ghostAvatars.get(ghostID);
     	
@@ -94,8 +101,13 @@ public class TreasureHuntClient extends GameConnectionClient {
     	}
     }
     
+    private void processWsds(UUID ghostID) {
+    	System.out.println("Processing wants details: " + ghostID);
+    	sendDetailsForMessage(ghostID, game.getPlayerPosition());
+    }
+    
     public void sendCreateMessage(Vector3D pos) {
-        // format: create,localId,x,y,z
+        // Format: create,localID,x,y,z
         try {
             String msg = new String("create," + id.toString());
             msg += "," + pos.getX() + "," + pos.getY() + "," + pos.getZ();
@@ -108,7 +120,7 @@ public class TreasureHuntClient extends GameConnectionClient {
     }
     
     public void sendJoinMsg() {
-        // format: join,localId
+        // Format: join,localID
         try {
             String msg = new String("join," + id.toString());
             
@@ -120,6 +132,7 @@ public class TreasureHuntClient extends GameConnectionClient {
     }
     
     public void sendByeMessage() {
+    	// Format: bye,localID
         try {
             String msg = new String("bye," + id.toString());
             
@@ -131,11 +144,12 @@ public class TreasureHuntClient extends GameConnectionClient {
     }
     
     public void sendDetailsForMessage(UUID remId, Vector3D pos) {
+    	// Format: dsfr,localID,remoteID,x,y,z
         try {
-            String msg = new String("dsfr," + id.toString());
+            String msg = new String("dsfr," + id.toString() + "," + remId.toString());
             msg += "," + pos.getX() + "," + pos.getY() + "," + pos.getZ();
             
-            System.out.println("Sending DSFR message: " + msg);
+            System.out.println("Sending dsfr message: " + msg);
             sendPacket(msg);
         } catch (IOException e) {
             e.printStackTrace();
@@ -143,9 +157,22 @@ public class TreasureHuntClient extends GameConnectionClient {
     }
     
     public void sendMoveMsg(Vector3D pos) {
+    	// Format move,localID,x,y,z
         try {
             String msg = new String("move," + id.toString());
             msg += "," + pos.getX() + "," + pos.getY() + "," + pos.getZ();
+            sendPacket(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void sendWantsDetailsMsg() {
+    	// Format wsds,localID
+        try {
+            String msg = new String("wsds," + id.toString());
+            
+            System.out.println("Sending wsds: " + msg);
             sendPacket(msg);
         } catch (IOException e) {
             e.printStackTrace();

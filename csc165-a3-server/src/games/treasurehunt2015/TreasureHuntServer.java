@@ -49,11 +49,22 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
                     break;
                     
                 case "move":
+                    sendMoveMsgs(UUID.fromString(msgTokens[1]), 
+                                 Float.parseFloat(msgTokens[2]), 
+                                 Float.parseFloat(msgTokens[3]), 
+                                 Float.parseFloat(msgTokens[4]));
                     break;
                     
                 case "dsfr":
-                    
+                    sendDetailsMsg(UUID.fromString(msgTokens[1]),
+                                   UUID.fromString(msgTokens[2]),
+                                   Float.parseFloat(msgTokens[3]), 
+                                   Float.parseFloat(msgTokens[4]), 
+                                   Float.parseFloat(msgTokens[5]));
                     break;
+                
+                case "wsds":
+                    sendWantsDetailsMsgs(UUID.fromString(msgTokens[1]));
             }
         }
     }
@@ -75,7 +86,7 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
     }
     
     public void sendCreateMsgs(UUID clientID, float x, float y, float z) {
-        // Format create,remoteID,x,y,z
+        // Format create,newID,x,y,z
         try {
             String msg = new String("create," + clientID.toString());
             msg += "," + x;
@@ -90,7 +101,7 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
     }
     
     public void sendDetailsMsg(UUID clientID, UUID remoteID, float x, float y, float z) {
-        // Format dsfr,remoteID,x,y,z
+        // Format dsfr,detailsID,requesterID,x,y,z
         try {
             String msg = new String("dsfr," + clientID);
             msg += "," + x;
@@ -105,14 +116,14 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
     }
     
     public void sendMoveMsgs(UUID clientID, float x, float y, float z) {
-        // Format move,clientID,x,y,z
+        // Format move,moveID,x,y,z
         try {
             String msg = new String("move," + clientID.toString());
             msg += "," + x;
             msg += "," + y;
             msg += "," + z;
 
-            System.out.println("Forwarding move: " + msg);
+            // System.out.println("Forwarding move: " + msg); Commented due to verbosity
             forwardPacketToAll(msg, clientID);
         } catch (IOException e) {
             e.printStackTrace();
@@ -120,7 +131,15 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
     }
     
     public void sendWantsDetailsMsgs(UUID clientID) {
-        
+        // Format wsds,requesterID
+        try {
+            String msg = new String("wsds," + clientID.toString());
+
+            System.out.println("Forwarding wants details: " + msg);
+            forwardPacketToAll(msg, clientID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }    
     }
     
     public void sendByeMsg(UUID clientID) {
@@ -131,6 +150,7 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
         System.out.println("Removing client: " + clientID);
         removeClient(clientID);
     }

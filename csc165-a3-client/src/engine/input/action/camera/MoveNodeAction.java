@@ -5,6 +5,7 @@ import sage.input.action.AbstractInputAction;
 import sage.scene.SceneNode;
 import sage.terrain.TerrainBlock;
 import engine.input.action.camera.MoveAction.Direction;
+import games.treasurehunt2015.TreasureHunt;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
@@ -14,15 +15,17 @@ public class MoveNodeAction extends AbstractInputAction {
 	private Direction		direction;					// Determines which direction to move.
 	private SetSpeedAction	runAction;
 	private TerrainBlock	terrain;
+	private TreasureHunt	bg;
 	
 	private float			speed			= 0.01f;
 	private float			idleConstant	= 0.65f;	// Constant indicating the threshold of an idle axis value.
 														
-	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, TerrainBlock terrainBlock) {
+	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, TerrainBlock terrainBlock, TreasureHunt bg) {
 		avatar = n;
 		direction = d;
 		runAction = r;
 		terrain = terrainBlock;
+		this.bg = bg;
 	}
 	
 	/**
@@ -153,6 +156,9 @@ public class MoveNodeAction extends AbstractInputAction {
 			avatar.getLocalTranslation().setElementAt(1, 3, desiredHeight);
 		}
 		
+		if (bg.getClient() != null) {
+			bg.getClient().sendMoveMsg(bg.getPlayerPosition());
+		}
 	}
 	
 	/*
