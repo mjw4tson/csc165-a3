@@ -247,6 +247,7 @@ public class InputHandler {
 				null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
 		
 		setupPlayerOne(bg);
+		setupController(bg);
 		
 		
 		/*
