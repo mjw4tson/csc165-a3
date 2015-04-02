@@ -283,42 +283,20 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
             }
         }
         
-        // Iterate through each hud image and update as necessary
-        Iterator<SceneNode> iteratorOne = hudGroupTeamOne.getChildren();
-        Iterator<SceneNode> iteratorOneTime = hudGroupTeamOneTime.getChildren();
         
-        SceneNode s2;
-        
-        // Clean up images from previous update
-        while (iteratorOne.hasNext()) {
-            s2 = iteratorOne.next();
-            camera1.removeFromHUD(s2);
-        }
-        
-        while (iteratorOneTime.hasNext()) {
-            s2 = iteratorOneTime.next();
-            camera1.removeFromHUD(s2);
-        }
-        
+        // Updates the time and score states on the hud.
+        // TODO optimize how the hud is updated. 
         int timeTemp = (int) time / 1000;
+        
+        removeGameWorldObject(hudGroupTeamOne);
+        removeGameWorldObject(hudGroupTeamOneTime);
         
         hudGroupTeamOne = hudNumberManager.printValues(scoreP1, -0.850f, -0.88f);
         hudGroupTeamOneTime = hudNumberManager.printValues(timeTemp, 0.050f, 0.90f);
         
-        iteratorOne = hudGroupTeamOne.getChildren();
-        iteratorOneTime = hudGroupTeamOneTime.getChildren();
+        addGameWorldObject(hudGroupTeamOne);
+        addGameWorldObject(hudGroupTeamOneTime);
         
-        while (iteratorOne.hasNext()) {
-            s2 = iteratorOne.next();
-            s2.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
-            camera1.addToHUD(s2);
-        }
-        
-        while (iteratorOneTime.hasNext()) {
-            s2 = iteratorOneTime.next();
-            s2.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
-            camera1.addToHUD(s2);
-        }
     }
     
     /**
@@ -437,6 +415,12 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
         p1Score.scale(.1570f, .0575f, .1f);
         p1Score.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
         camera1.addToHUD(p1Score);
+        
+        hudGroupTeamOne = hudNumberManager.printValues(0, -0.850f, -0.88f);
+        hudGroupTeamOneTime = hudNumberManager.printValues(0, 0.050f, 0.90f);
+        
+        addGameWorldObject(hudGroupTeamOne);
+        addGameWorldObject(hudGroupTeamOneTime);
         
     }
     
