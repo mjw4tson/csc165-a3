@@ -29,16 +29,13 @@ import sage.event.EventManager;
 import sage.event.IEventManager;
 import sage.input.IInputManager;
 import sage.input.InputManager;
-import sage.model.loader.OBJLoader;
 import sage.networking.IGameConnection.ProtocolType;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.HUDImage;
 import sage.scene.SceneNode;
-import sage.scene.SceneNode.CULL_MODE;
 import sage.scene.SkyBox;
 import sage.scene.SkyBox.Face;
-import sage.scene.TriMesh;
 import sage.scene.shape.Cube;
 import sage.scene.shape.Pyramid;
 import sage.scene.shape.Rectangle;
@@ -47,7 +44,6 @@ import sage.scene.state.RenderState;
 import sage.scene.state.TextureState;
 import sage.terrain.AbstractHeightMap;
 import sage.terrain.HillHeightMap;
-import sage.terrain.ImageBasedHeightMap;
 import sage.terrain.TerrainBlock;
 import sage.texture.Texture;
 import sage.texture.TextureManager;
@@ -97,7 +93,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private TreasureChest		treasureChest;
 	private SkyBox				skybox;
 	public HillHeightMap		myHillHeightMap;
-	public TerrainBlock			imageTerrain;
+	public TerrainBlock			hillTerrain;
 	
 	// Players
 	public Avatar				player1;
@@ -313,9 +309,9 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	 * Initializes the terrain.
 	 */
 	private void initTerrain() { // create height map and terrain block
-		ImageBasedHeightMap myHeightMap =
-				 new ImageBasedHeightMap(directory + dirEnvironment + "height.jpg");
-		imageTerrain = createTerBlock(myHeightMap);
+		myHillHeightMap = new HillHeightMap(300, 2000, 5.0f, 20.0f, (byte) 2, 12345);
+		myHillHeightMap.setHeightScale(0.01f);
+		hillTerrain = createTerBlock(myHillHeightMap);
 		
 		// create texture and texture state to color the terrain
 		TextureState grassState;
@@ -328,8 +324,8 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		grassState.setEnabled(true);
 		
 		// apply the texture to the terrain
-		imageTerrain.setRenderState(grassState);
-		addGameWorldObject(imageTerrain);
+		hillTerrain.setRenderState(grassState);
+		addGameWorldObject(hillTerrain);
 	}
 	
 	/**
@@ -339,7 +335,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	 * @return
 	 */
 	private TerrainBlock createTerBlock(AbstractHeightMap heightMap) {
-		float heightScale = 0.85f;
+		float heightScale = 0.13f;
 		Vector3D terrainScale = new Vector3D(1, heightScale, 1);
 		
 		// use the size of the height map as the size of the terrain
@@ -466,7 +462,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
         floor = new Rectangle();
         floor.scale(1000, 1000, 10);
         floor.rotate(90, new Vector3D(1	,0,0));
-        floor.translate(350, -.8f, 420);
+        floor.translate(0, -.8f, 0);
         floor.setTexture(groundTexture);
         environmentGroup.addChild(floor);
         addGameWorldObject(environmentGroup);
@@ -484,20 +480,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
         building.scale(1, 1, 1);
         building.setCullMode(CULL_MODE.NEVER);
         addGameWorldObject(building); TODO Example of adding an OBJ model to the game world */
-		
-		
-/*		OBJLoader loader = new OBJLoader();
-		TriMesh buildingTM = loader.loadModel(directory + dirModel + "fence.obj");
-	    buildingTM.updateLocalBound();
-	    
-	    Texture fenceT = TextureManager.loadTexture2D(directory + dirModel + "chainlink.jpg");
-	    buildingTM.setTexture(fenceT);
-	    Group building = new Group();
-	    building.addChild(buildingTM);
-	    building.translate(820, -20, 100);
-	    building.scale(.2f, .2f, .2f);
-	    building.setCullMode(CULL_MODE.NEVER);
-	    addGameWorldObject(building);*/
 		
 		// Add SceneNode controllers to each group.
 		scSNController.addControlledNode(pyGroup);

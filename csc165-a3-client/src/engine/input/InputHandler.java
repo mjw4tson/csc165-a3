@@ -106,10 +106,10 @@ public class InputHandler {
 		SetSpeedAction setSpeed = new SetSpeedAction(bg.player1);
 		SetLockedAction setLocked = new SetLockedAction(bg.player1);
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.player1, Direction.LEFT, setSpeed, bg.imageTerrain, bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.player1, Direction.RIGHT, setSpeed, bg.imageTerrain, bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.player1, Direction.FORWARD, setSpeed, bg.imageTerrain, bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.player1, Direction.BACKWARD, setSpeed, bg.imageTerrain, bg);
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.player1, Direction.LEFT, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.player1, Direction.RIGHT, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.player1, Direction.FORWARD, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.player1, Direction.BACKWARD, setSpeed, bg.hillTerrain, bg);
 		
 		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked, bg.player1);
 		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked, bg.player1);
@@ -171,10 +171,10 @@ public class InputHandler {
 		SetSpeedAction setSpeed = new SetSpeedAction(bg.player1);
 		SetLockedAction setLocked = new SetLockedAction(bg.player1);
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.player1, Direction.LEFT, setSpeed, bg.imageTerrain, bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.player1, Direction.RIGHT, setSpeed, bg.imageTerrain, bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.player1, Direction.FORWARD, setSpeed, bg.imageTerrain, bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.player1, Direction.BACKWARD, setSpeed, bg.imageTerrain, bg);
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.player1, Direction.LEFT, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.player1, Direction.RIGHT, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.player1, Direction.FORWARD, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.player1, Direction.BACKWARD, setSpeed, bg.hillTerrain, bg);
 		
 		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1,
 				setLocked, bg.player1);
