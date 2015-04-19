@@ -109,6 +109,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private Group				hudGroupTeamOne		= new Group("Team One Group");
 	private Group				environmentGroup	= new Group("Environment Group");
 	private Group				hudGroupTeamOneTime	= new Group("Team One Group Time");
+	private Group				lavaGroup			= new Group("Lava Group");
 	
 	// Texture Objects
 	private Texture				skyBoxTextureTop;
@@ -118,6 +119,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private Texture				skyBoxTextureFront;
 	private Texture				skyBoxTextureBot;
 	private Texture				groundTexture;
+	private Texture 			lavaTexture;
 	
 	private String				dirEnvironment		= "images" + File.separator + "environment"
 															+ File.separator;
@@ -145,6 +147,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	
 	// Environment
 	private Rectangle 			floor;
+	private Rectangle			lavaSegmentN;
+	private Rectangle			lavaSegmentS;
+	private Rectangle			lavaSegmentE;
+	private Rectangle			lavaSegmentW;
 	
 	/**
 	 * Sets up the initial game.
@@ -364,6 +370,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		String skyTop = directory + dirEnvironment + "skybox_top.png";
 		String skyBack = directory + dirEnvironment + "skybox_back.png";
 		String ground = directory + dirEnvironment + "ground.jpg";
+		String lava = directory + dirEnvironment + "lava.jpg";
 		
 		// Load Textures
 		skyBoxTextureTop = TextureManager.loadTexture2D(skyTop);
@@ -373,6 +380,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		skyBoxTextureWest = TextureManager.loadTexture2D(skyWest);
 		skyBoxTextureBack = TextureManager.loadTexture2D(skyBack);
 		groundTexture = TextureManager.loadTexture2D(ground);
+		lavaTexture = TextureManager.loadTexture2D(lava);
 	}
 	
 	/**
@@ -458,7 +466,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		addGameWorldObject(skybox);
 		
         //Create the world
-        
         floor = new Rectangle();
         floor.scale(1000, 1000, 10);
         floor.rotate(90, new Vector3D(1	,0,0));
@@ -466,6 +473,8 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
         floor.setTexture(groundTexture);
         environmentGroup.addChild(floor);
         addGameWorldObject(environmentGroup);
+        
+        createLava();
 		
 		// Get and build game world objects
 		buildEnvironmentFromScript();
@@ -502,6 +511,44 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		// Add a 3D axis to the game world.
 		worldAxis = new Axis(50, Color.red, Color.green, Color.blue);
 		addGameWorldObject(worldAxis);
+	}
+	
+	/**
+	 * Adds lava to the game world.
+	 */
+	private void createLava(){
+        // Create lava
+        lavaSegmentN = new Rectangle();
+        lavaSegmentN.scale(2000, 2000, 10);
+        lavaSegmentN.rotate(90, new Vector3D(1	,0,0));
+        lavaSegmentN.translate(1500, -.8f, 0);
+        lavaSegmentN.setTexture(lavaTexture);
+
+        
+        lavaSegmentS = new Rectangle();
+        lavaSegmentS.scale(2000, 2000, 10);
+        lavaSegmentS.rotate(90, new Vector3D(1,0,0));
+        lavaSegmentS.translate(-1500, -.8f, 0);
+        lavaSegmentS.setTexture(lavaTexture);
+        
+        lavaSegmentE = new Rectangle();
+        lavaSegmentE.scale(1000, 1000, 10);
+        lavaSegmentE.rotate(90, new Vector3D(1,0,0));
+        lavaSegmentE.translate(0, -.8f, -1000);
+        lavaSegmentE.setTexture(lavaTexture);
+        
+        lavaSegmentW = new Rectangle();
+        lavaSegmentW.scale(1000, 1000, 10);
+        lavaSegmentW.rotate(90, new Vector3D(1,0,0));
+        lavaSegmentW.translate(0, -.8f, 1000);
+        lavaSegmentW.setTexture(lavaTexture);
+
+        lavaGroup.addChild(lavaSegmentN);
+        lavaGroup.addChild(lavaSegmentS);
+        lavaGroup.addChild(lavaSegmentE);
+        lavaGroup.addChild(lavaSegmentW);
+        
+        addGameWorldObject(lavaGroup);
 	}
 	
 	/**
