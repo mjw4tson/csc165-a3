@@ -1,7 +1,9 @@
 package engine.graphics;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.DisplayMode;
+import java.awt.FlowLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -10,7 +12,11 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 import sage.display.DisplaySettingsDialog;
 import sage.display.DisplaySystem;
@@ -33,6 +39,39 @@ public class GameDisplaySystem implements IDisplaySystem {
 	private Canvas			rendererCanvas;
 	private boolean			isCreated;
 	private boolean			isFullScreen;
+	
+	// Networking information
+	private JRadioButton	singlePlayer;
+	private JRadioButton	multiPlayer;
+	private JTextField		serverIP;
+	private JTextField		serverPort;
+	
+	/**
+	 * Determines if single player is enabled.
+	 * 
+	 * @return
+	 */
+	public boolean isSinglePlayer() {
+		return singlePlayer.isSelected();
+	}
+	
+	/**
+	 * Gets the server IP
+	 * 
+	 * @return
+	 */
+	public String getServerIP() {
+		return serverIP.getText();
+	}
+	
+	/**
+	 * Gets the server port.
+	 * 
+	 * @return
+	 */
+	public int getServerPort() {
+		return Integer.parseInt(serverPort.getText());
+	}
 	
 	/**
 	 * Constructor for building the GameDisplaySystem.
@@ -82,6 +121,7 @@ public class GameDisplaySystem implements IDisplaySystem {
 	
 	/**
 	 * This method will wait for the GameDisplaySystem to initialize before returning it.
+	 * 
 	 * @return - The game display system.
 	 */
 	public IDisplaySystem waitForInitialization() {
@@ -111,6 +151,38 @@ public class GameDisplaySystem implements IDisplaySystem {
 	}
 	
 	/**
+	 * Configures the configuration window for display and networking settings.
+	 * 
+	 * @return
+	 */
+	private DisplaySettingsDialog getConfiguirationWindow() {
+	DisplaySettingsDialog dialog = new DisplaySettingsDialog(device);
+		
+	// Add networking options to the display window
+	singlePlayer = new JRadioButton("Single Player");
+	multiPlayer = new JRadioButton("Multi Player");
+	serverIP = new JTextField("Server IP Address", 20);
+	serverPort = new JTextField("Server Port", 20);
+	ButtonGroup radioGroup = new ButtonGroup();
+
+	// Radio buttons for single and multi-player
+	radioGroup.add(singlePlayer);
+	radioGroup.add(multiPlayer);
+		
+	dialog.setLayout(new FlowLayout());
+	dialog.add(singlePlayer);
+	dialog.add(multiPlayer);
+	dialog.add(serverIP);
+	dialog.add(serverPort);
+	singlePlayer.setSelected(true);
+		
+	dialog.setSize(400, 300);
+	dialog.setResizable(false);
+		
+	return dialog;
+	}
+	
+	/**
 	 * Initializes the game screen.
 	 * 
 	 * @param dispMode
@@ -125,8 +197,9 @@ public class GameDisplaySystem implements IDisplaySystem {
 		device = environment.getDefaultScreenDevice();
 		
 		// Show the display dialog and allow the user to specify their display settings.
-		DisplaySettingsDialog dialog = new DisplaySettingsDialog(device);
+		DisplaySettingsDialog dialog = getConfiguirationWindow();
 		dialog.showIt();
+		
 		DisplayMode dispMode = dialog.getSelectedDisplayMode();
 		
 		if (device.isFullScreenSupported() && dialog.isFullScreenModeSelected()) {

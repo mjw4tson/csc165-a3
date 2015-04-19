@@ -33,7 +33,7 @@ public class InputHandler {
 	private String					kbName;
 	private String					moName;
 	private ArrayList<Controller>	devices;
-	private boolean					finalBuild	= true;
+	private boolean					finalBuild	= false;
 	
 	public InputHandler(IInputManager inmanager) {
 		im = inmanager;
