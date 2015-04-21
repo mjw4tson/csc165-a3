@@ -30,6 +30,9 @@ import sage.event.IEventManager;
 import sage.input.IInputManager;
 import sage.input.InputManager;
 import sage.networking.IGameConnection.ProtocolType;
+import sage.physics.IPhysicsEngine;
+import sage.physics.IPhysicsObject;
+import sage.physics.PhysicsEngineFactory;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.HUDImage;
@@ -96,7 +99,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	public TerrainBlock			hillTerrain;
 	
 	// Players
-	public Avatar				player1;
+	public Avatar				localPlayer;
 	public Vector<Avatar>		ghostPlayers;
 	
 	// SceneNode Controllers
@@ -119,7 +122,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private Texture				skyBoxTextureFront;
 	private Texture				skyBoxTextureBot;
 	private Texture				groundTexture;
-	private Texture 			lavaTexture;
+	private Texture				lavaTexture;
 	
 	private String				dirEnvironment		= "images" + File.separator + "environment"
 															+ File.separator;
@@ -146,11 +149,17 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private static int			ghostCount			= 0;
 	
 	// Environment
-	private Rectangle 			floor;
+	private Rectangle			floor;
 	private Rectangle			lavaSegmentN;
 	private Rectangle			lavaSegmentS;
 	private Rectangle			lavaSegmentE;
 	private Rectangle			lavaSegmentW;
+	
+	// Physics
+	private IPhysicsEngine		physicsEngine;
+	private IPhysicsObject		playerPObject, worldFloor;
+	private boolean				physicsEnabled		= false;
+	private boolean				physicsEngineEnabled = false;
 	
 	/**
 	 * Sets up the initial game.
@@ -164,9 +173,12 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		configureEnvironment();
 		initGameEntities(); // Populate the game world.
 		initTerrain();
+		if(physicsEngineEnabled){
+			initPhysicsSystem();
+		}
 		addEventHandlers();
 		initEventManager(); // Get event manager.
-		cc1 = new Camera3PController(camera1, player1);
+		cc1 = new Camera3PController(camera1, localPlayer);
 		setupControls(); // Set up the game world controls.
 	}
 	
@@ -212,11 +224,30 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 			gameClient.processPackets();
 		}
 		
+		updateGameWorldPhysicsState(physicsEnabled);
+		super.update(time);
+		
 		updateGameWorld(elapsedTimeMS);
 		updateSceneNodeControllers();
 		cc1.update(elapsedTimeMS);
 		
 		super.update(elapsedTimeMS);
+	}
+	
+	private void updateGameWorldPhysicsState(boolean pEnabled) {
+		if (pEnabled && physicsEngineEnabled) {
+			Matrix3D mat;
+			Vector3D translateVec;
+			physicsEngine.update(20.0f);
+			for (SceneNode s : getGameWorld()) {
+				if (s.getPhysicsObject() != null) {
+					mat = new Matrix3D(s.getPhysicsObject().getTransform());
+					translateVec = mat.getCol(3);
+					s.getLocalTranslation().setCol(3, translateVec);
+					// should also get and apply rotation
+				}
+			}
+		}
 	}
 	
 	/**
@@ -263,7 +294,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		Iterator<SceneNode> iterator = getGameWorld().iterator();
 		SceneNode s;
 		
-		Point3D locP1 = new Point3D(player1.getLocalTranslation().getCol(3));
+		Point3D locP1 = new Point3D(localPlayer.getLocalTranslation().getCol(3));
 		
 		while (iterator.hasNext()) {
 			s = iterator.next();
@@ -465,30 +496,24 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		skybox.setTexture(Face.South, skyBoxTextureBack);
 		addGameWorldObject(skybox);
 		
-        //Create the world
-        floor = new Rectangle();
-        floor.scale(1000, 1000, 10);
-        floor.rotate(90, new Vector3D(1	,0,0));
-        floor.translate(0, -.8f, 0);
-        floor.setTexture(groundTexture);
-        environmentGroup.addChild(floor);
-        addGameWorldObject(environmentGroup);
-        
-        createLava();
+		//Create the world
+		floor = new Rectangle();
+		floor.scale(1000, 1000, 10);
+		floor.rotate(90, new Vector3D(1, 0, 0));
+		floor.translate(0, -.8f, 0);
+		floor.setTexture(groundTexture);
+		environmentGroup.addChild(floor);
+		addGameWorldObject(environmentGroup);
+		
+		createLava();
 		
 		// Get and build game world objects
 		buildEnvironmentFromScript();
 		
-		/*      // Add the building TODO Example of adding an OBJ model to the game world
-		//Material file needs to be located in ./material/
-        buildingTM = loader.loadModel(directory + dirModel + "OBJ MODEL LOCATION");
-        buildingTM.updateLocalBound();
-        buildingTM.setTexture(TEXTURE OBJECT);
-        building.addChild(buildingTM);
-        building.translate(-220, -20, 100);
-        building.scale(1, 1, 1);
-        building.setCullMode(CULL_MODE.NEVER);
-        addGameWorldObject(building); TODO Example of adding an OBJ model to the game world */
+		/*
+		 * // Add the building TODO Example of adding an OBJ model to the game world //Material file needs to be located in ./material/ buildingTM = loader.loadModel(directory + dirModel + "OBJ MODEL LOCATION"); buildingTM.updateLocalBound(); buildingTM.setTexture(TEXTURE OBJECT); building.addChild(buildingTM); building.translate(-220, -20, 100);
+		 * building.scale(1, 1, 1); building.setCullMode(CULL_MODE.NEVER); addGameWorldObject(building); TODO Example of adding an OBJ model to the game world
+		 */
 		
 		// Add SceneNode controllers to each group.
 		scSNController.addControlledNode(pyGroup);
@@ -503,10 +528,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		treasureChest.scale(.8f, .4f, .2f);
 		
 		// Add players
-		player1 = new Avatar("Player 1", 1, 20, 20, Color.blue);
-		player1.translate(50, .8f, 10 + origin);
+		localPlayer = new Avatar("Player 1", 1, 20, 20, Color.blue);
+		localPlayer.translate(50, .8f, 10 + origin);
 		
-		addGameWorldObject(player1);
+		addGameWorldObject(localPlayer);
 		
 		// Add a 3D axis to the game world.
 		worldAxis = new Axis(50, Color.red, Color.green, Color.blue);
@@ -516,39 +541,38 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	/**
 	 * Adds lava to the game world.
 	 */
-	private void createLava(){
-        // Create lava
-        lavaSegmentN = new Rectangle();
-        lavaSegmentN.scale(2000, 2000, 10);
-        lavaSegmentN.rotate(90, new Vector3D(1	,0,0));
-        lavaSegmentN.translate(1500, -.8f, 0);
-        lavaSegmentN.setTexture(lavaTexture);
-
-        
-        lavaSegmentS = new Rectangle();
-        lavaSegmentS.scale(2000, 2000, 10);
-        lavaSegmentS.rotate(90, new Vector3D(1,0,0));
-        lavaSegmentS.translate(-1500, -.8f, 0);
-        lavaSegmentS.setTexture(lavaTexture);
-        
-        lavaSegmentE = new Rectangle();
-        lavaSegmentE.scale(1000, 1000, 10);
-        lavaSegmentE.rotate(90, new Vector3D(1,0,0));
-        lavaSegmentE.translate(0, -.8f, -1000);
-        lavaSegmentE.setTexture(lavaTexture);
-        
-        lavaSegmentW = new Rectangle();
-        lavaSegmentW.scale(1000, 1000, 10);
-        lavaSegmentW.rotate(90, new Vector3D(1,0,0));
-        lavaSegmentW.translate(0, -.8f, 1000);
-        lavaSegmentW.setTexture(lavaTexture);
-
-        lavaGroup.addChild(lavaSegmentN);
-        lavaGroup.addChild(lavaSegmentS);
-        lavaGroup.addChild(lavaSegmentE);
-        lavaGroup.addChild(lavaSegmentW);
-        
-        addGameWorldObject(lavaGroup);
+	private void createLava() {
+		// Create lava
+		lavaSegmentN = new Rectangle();
+		lavaSegmentN.scale(2000, 2000, 10);
+		lavaSegmentN.rotate(90, new Vector3D(1, 0, 0));
+		lavaSegmentN.translate(1500, -.8f, 0);
+		lavaSegmentN.setTexture(lavaTexture);
+		
+		lavaSegmentS = new Rectangle();
+		lavaSegmentS.scale(2000, 2000, 10);
+		lavaSegmentS.rotate(90, new Vector3D(1, 0, 0));
+		lavaSegmentS.translate(-1500, -.8f, 0);
+		lavaSegmentS.setTexture(lavaTexture);
+		
+		lavaSegmentE = new Rectangle();
+		lavaSegmentE.scale(1000, 1000, 10);
+		lavaSegmentE.rotate(90, new Vector3D(1, 0, 0));
+		lavaSegmentE.translate(0, -.8f, -1000);
+		lavaSegmentE.setTexture(lavaTexture);
+		
+		lavaSegmentW = new Rectangle();
+		lavaSegmentW.scale(1000, 1000, 10);
+		lavaSegmentW.rotate(90, new Vector3D(1, 0, 0));
+		lavaSegmentW.translate(0, -.8f, 1000);
+		lavaSegmentW.setTexture(lavaTexture);
+		
+		lavaGroup.addChild(lavaSegmentN);
+		lavaGroup.addChild(lavaSegmentS);
+		lavaGroup.addChild(lavaSegmentE);
+		lavaGroup.addChild(lavaSegmentW);
+		
+		addGameWorldObject(lavaGroup);
 	}
 	
 	/**
@@ -691,8 +715,48 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		}
 	}
 	
+	/**
+	 * Helper method to initialize the physics engine.
+	 */
+	protected void initPhysicsSystem() {
+		String engine = "sage.physics.JBullet.JBulletPhysicsEngine";
+		physicsEngine = PhysicsEngineFactory.createPhysicsEngine(engine);
+		physicsEngine.initSystem();
+		float[] gravity = { 0, -1f, 0 };
+		physicsEngine.setGravity(gravity);
+		
+		// Apply physics properties to the world floor
+		float up[] = { -0.05f, 0.95f, 0 }; // {0,1,0} is flat
+		worldFloor = physicsEngine.addStaticPlaneObject(physicsEngine.nextUID(), floor
+				.getWorldTransform().getValues(), up, 0.0f);
+		worldFloor.setBounciness(1.0f);
+		floor.setPhysicsObject(worldFloor);
+		
+		// Bind Physics Property to the SceneNodes
+		bindPhysicsProperty(localPlayer, 1.0f, playerPObject);
+	}
+	
+	/**
+	 * Method to apply physics properties to a specified SceneNode.
+	 * 
+	 * @param object
+	 *            - The SceneNode to apply physics to
+	 * @param mass
+	 *            - The mass of the SceneNode object
+	 * @param pObject
+	 *            - The container to keep the physics properties of the object.
+	 */
+	private void bindPhysicsProperty(	SceneNode object,
+										float mass,
+										IPhysicsObject pObject) {
+		pObject = physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, object
+				.getWorldTransform().getValues(), 1.0f);
+		pObject.setBounciness(1.0f);
+		object.setPhysicsObject(pObject);
+	}
+	
 	public Vector3D getPlayerPosition() {
-		Vector3D position = player1.getWorldTransform().getCol(3);
+		Vector3D position = localPlayer.getWorldTransform().getCol(3);
 		
 		return new Vector3D(position.getX(), position.getY(), position.getZ());
 	}
