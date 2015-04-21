@@ -7,6 +7,7 @@ import engine.input.action.camera.OrbitUpDownAction;
 import engine.input.action.camera.SetLockedAction;
 import engine.input.action.camera.SetSpeedAction;
 import engine.input.action.camera.ZoomAction;
+import engine.scene.SceneManager;
 import games.treasurehunt2015.TreasureHunt;
 
 import java.util.ArrayList;
@@ -101,15 +102,15 @@ public class InputHandler {
 		
 	}
 	
-	private void setupPlayerOne(TreasureHunt bg) {
+	private void setupPlayerOne(TreasureHunt bg, SceneManager sm) {
 		// Controls for the first player, using mouse and keyboard.
 		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer);
 		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer);
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed,sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD, setSpeed, sm.getHillTerrain(), bg);
 		
 		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked, bg.localPlayer);
 		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked, bg.localPlayer);
@@ -166,15 +167,15 @@ public class InputHandler {
 		
 	}
 	
-	private void setupController(TreasureHunt bg) {
+	private void setupController(TreasureHunt bg, SceneManager sm) {
 		// Controls for the first player, using mouse and keyboard.
 		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer);
 		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer);
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD, setSpeed, sm.getHillTerrain(), bg);
 		
 		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1,
 				setLocked, bg.localPlayer);
@@ -238,7 +239,8 @@ public class InputHandler {
 	
 	public IInputManager setupControls(	ICamera camera1,
 										IInputManager im,
-										TreasureHunt bg) {
+										TreasureHunt bg,
+										SceneManager sm) {
 		// Game controls
 		QuitGameAction qgAction = new QuitGameAction(bg);
 		
@@ -246,8 +248,8 @@ public class InputHandler {
 		this.addControl(null, Key.ESCAPE, null, qgAction,
 				null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
 		
-		setupPlayerOne(bg);
-		setupController(bg);
+		setupPlayerOne(bg,sm);
+		setupController(bg, sm);
 		
 		
 		/*
