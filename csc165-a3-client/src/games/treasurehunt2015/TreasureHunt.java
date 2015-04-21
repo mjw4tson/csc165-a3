@@ -29,6 +29,7 @@ import sage.event.EventManager;
 import sage.event.IEventManager;
 import sage.input.IInputManager;
 import sage.input.InputManager;
+import sage.model.loader.OBJLoader;
 import sage.networking.IGameConnection.ProtocolType;
 import sage.physics.IPhysicsEngine;
 import sage.physics.IPhysicsObject;
@@ -37,8 +38,10 @@ import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.HUDImage;
 import sage.scene.SceneNode;
+import sage.scene.SceneNode.CULL_MODE;
 import sage.scene.SkyBox;
 import sage.scene.SkyBox.Face;
+import sage.scene.TriMesh;
 import sage.scene.shape.Cube;
 import sage.scene.shape.Pyramid;
 import sage.scene.shape.Rectangle;
@@ -124,6 +127,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private Texture				skyBoxTextureBot;
 	private Texture				groundTexture;
 	private Texture				lavaTexture;
+	private Texture				ammoBoxTexture;
 	
 	private String				dirEnvironment			= "images" + File.separator + "environment"
 																+ File.separator;
@@ -156,13 +160,17 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private Rectangle			lavaSegmentE;
 	private Rectangle			lavaSegmentW;
 	
+	// Modeling
+	private OBJLoader 			loader = new OBJLoader();
+	private TriMesh				ammoBoxTM;
+	
 	// Physics
 	private IPhysicsEngine		physicsEngine;
 	private IPhysicsObject		playerPObject, worldFloor;
 	// Enables the updating of each game world object physics state, if applicable.
 	private boolean				physicsEnabled			= false;
 	// Enables the physics engine.
-	private boolean				physicsEngineEnabled	= true;
+	private boolean				physicsEngineEnabled	= false;
 	
 	/**
 	 * Sets up the initial game.
@@ -239,6 +247,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	
 	/**
 	 * Updates all of the game world objects physics states if applicable.
+	 * 
 	 * @param pEnabled
 	 */
 	private void updateGameWorldPhysicsState(boolean pEnabled) {
@@ -409,6 +418,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		String skyBack = directory + dirEnvironment + "skybox_back.png";
 		String ground = directory + dirEnvironment + "ground.jpg";
 		String lava = directory + dirEnvironment + "lava.jpg";
+		String ammoBox = directory + dirModel + "ammo.png";
 		
 		// Load Textures
 		skyBoxTextureTop = TextureManager.loadTexture2D(skyTop);
@@ -419,6 +429,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		skyBoxTextureBack = TextureManager.loadTexture2D(skyBack);
 		groundTexture = TextureManager.loadTexture2D(ground);
 		lavaTexture = TextureManager.loadTexture2D(lava);
+		ammoBoxTexture= TextureManager.loadTexture2D(ammoBox);
 	}
 	
 	/**
@@ -517,10 +528,16 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		// Get and build game world objects
 		buildEnvironmentFromScript();
 		
-		/*
-		 * // Add the building TODO Example of adding an OBJ model to the game world //Material file needs to be located in ./material/ buildingTM = loader.loadModel(directory + dirModel + "OBJ MODEL LOCATION"); buildingTM.updateLocalBound(); buildingTM.setTexture(TEXTURE OBJECT); building.addChild(buildingTM); building.translate(-220, -20, 100);
-		 * building.scale(1, 1, 1); building.setCullMode(CULL_MODE.NEVER); addGameWorldObject(building); TODO Example of adding an OBJ model to the game world
-		 */
+		
+		 // Adding ammo box to the game world.
+		ammoBoxTM = loader.loadModel(directory + dirModel + "ammo.obj"); 
+		ammoBoxTM.updateLocalBound(); 
+		ammoBoxTM.setTexture(ammoBoxTexture);  
+		ammoBoxTM.translate(-220, -20, 100);
+		ammoBoxTM.scale(100, 100, 100); 
+		ammoBoxTM.setCullMode(CULL_MODE.NEVER); 
+		addGameWorldObject(ammoBoxTM); 
+		
 		
 		// Add SceneNode controllers to each group.
 		scSNController.addControlledNode(pyGroup);

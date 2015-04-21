@@ -88,7 +88,7 @@ public class InputHandler {
 		}
 		if (kbName != null && kbKey != null) {
 			if (finalBuild == false) {
-				im.associateAction(devices.get(3), kbKey, action, kbActionType);
+				im.associateAction(kbName, kbKey, action, kbActionType);
 			} else {
 				im.associateAction(kbName, kbKey, action, kbActionType);
 			}
@@ -103,18 +103,18 @@ public class InputHandler {
 	
 	private void setupPlayerOne(TreasureHunt bg) {
 		// Controls for the first player, using mouse and keyboard.
-		SetSpeedAction setSpeed = new SetSpeedAction(bg.player1);
-		SetLockedAction setLocked = new SetLockedAction(bg.player1);
+		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer);
+		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer);
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.player1, Direction.LEFT, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.player1, Direction.RIGHT, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.player1, Direction.FORWARD, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.player1, Direction.BACKWARD, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD, setSpeed, bg.hillTerrain, bg);
 		
-		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked, bg.player1);
-		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked, bg.player1);
-		OrbitUpDownAction orbitUp = new OrbitUpDownAction(false, true, bg.cc1, setLocked, bg.player1);
-		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1, setLocked, bg.player1);
+		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked, bg.localPlayer);
+		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked, bg.localPlayer);
+		OrbitUpDownAction orbitUp = new OrbitUpDownAction(false, true, bg.cc1, setLocked, bg.localPlayer);
+		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1, setLocked, bg.localPlayer);
 		
 		// Orbit Up.
 		this.addControl(null, Key.UP, null, orbitUp,
@@ -168,19 +168,19 @@ public class InputHandler {
 	
 	private void setupController(TreasureHunt bg) {
 		// Controls for the first player, using mouse and keyboard.
-		SetSpeedAction setSpeed = new SetSpeedAction(bg.player1);
-		SetLockedAction setLocked = new SetLockedAction(bg.player1);
+		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer);
+		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer);
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.player1, Direction.LEFT, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.player1, Direction.RIGHT, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.player1, Direction.FORWARD, setSpeed, bg.hillTerrain, bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.player1, Direction.BACKWARD, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD, setSpeed, bg.hillTerrain, bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD, setSpeed, bg.hillTerrain, bg);
 		
 		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1,
-				setLocked, bg.player1);
+				setLocked, bg.localPlayer);
 		
 		OrbitUpDownAction orbitUpDown = new OrbitUpDownAction(true, false, bg.cc1, setLocked,
-				bg.player1);
+				bg.localPlayer);
 		
 		ZoomAction zoomOutP2 = new ZoomAction(bg.cc1, true, 2);
 		ZoomAction zoomInP2 = new ZoomAction(bg.cc1, false, 2);
