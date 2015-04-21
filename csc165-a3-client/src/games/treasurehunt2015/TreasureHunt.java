@@ -74,21 +74,22 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	
 	// Engine objects.
 	public Camera3PController	cc1;
-	private IDisplaySystem		display;																// The game display.
-	private ICamera				camera1;																// The game camera.
-	private InputHandler		ih;																	// Input handler
-	private IInputManager		im;																	// The input manager
+	private IDisplaySystem		display;													// The game display.
+	private ICamera				camera1;													// The game camera.
+	private InputHandler		ih;														// Input handler
+	private IInputManager		im;														// The input manager
 	private IEventManager		eventManager;
 	private IRenderer			renderer;
-	private boolean				finalBuild			= false;											// Determines if final build
-	private float				time				= 0.0f;											// Stores the total time
-	private int					scoreP1				= 0;												// The total score
-	private int					numCrashes			= 0;
+	private boolean				finalBuild				= false;							// Determines if final build
+	private float				time					= 0.0f;							// Stores the total time
+	private int					scoreP1					= 0;								// The total score
+	private int					numCrashes				= 0;
 	private Cursor				crossHairCursor;
 	private BlendState			transparencyState;
 	private HUDNumber			hudNumberManager;
 	
-	private static String		directory			= "." + File.separator + "bin" + File.separator;
+	private static String		directory				= "." + File.separator + "bin"
+																+ File.separator;
 	
 	// Game World Objects
 	private Axis				worldAxis;
@@ -103,16 +104,16 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	public Vector<Avatar>		ghostPlayers;
 	
 	// SceneNode Controllers
-	private BounceController	roSNController		= new BounceController();
-	private ScaleController		scSNController		= new ScaleController();
+	private BounceController	roSNController			= new BounceController();
+	private ScaleController		scSNController			= new ScaleController();
 	
 	// SceneNode Groups
-	private Group				cuGroup				= new Group("Cube Group");
-	private Group				pyGroup				= new Group("Pyramid Group");
-	private Group				hudGroupTeamOne		= new Group("Team One Group");
-	private Group				environmentGroup	= new Group("Environment Group");
-	private Group				hudGroupTeamOneTime	= new Group("Team One Group Time");
-	private Group				lavaGroup			= new Group("Lava Group");
+	private Group				cuGroup					= new Group("Cube Group");
+	private Group				pyGroup					= new Group("Pyramid Group");
+	private Group				hudGroupTeamOne			= new Group("Team One Group");
+	private Group				environmentGroup		= new Group("Environment Group");
+	private Group				hudGroupTeamOneTime		= new Group("Team One Group Time");
+	private Group				lavaGroup				= new Group("Lava Group");
 	
 	// Texture Objects
 	private Texture				skyBoxTextureTop;
@@ -124,13 +125,13 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private Texture				groundTexture;
 	private Texture				lavaTexture;
 	
-	private String				dirEnvironment		= "images" + File.separator + "environment"
-															+ File.separator;
-	private String				dirHud				= "images" + File.separator + "hud"
-															+ File.separator;
-	private String				dirScripts			= "scripts" + File.separator;
-	private String				dirModel			= "images" + File.separator + "models"
-															+ File.separator;
+	private String				dirEnvironment			= "images" + File.separator + "environment"
+																+ File.separator;
+	private String				dirHud					= "images" + File.separator + "hud"
+																+ File.separator;
+	private String				dirScripts				= "scripts" + File.separator;
+	private String				dirModel				= "images" + File.separator + "models"
+																+ File.separator;
 	
 	// Scripting
 	private ScriptEngine		jsEngine;
@@ -138,7 +139,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	// HUD
 	private HUDImage			p1Time;
 	private HUDImage			p1Score;
-	private float				origin				= 65f;
+	private float				origin					= 65f;
 	
 	// Game Client
 	private TreasureHuntClient	gameClient;
@@ -146,7 +147,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private int					serverPort;
 	private ProtocolType		pType;
 	private boolean				isConnected;
-	private static int			ghostCount			= 0;
+	private static int			ghostCount				= 0;
 	
 	// Environment
 	private Rectangle			floor;
@@ -158,8 +159,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	// Physics
 	private IPhysicsEngine		physicsEngine;
 	private IPhysicsObject		playerPObject, worldFloor;
-	private boolean				physicsEnabled		= false;
-	private boolean				physicsEngineEnabled = false;
+	// Enables the updating of each game world object physics state, if applicable.
+	private boolean				physicsEnabled			= false;
+	// Enables the physics engine.
+	private boolean				physicsEngineEnabled	= true;
 	
 	/**
 	 * Sets up the initial game.
@@ -173,7 +176,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		configureEnvironment();
 		initGameEntities(); // Populate the game world.
 		initTerrain();
-		if(physicsEngineEnabled){
+		if (physicsEngineEnabled) {
 			initPhysicsSystem();
 		}
 		addEventHandlers();
@@ -234,6 +237,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		super.update(elapsedTimeMS);
 	}
 	
+	/**
+	 * Updates all of the game world objects physics states if applicable.
+	 * @param pEnabled
+	 */
 	private void updateGameWorldPhysicsState(boolean pEnabled) {
 		if (pEnabled && physicsEngineEnabled) {
 			Matrix3D mat;
