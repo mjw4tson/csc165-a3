@@ -110,8 +110,9 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private Group				hudGroupTeamOne		= new Group("Team One Group");
 	private Group				environmentGroup	= new Group("Environment Group");
 	private Group				hudGroupTeamOneTime	= new Group("Team One Group Time");
-	private Group				lavaGroup			= new Group("Lava Group");
 	private Group				ammoGroup			= new Group("Ammo Box Group");
+	private Group				fenceGroup			= new Group("Fence Group");
+	private Group				healthGroup			= new Group("Health Box Group");
 	
 	// Texture Objects
 	private Texture				ammoBoxTexture;
@@ -384,16 +385,20 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		sceneManager.addGameFloor(environmentGroup);
 		addGameWorldObject(environmentGroup);
 		
-		// Add lava to the game world.
-		sceneManager.addLava(lavaGroup);
-		addGameWorldObject(lavaGroup);
-		
 		// Get and build game world objects
 		buildEnvironmentFromScript();
 		
 		// Adding ammo box to the game world.
 		sceneManager.addAmmoBoxes(ammoGroup);
 		addGameWorldObject(ammoGroup);
+		
+		// Adding health box to the game world.
+		sceneManager.addHealthBoxes(healthGroup);
+		addGameWorldObject(healthGroup);
+		
+		// Adding fences to the game world.
+		sceneManager.addFencing(fenceGroup);
+		addGameWorldObject(fenceGroup);
 		
 		// Add SceneNode controllers to each group.
 		scSNController.addControlledNode(pyGroup);

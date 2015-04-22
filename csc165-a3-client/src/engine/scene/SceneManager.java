@@ -44,9 +44,10 @@ public class SceneManager {
 	private Texture			skyBoxTextureFront;
 	private Texture			skyBoxTextureBot;
 	private Texture			groundTexture;
-	private Texture			lavaTexture;
 	private Texture			ammoBoxTexture;
 	private Texture			sandTexture;
+	private Texture			fenceTexture;
+	private Texture			medicTexture;
 	
 	// Game World SceneNodes
 	private SkyBox			skyBox;
@@ -63,16 +64,17 @@ public class SceneManager {
 	
 	private void setupTextures() {
 		// Texture file locations
-		String skyFront = directory + dirEnvironment + "skybox_front.png";
-		String skyEast = directory + dirEnvironment + "skybox_east.png";
-		String skyWest = directory + dirEnvironment + "skybox_west.png";
-		String skyBot = directory + dirEnvironment + "skybox_bot.png";
-		String skyTop = directory + dirEnvironment + "skybox_top.png";
-		String skyBack = directory + dirEnvironment + "skybox_back.png";
+		String skyFront = directory + dirEnvironment + "posz.jpg";
+		String skyEast = directory + dirEnvironment + "posx.jpg";
+		String skyWest = directory + dirEnvironment + "negx.jpg";
+		String skyBot = directory + dirEnvironment + "negy.jpg";
+		String skyTop = directory + dirEnvironment + "posy.jpg";
+		String skyBack = directory + dirEnvironment + "negz.jpg";
 		String ground = directory + dirEnvironment + "ground.jpg";
-		String lava = directory + dirEnvironment + "lava.jpg";
 		String ammoBox = directory + dirModel + "ammo.png";
 		String sand = directory + dirEnvironment + "ground.jpg";
+		String fence = directory + dirModel + "fence.png";
+		String medic = directory + dirModel + "medic.png";
 		
 		// Load Textures
 		skyBoxTextureTop = TextureManager.loadTexture2D(skyTop);
@@ -82,24 +84,55 @@ public class SceneManager {
 		skyBoxTextureWest = TextureManager.loadTexture2D(skyWest);
 		skyBoxTextureBack = TextureManager.loadTexture2D(skyBack);
 		groundTexture = TextureManager.loadTexture2D(ground);
-		lavaTexture = TextureManager.loadTexture2D(lava);
 		ammoBoxTexture = TextureManager.loadTexture2D(ammoBox);
 		sandTexture = TextureManager.loadTexture2D(sand);
+		fenceTexture = TextureManager.loadTexture2D(fence);
+		medicTexture = TextureManager.loadTexture2D(medic);
 	}
 	
 	/**
 	 * Adds the ammo boxes to the game world.
+	 * 
 	 * @param ammoGroup
 	 */
 	public void addAmmoBoxes(Group ammoGroup) {
 		TriMesh ammoBoxTM = loader.loadModel(directory + dirModel + "ammo.obj");
 		ammoBoxTM.updateLocalBound();
 		ammoBoxTM.setTexture(ammoBoxTexture);
-		ammoBoxTM.translate(-220, -20, 100);
-		ammoBoxTM.scale(100, 100, 100);
-		ammoBoxTM.setCullMode(CULL_MODE.NEVER);
+		ammoBoxTM.translate(-10, 0.5f, 50);
+		ammoBoxTM.scale(6, 6, 6);
 		ammoGroup.addChild(ammoBoxTM);
 	}
+	
+	/**
+	 * Adds the health boxes to the game world.
+	 * 
+	 * @param ammoGroup
+	 */
+	public void addHealthBoxes(Group healthGroup) {
+		TriMesh healthBoxTM = loader.loadModel(directory + dirModel + "medic.obj");
+		healthBoxTM.updateLocalBound();
+		healthBoxTM.setTexture(medicTexture);
+		healthBoxTM.translate(10, 0.5f, 50);
+		healthBoxTM.scale(8, 8, 8);
+		healthGroup.addChild(healthBoxTM);
+	}
+	
+	
+	/**
+	 * Adds fencing to the game world.
+	 * @param fenceGroup
+	 */
+	public void addFencing(Group fenceGroup){
+		TriMesh fenceTM = loader.loadModel(directory + dirModel + "fence.obj");
+		fenceTM.updateLocalBound();
+		fenceTM.setTexture(fenceTexture);
+		fenceTM.translate(-700, 9f, 640);
+		fenceTM.scale(8, 8, 8);
+		fenceGroup.addChild(fenceTM);
+		
+	}
+	
 	
 	/**
 	 * Creates the SkyBox.
@@ -123,42 +156,6 @@ public class SceneManager {
 	}
 	
 	/**
-	 * Tasked with creating lava for the game world, adds it to the specified group.
-	 * 
-	 * @return
-	 */
-	public void addLava(Group lavaGroup) {
-		Rectangle lavaSegmentN = new Rectangle();
-		lavaSegmentN.scale(2000, 2000, 10);
-		lavaSegmentN.rotate(90, new Vector3D(1, 0, 0));
-		lavaSegmentN.translate(1500, -.8f, 0);
-		lavaSegmentN.setTexture(lavaTexture);
-		
-		Rectangle lavaSegmentS = new Rectangle();
-		lavaSegmentS.scale(2000, 2000, 10);
-		lavaSegmentS.rotate(90, new Vector3D(1, 0, 0));
-		lavaSegmentS.translate(-1500, -.8f, 0);
-		lavaSegmentS.setTexture(lavaTexture);
-		
-		Rectangle lavaSegmentE = new Rectangle();
-		lavaSegmentE.scale(1000, 1000, 10);
-		lavaSegmentE.rotate(90, new Vector3D(1, 0, 0));
-		lavaSegmentE.translate(0, -.8f, -1000);
-		lavaSegmentE.setTexture(lavaTexture);
-		
-		Rectangle lavaSegmentW = new Rectangle();
-		lavaSegmentW.scale(1000, 1000, 10);
-		lavaSegmentW.rotate(90, new Vector3D(1, 0, 0));
-		lavaSegmentW.translate(0, -.8f, 1000);
-		lavaSegmentW.setTexture(lavaTexture);
-		
-		lavaGroup.addChild(lavaSegmentN);
-		lavaGroup.addChild(lavaSegmentS);
-		lavaGroup.addChild(lavaSegmentE);
-		lavaGroup.addChild(lavaSegmentW);
-	}
-	
-	/**
 	 * Creates the floor for the game world.
 	 * 
 	 * @return
@@ -166,7 +163,7 @@ public class SceneManager {
 	public void addGameFloor(Group environmentGroup) {
 		// Create the world
 		floor = new Rectangle();
-		floor.scale(1000, 1000, 10);
+		floor.scale(2600, 1400, 10);
 		floor.rotate(90, new Vector3D(1, 0, 0));
 		floor.translate(0, -.8f, 0);
 		floor.setTexture(groundTexture);

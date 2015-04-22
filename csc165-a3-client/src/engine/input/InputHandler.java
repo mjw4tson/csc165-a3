@@ -89,7 +89,7 @@ public class InputHandler {
 		}
 		if (kbName != null && kbKey != null) {
 			if (finalBuild == false) {
-				im.associateAction(kbName, kbKey, action, kbActionType);
+				im.associateAction(devices.get(3), kbKey, action, kbActionType);
 			} else {
 				im.associateAction(kbName, kbKey, action, kbActionType);
 			}
