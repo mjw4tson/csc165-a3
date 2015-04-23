@@ -96,12 +96,13 @@ public class SceneManager {
 	 * 
 	 * @param ammoGroup
 	 */
-	public void addAmmoBoxes(Group ammoGroup) {
+	public void addAmmoBoxes(Group ammoGroup, PhysicsManager pMan) {
 		TriMesh ammoBoxTM = loader.loadModel(directory + dirModel + "ammo.obj");
 		ammoBoxTM.updateLocalBound();
 		ammoBoxTM.setTexture(ammoBoxTexture);
-		ammoBoxTM.translate(-10, 0.5f, 50);
+		ammoBoxTM.translate(-10, 10.5f, 50);
 		ammoBoxTM.scale(6, 6, 6);
+		pMan.bindPhysicsProperty(ammoBoxTM, 5.0f);
 		ammoGroup.addChild(ammoBoxTM);
 	}
 	
@@ -110,12 +111,13 @@ public class SceneManager {
 	 * 
 	 * @param ammoGroup
 	 */
-	public void addHealthBoxes(Group healthGroup) {
+	public void addHealthBoxes(Group healthGroup, PhysicsManager pMan) {
 		TriMesh healthBoxTM = loader.loadModel(directory + dirModel + "medic.obj");
 		healthBoxTM.updateLocalBound();
 		healthBoxTM.setTexture(medicTexture);
 		healthBoxTM.translate(10, 0.5f, 50);
 		healthBoxTM.scale(8, 8, 8);
+		pMan.bindPhysicsProperty(healthBoxTM, 5.0f);
 		healthGroup.addChild(healthBoxTM);
 	}
 	

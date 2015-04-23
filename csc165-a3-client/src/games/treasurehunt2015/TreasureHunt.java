@@ -150,10 +150,9 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		if (!runAsSinglePlayer()) {
 			initGameClient();
 		}
-		
+		initPhysics();
 		configureEnvironment();
 		initGameEntities(); // Populate the game world.
-		initPhysics();
 		addEventHandlers();
 		initEventManager(); // Get event manager.
 		cc1 = new Camera3PController(camera1, localPlayer);
@@ -162,15 +161,9 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	
 	private void initPhysics() {
 		phyManager = new PhysicsManager(localPlayer);
-		
-		// Populate physics objects if the physics engine has been intialized.
-		if (phyManager.isPhysicsEngineEnabled()) {
-			worldFloor = phyManager.bindFloorPhysics(sceneManager.getFloor());
-			localPlayer.setPhysicsObject(phyManager.bindPhysicsProperty(localPlayer, 1.0f));
-		}
 	}
 	
-	public PhysicsManager getPhysicsManager(){
+	public PhysicsManager getPhysicsManager() {
 		return phyManager;
 	}
 	
@@ -382,15 +375,19 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		sceneManager.addGameFloor(environmentGroup);
 		addGameWorldObject(environmentGroup);
 		
+		if (phyManager.isPhysicsEngineEnabled()) {
+			worldFloor = phyManager.bindFloorPhysics(sceneManager.getFloor());
+		}
+		
 		// Get and build game world objects
 		buildEnvironmentFromScript();
 		
 		// Adding ammo box to the game world.
-		sceneManager.addAmmoBoxes(ammoGroup);
+		sceneManager.addAmmoBoxes(ammoGroup, phyManager);
 		addGameWorldObject(ammoGroup);
 		
 		// Adding health box to the game world.
-		sceneManager.addHealthBoxes(healthGroup);
+		sceneManager.addHealthBoxes(healthGroup, phyManager);
 		addGameWorldObject(healthGroup);
 		
 		// Adding fences to the game world.

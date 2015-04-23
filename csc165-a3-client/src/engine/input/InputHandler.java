@@ -1,6 +1,6 @@
 package engine.input;
 
-import engine.input.action.camera.JumpAction;
+
 import engine.input.action.camera.MoveAction.Direction;
 import engine.input.action.camera.MoveNodeAction;
 import engine.input.action.camera.OrbitLeftRightAction;
@@ -126,7 +126,6 @@ public class InputHandler {
 				bg.localPlayer);
 		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1, setLocked,
 				bg.localPlayer);
-		JumpAction jAction = new JumpAction(bg.localPlayer);
 		
 		// Orbit Up.
 		this.addControl(null, Key.UP, null, orbitUp,
@@ -175,10 +174,7 @@ public class InputHandler {
 		// Set Locked action.
 		this.addControl(null, Key.RSHIFT, null, setLocked, null,
 				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
-		
-		// Set Locked action.
-		this.addControl(null, Key.SPACE, null, jAction, null,
-				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
+
 		
 	}
 	

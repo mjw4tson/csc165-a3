@@ -10,6 +10,7 @@ import graphicslib3D.Vector3D;
 import sage.physics.IPhysicsEngine;
 import sage.physics.IPhysicsObject;
 import sage.physics.PhysicsEngineFactory;
+import sage.scene.Group;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
 
@@ -41,19 +42,30 @@ public class PhysicsManager {
 		}
 	}
 	
-	public void updatePhysicsState(Iterable<SceneNode>  sceneNodes){
+	public void updatePhysicsState(Iterable<SceneNode> sceneNodes){
 		if (pEnabled && physicsEngineEnabled) {
 			Matrix3D mat;
 			Vector3D translateVec;
 			physicsEngine.update(20.0f);
 			for (SceneNode s : sceneNodes) {
-				if (s.getPhysicsObject() != null && s instanceof Avatar) {
-					if( ((Avatar) s).isJumping()){
-						mat = new Matrix3D(s.getPhysicsObject().getTransform());
-						translateVec = mat.getCol(3);
-						s.getLocalTranslation().setCol(3, translateVec);
-						// should also get and apply rotation
+				if(s instanceof Group){
+					Iterator<SceneNode> i = ((Group) s).getChildren();
+					while(i.hasNext()){
+						SceneNode n = i.next();
+						if(n.getPhysicsObject() != null){
+							System.out.println(n.getName());
+							mat = new Matrix3D(n.getPhysicsObject().getTransform());
+							translateVec = mat.getCol(3);
+							n.getLocalTranslation().setCol(3, translateVec);
+						}
+						
 					}
+					
+					
+				} else if (s.getPhysicsObject() != null && s instanceof Avatar == false) {
+					mat = new Matrix3D(s.getPhysicsObject().getTransform());
+					translateVec = mat.getCol(3);
+					s.getLocalTranslation().setCol(3, translateVec);
 				}
 			}
 		}
@@ -76,7 +88,7 @@ public class PhysicsManager {
 		IPhysicsObject pObject;
 		pObject = physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, object
 				.getWorldTransform().getValues(), 1.0f);
-		pObject.setBounciness(1.0f);
+		pObject.setBounciness(.5f);
 		object.setPhysicsObject(pObject);
 		return pObject;
 	}
@@ -90,7 +102,7 @@ public class PhysicsManager {
 	public IPhysicsObject bindFloorPhysics(SceneNode floorObject) {
 		// Apply physics properties to the world floor
 		IPhysicsObject worldFloor;
-		float up[] = { -0.05f, 0.95f, 0 }; // {0,1,0} is flat
+		float up[] = { 0f, 1f, 0 }; // {0,1,0} is flat
 		worldFloor = physicsEngine.addStaticPlaneObject(physicsEngine.nextUID(), floorObject
 				.getWorldTransform().getValues(), up, 0.0f);
 		worldFloor.setBounciness(1.0f);

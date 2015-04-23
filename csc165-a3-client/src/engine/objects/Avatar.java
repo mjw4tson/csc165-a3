@@ -12,14 +12,12 @@ import sage.scene.shape.Sphere;
 public class Avatar extends Sphere {
 	private UUID			uuid;
 	private float			health;
-	private boolean			isJumping;
 	private IPhysicsObject	physicsObject;
 	
 	public Avatar(String name, double radius, int stacks, int slices, Color color) {
 		super(name, radius, stacks, slices, color);
 		this.health = 100.0f;
 		uuid = UUID.randomUUID();
-		this.isJumping = false;
 	}
 	
 	public float getHealth() {
@@ -46,14 +44,6 @@ public class Avatar extends Sphere {
 		return uuid;
 	}
 	
-	public boolean isJumping() {
-		return isJumping;
-	}
-	
-	public void setJumping(boolean isJumping) {
-		this.isJumping = isJumping;
-	}
-
 	public IPhysicsObject getPhysicsObject() {
 		return physicsObject;
 	}
