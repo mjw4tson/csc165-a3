@@ -148,7 +148,7 @@ public class MoveNodeAction extends AbstractInputAction {
 		Point3D avLoc = new Point3D(avatar.getLocalTranslation().getCol(3));
 		float x = (float) avLoc.getX();
 		float z = (float) avLoc.getZ();
-		float terHeight = terrain.getHeight(x, z);
+		float terHeight = terrain.getHeightFromWorld(new Point3D(x,0,z));
 		float desiredHeight = terHeight + (float) terrain.getOrigin().getY() + 1.5f;
 		if (Float.isNaN(desiredHeight)) {
 			
