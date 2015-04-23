@@ -1,5 +1,6 @@
 package engine.scene;
 
+import engine.scene.physics.PhysicsManager;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 
@@ -20,6 +21,7 @@ import sage.terrain.AbstractHeightMap;
 import sage.terrain.HillHeightMap;
 import sage.terrain.TerrainBlock;
 import sage.texture.Texture;
+import sage.texture.Texture.WrapMode;
 import sage.texture.TextureManager;
 
 /**
@@ -32,8 +34,6 @@ public class SceneManager {
 	private String			directory;
 	private String			dirEnvironment	= "images" + File.separator + "environment"
 													+ File.separator;
-	private String			dirHud			= "images" + File.separator + "hud" + File.separator;
-	private String			dirScripts		= "scripts" + File.separator;
 	private String			dirModel		= "images" + File.separator + "models" + File.separator;
 	
 	// Texture Objects
@@ -86,6 +86,7 @@ public class SceneManager {
 		groundTexture = TextureManager.loadTexture2D(ground);
 		ammoBoxTexture = TextureManager.loadTexture2D(ammoBox);
 		sandTexture = TextureManager.loadTexture2D(sand);
+		sandTexture.setWrapMode(WrapMode.Repeat);
 		fenceTexture = TextureManager.loadTexture2D(fence);
 		medicTexture = TextureManager.loadTexture2D(medic);
 	}

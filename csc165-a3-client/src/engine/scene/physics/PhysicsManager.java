@@ -1,11 +1,17 @@
 package engine.scene.physics;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import engine.objects.Avatar;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
 import sage.physics.IPhysicsEngine;
 import sage.physics.IPhysicsObject;
 import sage.physics.PhysicsEngineFactory;
 import sage.scene.SceneNode;
+import sage.scene.TriMesh;
 
 /**
  * Helper class that encapsulates the operations of the physics engine.
@@ -15,21 +21,20 @@ import sage.scene.SceneNode;
 public class PhysicsManager {
 	
 	private IPhysicsEngine	physicsEngine;
-	private IPhysicsObject	playerPObject;
 	
 	private String			ENGINE	= "sage.physics.JBullet.JBulletPhysicsEngine";
 	// Determines if the physics engine is enabled.
-	private boolean			physicsEngineEnabled = false; 
+	private boolean			physicsEngineEnabled = true; 
 	
 	// Determines if physics are enabled.
-	private boolean			pEnabled = false;
+	private boolean			pEnabled = true;
 	
 	public PhysicsManager(SceneNode localPlayer) {
 		if(physicsEngineEnabled){
 			System.out.println("Initializing the SAGE JBullet Physics Engine");
 			physicsEngine = PhysicsEngineFactory.createPhysicsEngine(ENGINE);
 			physicsEngine.initSystem();
-			float[] gravity = { 0, -1f, 0 };
+			float[] gravity = { 0, -4f, 0 };
 			physicsEngine.setGravity(gravity);
 		} else {
 			System.out.println("Skipping initiaization of the physics engine");
@@ -42,16 +47,19 @@ public class PhysicsManager {
 			Vector3D translateVec;
 			physicsEngine.update(20.0f);
 			for (SceneNode s : sceneNodes) {
-				if (s.getPhysicsObject() != null) {
-					mat = new Matrix3D(s.getPhysicsObject().getTransform());
-					translateVec = mat.getCol(3);
-					s.getLocalTranslation().setCol(3, translateVec);
-					// should also get and apply rotation
+				if (s.getPhysicsObject() != null && s instanceof Avatar) {
+					if( ((Avatar) s).isJumping()){
+						mat = new Matrix3D(s.getPhysicsObject().getTransform());
+						translateVec = mat.getCol(3);
+						s.getLocalTranslation().setCol(3, translateVec);
+						// should also get and apply rotation
+					}
 				}
 			}
 		}
 		
 	}
+	
 	
 	/**
 	 * Method to apply physics properties to a specified SceneNode.

@@ -114,16 +114,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private Group				fenceGroup			= new Group("Fence Group");
 	private Group				healthGroup			= new Group("Health Box Group");
 	
-	// Texture Objects
-	private Texture				ammoBoxTexture;
-	
-	private String				dirEnvironment		= "images" + File.separator + "environment"
-															+ File.separator;
+	// Directory related.
 	private String				dirHud				= "images" + File.separator + "hud"
 															+ File.separator;
 	private String				dirScripts			= "scripts" + File.separator;
-	private String				dirModel			= "images" + File.separator + "models"
-															+ File.separator;
 	
 	// Scripting
 	private ScriptEngine		jsEngine;
@@ -146,7 +140,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	
 	// Physics
 	private PhysicsManager		phyManager;
-	private IPhysicsObject		playerPObject, worldFloor;
+	private IPhysicsObject		worldFloor;
 	
 	/**
 	 * Sets up the initial game.
@@ -172,9 +166,12 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		// Populate physics objects if the physics engine has been intialized.
 		if (phyManager.isPhysicsEngineEnabled()) {
 			worldFloor = phyManager.bindFloorPhysics(sceneManager.getFloor());
-			playerPObject = phyManager.bindPhysicsProperty(localPlayer, 1.0f);
-			
+			localPlayer.setPhysicsObject(phyManager.bindPhysicsProperty(localPlayer, 1.0f));
 		}
+	}
+	
+	public PhysicsManager getPhysicsManager(){
+		return phyManager;
 	}
 	
 	/**

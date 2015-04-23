@@ -11,7 +11,7 @@ import sage.scene.SceneNode;
  *
  */
 public class SetLockedAction extends AbstractInputAction {
-	private boolean		locked	= false;
+	private boolean		locked	= true;
 	private SceneNode	player;
 
 	public SetLockedAction( SceneNode n ) {
