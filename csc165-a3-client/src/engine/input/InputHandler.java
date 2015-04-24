@@ -106,26 +106,26 @@ public class InputHandler {
 	private void setupPlayerOne(TreasureHunt bg,
 								SceneManager sm) {
 		// Controls for the first player, using mouse and keyboard.
-		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer);
-		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer);
+		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer.getTriMesh());
+		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer.getTriMesh());
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed,
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed,
 				sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed,
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed,
 				sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD,
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD,
 				setSpeed, sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD,
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD,
 				setSpeed, sm.getHillTerrain(), bg);
 		
 		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked,
-				bg.localPlayer);
+				bg.localPlayer.getTriMesh());
 		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked,
-				bg.localPlayer);
+				bg.localPlayer.getTriMesh());
 		OrbitUpDownAction orbitUp = new OrbitUpDownAction(false, true, bg.cc1, setLocked,
-				bg.localPlayer);
+				bg.localPlayer.getTriMesh());
 		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1, setLocked,
-				bg.localPlayer);
+				bg.localPlayer.getTriMesh());
 		
 		// Orbit Up.
 		this.addControl(null, Key.UP, null, orbitUp,
@@ -181,23 +181,23 @@ public class InputHandler {
 	private void setupController(	TreasureHunt bg,
 									SceneManager sm) {
 		// Controls for the first player, using mouse and keyboard.
-		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer);
-		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer);
+		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer.getTriMesh());
+		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer.getTriMesh());
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed,
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed,
 				sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed,
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed,
 				sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD,
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD,
 				setSpeed, sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD,
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD,
 				setSpeed, sm.getHillTerrain(), bg);
 		
 		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1,
-				setLocked, bg.localPlayer);
+				setLocked, bg.localPlayer.getTriMesh());
 		
 		OrbitUpDownAction orbitUpDown = new OrbitUpDownAction(true, false, bg.cc1, setLocked,
-				bg.localPlayer);
+				bg.localPlayer.getTriMesh());
 		
 		ZoomAction zoomOutP2 = new ZoomAction(bg.cc1, true, 2);
 		ZoomAction zoomInP2 = new ZoomAction(bg.cc1, false, 2);

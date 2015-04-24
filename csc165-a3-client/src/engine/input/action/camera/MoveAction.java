@@ -49,9 +49,9 @@ public class MoveAction extends AbstractInputAction {
 
 		// Determine if the player is running.
 		if ( runAction.isRunning() ) {
-			moveConstant = .03f;
+			moveConstant = .06f;
 		} else {
-			moveConstant = .01f;
+			moveConstant = .03f;
 		}
 		
 		if ( isXAxis ) {

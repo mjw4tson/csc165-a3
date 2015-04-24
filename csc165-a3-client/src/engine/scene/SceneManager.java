@@ -45,6 +45,7 @@ public class SceneManager {
 	private Texture			skyBoxTextureBot;
 	private Texture			groundTexture;
 	private Texture			ammoBoxTexture;
+	private Texture			avatarTexture;
 	private Texture			sandTexture;
 	private Texture			fenceTexture;
 	private Texture			medicTexture;
@@ -72,6 +73,7 @@ public class SceneManager {
 		String skyBack = directory + dirEnvironment + "negz.jpg";
 		String ground = directory + dirEnvironment + "ground.jpg";
 		String ammoBox = directory + dirModel + "ammo.png";
+		String avatar = directory + dirModel + "avatar.png";
 		String sand = directory + dirEnvironment + "ground.jpg";
 		String fence = directory + dirModel + "fence.png";
 		String medic = directory + dirModel + "medic.png";
@@ -85,6 +87,7 @@ public class SceneManager {
 		skyBoxTextureBack = TextureManager.loadTexture2D(skyBack);
 		groundTexture = TextureManager.loadTexture2D(ground);
 		ammoBoxTexture = TextureManager.loadTexture2D(ammoBox);
+		avatarTexture = TextureManager.loadTexture2D(avatar);
 		sandTexture = TextureManager.loadTexture2D(sand);
 		sandTexture.setWrapMode(WrapMode.Repeat);
 		fenceTexture = TextureManager.loadTexture2D(fence);
@@ -100,10 +103,18 @@ public class SceneManager {
 		TriMesh ammoBoxTM = loader.loadModel(directory + dirModel + "ammo.obj");
 		ammoBoxTM.updateLocalBound();
 		ammoBoxTM.setTexture(ammoBoxTexture);
-		ammoBoxTM.translate(-10, 10.5f, 50);
+		ammoBoxTM.translate(60, .8f, 75 );
 		ammoBoxTM.scale(6, 6, 6);
 		pMan.bindPhysicsProperty(ammoBoxTM, 5.0f);
 		ammoGroup.addChild(ammoBoxTM);
+	}
+	
+	public TriMesh addAvatar() {
+		TriMesh avatarTM = loader.loadModel(directory + dirModel + "avatar.obj");
+		avatarTM.updateLocalBound();
+		avatarTM.setTexture(avatarTexture);
+		
+		return avatarTM;
 	}
 	
 	/**
@@ -115,7 +126,7 @@ public class SceneManager {
 		TriMesh healthBoxTM = loader.loadModel(directory + dirModel + "medic.obj");
 		healthBoxTM.updateLocalBound();
 		healthBoxTM.setTexture(medicTexture);
-		healthBoxTM.translate(10, 0.5f, 50);
+		healthBoxTM.translate(40, 0.5f, 50);
 		healthBoxTM.scale(8, 8, 8);
 		pMan.bindPhysicsProperty(healthBoxTM, 5.0f);
 		healthGroup.addChild(healthBoxTM);
@@ -130,12 +141,10 @@ public class SceneManager {
 		TriMesh fenceTM = loader.loadModel(directory + dirModel + "fence.obj");
 		fenceTM.updateLocalBound();
 		fenceTM.setTexture(fenceTexture);
-		fenceTM.translate(-700, 9f, 640);
+		fenceTM.translate(-100, 9f, 100);
 		fenceTM.scale(8, 8, 8);
 		fenceGroup.addChild(fenceTM);
-		
 	}
-	
 	
 	/**
 	 * Creates the SkyBox.

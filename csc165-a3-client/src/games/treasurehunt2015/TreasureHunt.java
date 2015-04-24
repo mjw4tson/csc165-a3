@@ -147,20 +147,20 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	 */
 	@Override
 	public void initGame() {
-		if (!runAsSinglePlayer()) {
+		if (!runAsSinglePlayer())
 			initGameClient();
-		}
-		initPhysics();
+		
+		initPhysics();		
 		configureEnvironment();
 		initGameEntities(); // Populate the game world.
 		addEventHandlers();
 		initEventManager(); // Get event manager.
-		cc1 = new Camera3PController(camera1, localPlayer);
+		cc1 = new Camera3PController(camera1, localPlayer.getTriMesh());
 		setupControls(); // Set up the game world controls.
 	}
 	
 	private void initPhysics() {
-		phyManager = new PhysicsManager(localPlayer);
+		phyManager = new PhysicsManager();
 	}
 	
 	public PhysicsManager getPhysicsManager() {
@@ -266,7 +266,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		Iterator<SceneNode> iterator = getGameWorld().iterator();
 		SceneNode s;
 		
-		Point3D locP1 = new Point3D(localPlayer.getLocalTranslation().getCol(3));
+		Point3D locP1 = new Point3D(localPlayer.getTriMesh().getLocalTranslation().getCol(3));
 		
 		while (iterator.hasNext()) {
 			s = iterator.next();
@@ -368,7 +368,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	 * This method is tasked with building and placing game world objects in the world.
 	 */
 	private void loadGameWorldObjects() {
-		// Add a skybox.;
+		// Add a skybox;
 		addGameWorldObject(sceneManager.addSkybox(this, origin));
 		
 		// Create the game world floor.
@@ -402,9 +402,9 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		addGameWorldObject(cuGroup);
 		
 		// Add the player to the game world.
-		localPlayer = new Avatar("Player 1", 1, 20, 20, Color.blue);
-		localPlayer.translate(50, .8f, 10 + origin);
-		addGameWorldObject(localPlayer);
+		localPlayer = new Avatar("Player 1", sceneManager.addAvatar());
+		localPlayer.getTriMesh().translate(50, .8f, 10 + origin);
+		addGameWorldObject(localPlayer.getTriMesh());
 	}
 	
 	/**
@@ -548,7 +548,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	}
 	
 	public Vector3D getPlayerPosition() {
-		Vector3D position = localPlayer.getWorldTransform().getCol(3);
+		Vector3D position = localPlayer.getTriMesh().getWorldTransform().getCol(3);
 		
 		return new Vector3D(position.getX(), position.getY(), position.getZ());
 	}
@@ -564,15 +564,15 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	public Avatar addGhostToGame(	float x,
 									float y,
 									float z) {
-		Avatar ghost = new Avatar("Ghost " + ++ghostCount, 1, 20, 20, Color.red);
-		ghost.translate(x, y, z);
-		addGameWorldObject(ghost);
+		Avatar ghost = new Avatar("Ghost " + ++ghostCount, sceneManager.addAvatar());
+		ghost.getTriMesh().translate(x, y, z);
+		addGameWorldObject(ghost.getTriMesh());
 		
 		return ghost;
 	}
 	
 	public void removeGhostFromGame(Avatar ghost) {
-		removeGameWorldObject(ghost);
+		removeGameWorldObject(ghost.getTriMesh());
 	}
 	
 	public TreasureHuntClient getClient() {

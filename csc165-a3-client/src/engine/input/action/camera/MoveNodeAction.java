@@ -17,7 +17,7 @@ public class MoveNodeAction extends AbstractInputAction {
 	private TerrainBlock	terrain;
 	private TreasureHunt	bg;
 	
-	private float			speed			= 0.01f;
+	private float			speed			= 0.03f;
 	private float			idleConstant	= 0.65f;	// Constant indicating the threshold of an idle axis value.
 														
 	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, TerrainBlock terrainBlock, TreasureHunt bg) {

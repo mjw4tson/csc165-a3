@@ -97,7 +97,7 @@ public class TreasureHuntClient extends GameConnectionClient {
     	if (ghost != null) {
     		Matrix3D translate = new Matrix3D();
     		translate.translate(x, y, z);
-    		ghost.setLocalTranslation(translate);
+    		ghost.getTriMesh().setLocalTranslation(translate);
     	}
     }
     

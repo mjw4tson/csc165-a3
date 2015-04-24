@@ -1,21 +1,18 @@
 package engine.objects;
 
-import graphicslib3D.Matrix3D;
-import graphicslib3D.Vector3D;
-
-import java.awt.Color;
 import java.util.UUID;
 
 import sage.physics.IPhysicsObject;
-import sage.scene.shape.Sphere;
+import sage.scene.TriMesh;
 
-public class Avatar extends Sphere {
+public class Avatar {
 	private UUID			uuid;
 	private float			health;
 	private IPhysicsObject	physicsObject;
+	private TriMesh triMesh;
 	
-	public Avatar(String name, double radius, int stacks, int slices, Color color) {
-		super(name, radius, stacks, slices, color);
+	public Avatar(String name, TriMesh triMesh) {
+		this.triMesh = triMesh;
 		this.health = 100.0f;
 		uuid = UUID.randomUUID();
 	}
@@ -50,5 +47,9 @@ public class Avatar extends Sphere {
 
 	public void setPhysicsObject(IPhysicsObject physicsObject) {
 		this.physicsObject = physicsObject;
+	}
+	
+	public TriMesh getTriMesh() {
+		return triMesh;
 	}
 }

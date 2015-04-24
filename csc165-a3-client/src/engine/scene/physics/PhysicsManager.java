@@ -1,18 +1,15 @@
 package engine.scene.physics;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import engine.objects.Avatar;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
+
+import java.util.Iterator;
+
 import sage.physics.IPhysicsEngine;
 import sage.physics.IPhysicsObject;
 import sage.physics.PhysicsEngineFactory;
 import sage.scene.Group;
 import sage.scene.SceneNode;
-import sage.scene.TriMesh;
 
 /**
  * Helper class that encapsulates the operations of the physics engine.
@@ -30,7 +27,7 @@ public class PhysicsManager {
 	// Determines if physics are enabled.
 	private boolean			pEnabled = true;
 	
-	public PhysicsManager(SceneNode localPlayer) {
+	public PhysicsManager() {
 		if(physicsEngineEnabled){
 			System.out.println("Initializing the SAGE JBullet Physics Engine");
 			physicsEngine = PhysicsEngineFactory.createPhysicsEngine(ENGINE);
@@ -53,16 +50,13 @@ public class PhysicsManager {
 					while(i.hasNext()){
 						SceneNode n = i.next();
 						if(n.getPhysicsObject() != null){
-							System.out.println(n.getName());
 							mat = new Matrix3D(n.getPhysicsObject().getTransform());
 							translateVec = mat.getCol(3);
 							n.getLocalTranslation().setCol(3, translateVec);
 						}
 						
 					}
-					
-					
-				} else if (s.getPhysicsObject() != null && s instanceof Avatar == false) {
+				} else if (s.getPhysicsObject() != null) {
 					mat = new Matrix3D(s.getPhysicsObject().getTransform());
 					translateVec = mat.getCol(3);
 					s.getLocalTranslation().setCol(3, translateVec);
