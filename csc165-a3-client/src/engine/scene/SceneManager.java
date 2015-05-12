@@ -65,12 +65,12 @@ public class SceneManager {
 	
 	private void setupTextures() {
 		// Texture file locations
-		String skyFront = directory + dirEnvironment + "posz.jpg";
-		String skyEast = directory + dirEnvironment + "posx.jpg";
-		String skyWest = directory + dirEnvironment + "negx.jpg";
-		String skyBot = directory + dirEnvironment + "negy.jpg";
-		String skyTop = directory + dirEnvironment + "posy.jpg";
-		String skyBack = directory + dirEnvironment + "negz.jpg";
+		String skyFront = directory + dirEnvironment + "sky.jpg";
+		String skyEast = directory + dirEnvironment + "sky.jpg";
+		String skyWest = directory + dirEnvironment + "sky.jpg";
+		String skyBot = directory + dirEnvironment + "sky.jpg";
+		String skyTop = directory + dirEnvironment + "sky.jpg";
+		String skyBack = directory + dirEnvironment + "sky.jpg";
 		String ground = directory + dirEnvironment + "ground.jpg";
 		String ammoBox = directory + dirModel + "ammo.png";
 		String avatar = directory + dirModel + "avatar.png";
@@ -186,8 +186,8 @@ public class SceneManager {
 	 * Initializes the terrain.
 	 */
 	public TerrainBlock initTerrain(IDisplaySystem display) { // create height map and terrain block
-		HillHeightMap myHillHeightMap = new HillHeightMap(300, 2000, 5.0f, 20.0f, (byte) 2, 12345);
-		myHillHeightMap.setHeightScale(0.01f);
+		HillHeightMap myHillHeightMap = new HillHeightMap(229, 2000, 10.0f, 20.0f, (byte) 2, 12345);
+		myHillHeightMap.setHeightScale(0.1f);
 		hillTerrain = createTerBlock(myHillHeightMap);
 		
 		// create texture and texture state to color the terrain
@@ -210,7 +210,7 @@ public class SceneManager {
 	 * @return
 	 */
 	private TerrainBlock createTerBlock(AbstractHeightMap heightMap) {
-		float heightScale = 0.13f;
+		float heightScale = 0.15f;
 		Vector3D terrainScale = new Vector3D(1, heightScale, 1);
 		
 		// use the size of the height map as the size of the terrain

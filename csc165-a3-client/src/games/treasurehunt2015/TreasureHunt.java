@@ -21,7 +21,17 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.newt.event.MouseListener;
+
 import sage.app.BaseGame;
+import sage.audio.AudioManager;
+import sage.audio.AudioManagerFactory;
+import sage.audio.AudioResource;
+import sage.audio.AudioResourceType;
+import sage.audio.IAudioManager;
+import sage.audio.Sound;
+import sage.audio.SoundType;
 import sage.camera.ICamera;
 import sage.camera.JOGLCamera;
 import sage.display.IDisplaySystem;
@@ -74,7 +84,7 @@ import graphicslib3D.Vector3D;
  *
  * @author ktajeran
  */
-public class TreasureHunt extends BaseGame implements MouseWheelListener {
+public class TreasureHunt extends BaseGame implements MouseWheelListener, java.awt.event.MouseListener {
 	
 	// Engine objects.
 	public Camera3PController	cc1;
@@ -92,6 +102,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private HUDNumber			hudNumberManager;
 	
 	private static String		directory			= "." + File.separator + "bin" + File.separator;
+	private static String		audio				= "audio";
 	
 	// Game World Objects
 	public HillHeightMap		myHillHeightMap;
@@ -118,6 +129,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private String				dirHud				= "images" + File.separator + "hud"
 															+ File.separator;
 	private String				dirScripts			= "scripts" + File.separator;
+	private String				dirAudio			= "audio" + File.separator;
 	
 	// Scripting
 	private ScriptEngine		jsEngine;
@@ -142,6 +154,11 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	private PhysicsManager		phyManager;
 	private IPhysicsObject		worldFloor;
 	
+	//Audio
+	IAudioManager				audioMgr;
+	AudioResource				ambientResource, pickUpResource, fireResource;
+	private Sound						ambientSound, pickUp, fire;															// static and moving sound sources
+																										
 	/**
 	 * Sets up the initial game.
 	 */
@@ -150,13 +167,15 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		if (!runAsSinglePlayer())
 			initGameClient();
 		
-		initPhysics();		
+		initPhysics();
 		configureEnvironment();
 		initGameEntities(); // Populate the game world.
 		addEventHandlers();
 		initEventManager(); // Get event manager.
 		cc1 = new Camera3PController(camera1, localPlayer.getTriMesh());
 		setupControls(); // Set up the game world controls.
+		initAudio();
+
 	}
 	
 	private void initPhysics() {
@@ -239,6 +258,47 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		super.update(0.0f);
 	}
 	
+	public void initAudio() {
+		audioMgr = AudioManagerFactory.createAudioManager("sage.audio.joal.JOALAudioManager");
+		if (!audioMgr.initialize()) {
+			System.out.println("Audio Manager failed to initialize!");
+			return;
+		}
+		ambientResource = audioMgr.createAudioResource(directory + dirAudio +"test.wav", AudioResourceType.AUDIO_SAMPLE);
+		pickUpResource = audioMgr.createAudioResource(directory + dirAudio +"get.wav", AudioResourceType.AUDIO_SAMPLE);
+		fireResource = audioMgr.createAudioResource(directory + dirAudio +"fire.wav", AudioResourceType.AUDIO_SAMPLE);
+		
+		ambientSound = new Sound(ambientResource, SoundType.SOUND_MUSIC, 5, true);
+		pickUp = new Sound(pickUpResource, SoundType.SOUND_EFFECT, 5, false);
+		fire = new Sound(fireResource, SoundType.SOUND_EFFECT, 5, false);
+		
+		ambientSound.initialize(audioMgr);
+		pickUp.initialize(audioMgr);
+		fire.initialize(audioMgr);
+		
+		pickUp.setMaxDistance(50.0f);
+		pickUp.setMinDistance(3.0f);
+		pickUp.setRollOff(5.0f);
+		
+		fire.setMaxDistance(50.0f);
+		fire.setMinDistance(3.0f);
+		fire.setRollOff(5.0f);
+	
+		setEarParameters();
+		ambientSound.play();
+
+	}
+	
+	public void setEarParameters() {
+		Matrix3D avDir = (Matrix3D) (localPlayer.getTriMesh().getWorldRotation().clone());
+		float camAz = cc1.getCameraAzimuth();
+		avDir.rotateY(180.0f - camAz);
+		Vector3D camDir = new Vector3D(0, 0, 1);
+		camDir = camDir.mult(avDir);
+		audioMgr.getEar().setLocation(new Point3D(0,0,0));
+		audioMgr.getEar().setOrientation(camDir, new Vector3D(0, 1, 0));
+	}
+	
 	/**
 	 * Moves the SkyBox to account for any player movement.
 	 */
@@ -284,6 +344,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 						this.removeGameWorldObject(gs);
 						CrashEvent newCrash = new CrashEvent(numCrashes);
 						eventManager.triggerEvent(newCrash);
+						pickUp.play();
 					}
 				}
 			}
@@ -440,7 +501,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		VersionInfo version = new VersionInfo();
 		System.out.println("SAGE: " + version.getSystemVersionInfo());
 		this.getDisplaySystem().getRenderer().getCanvas().addMouseWheelListener(this);
-		
+		this.getDisplaySystem().getRenderer().getCanvas().addMouseListener(this);
 		// Set the directory to empty if the build is not final, as everything will be located on a
 		// flat level in this case.
 		if (!finalBuild) {
@@ -553,6 +614,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 		return new Vector3D(position.getX(), position.getY(), position.getZ());
 	}
 	
+	public IAudioManager getAudioManager(){
+		return this.audioMgr;
+	}
+	
 	public void setIsConnected(boolean connected) {
 		isConnected = connected;
 	}
@@ -577,5 +642,40 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener {
 	
 	public TreasureHuntClient getClient() {
 		return gameClient;
+	}
+	
+	public void playFireSound(){
+		fire.play();
+	}
+
+
+	@Override
+	public void mouseClicked(java.awt.event.MouseEvent e) {
+		fire.play();
+		
+	}
+
+	@Override
+	public void mouseEntered(java.awt.event.MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(java.awt.event.MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(java.awt.event.MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(java.awt.event.MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

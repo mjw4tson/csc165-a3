@@ -1,6 +1,6 @@
 package engine.input;
 
-
+import engine.input.action.camera.FireAction;
 import engine.input.action.camera.MoveAction.Direction;
 import engine.input.action.camera.MoveNodeAction;
 import engine.input.action.camera.OrbitLeftRightAction;
@@ -35,7 +35,7 @@ public class InputHandler {
 	private String					kbName;
 	private String					moName;
 	private ArrayList<Controller>	devices;
-	private boolean					finalBuild	= true;
+	private boolean					finalBuild	= false;
 	
 	public InputHandler(IInputManager inmanager) {
 		im = inmanager;
@@ -109,14 +109,14 @@ public class InputHandler {
 		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer.getTriMesh());
 		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer.getTriMesh());
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed,
-				sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed,
-				sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD,
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT,
 				setSpeed, sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD,
-				setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(),
+				Direction.RIGHT, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(),
+				Direction.FORWARD, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(),
+				Direction.BACKWARD, setSpeed, sm.getHillTerrain(), bg);
 		
 		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked,
 				bg.localPlayer.getTriMesh());
@@ -126,6 +126,7 @@ public class InputHandler {
 				bg.localPlayer.getTriMesh());
 		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1, setLocked,
 				bg.localPlayer.getTriMesh());
+		FireAction fAction = new FireAction(bg);
 		
 		// Orbit Up.
 		this.addControl(null, Key.UP, null, orbitUp,
@@ -174,7 +175,6 @@ public class InputHandler {
 		// Set Locked action.
 		this.addControl(null, Key.RSHIFT, null, setLocked, null,
 				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE, null);
-
 		
 	}
 	
@@ -184,14 +184,14 @@ public class InputHandler {
 		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer.getTriMesh());
 		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer.getTriMesh());
 		
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed,
-				sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed,
-				sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD,
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT,
 				setSpeed, sm.getHillTerrain(), bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD,
-				setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(),
+				Direction.RIGHT, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(),
+				Direction.FORWARD, setSpeed, sm.getHillTerrain(), bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(),
+				Direction.BACKWARD, setSpeed, sm.getHillTerrain(), bg);
 		
 		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1,
 				setLocked, bg.localPlayer.getTriMesh());
@@ -199,8 +199,15 @@ public class InputHandler {
 		OrbitUpDownAction orbitUpDown = new OrbitUpDownAction(true, false, bg.cc1, setLocked,
 				bg.localPlayer.getTriMesh());
 		
+		FireAction fAction = new FireAction(bg);
+		
 		ZoomAction zoomOutP2 = new ZoomAction(bg.cc1, true, 2);
 		ZoomAction zoomInP2 = new ZoomAction(bg.cc1, false, 2);
+		
+		// Fire
+		this.addControl(Button.TRIGGER, null, null, fAction,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Zoom in P1
 		this.addControl(Button._4, null, null, zoomInP2,

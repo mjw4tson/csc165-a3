@@ -79,11 +79,14 @@ public class PhysicsManager {
 	 */
 	public IPhysicsObject bindPhysicsProperty(	SceneNode object,
 												float mass) {
-		IPhysicsObject pObject;
-		pObject = physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, object
-				.getWorldTransform().getValues(), 1.0f);
-		pObject.setBounciness(.5f);
-		object.setPhysicsObject(pObject);
+		IPhysicsObject pObject = null;
+		if(this.physicsEngineEnabled != false){
+			pObject = physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, object
+					.getWorldTransform().getValues(), 1.0f);
+			pObject.setBounciness(.5f);
+			object.setPhysicsObject(pObject);
+		}
+
 		return pObject;
 	}
 	
