@@ -3,15 +3,15 @@ package engine.objects;
 import java.util.UUID;
 
 import sage.physics.IPhysicsObject;
-import sage.scene.TriMesh;
+import sage.scene.Model3DTriMesh;
 
 public class Avatar {
 	private UUID			uuid;
 	private float			health;
 	private IPhysicsObject	physicsObject;
-	private TriMesh triMesh;
+	private Model3DTriMesh triMesh;
 	
-	public Avatar(String name, TriMesh triMesh) {
+	public Avatar(String name, Model3DTriMesh triMesh) {
 		this.triMesh = triMesh;
 		this.health = 100.0f;
 		uuid = UUID.randomUUID();
@@ -49,7 +49,7 @@ public class Avatar {
 		this.physicsObject = physicsObject;
 	}
 	
-	public TriMesh getTriMesh() {
+	public Model3DTriMesh getTriMesh() {
 		return triMesh;
 	}
 }

@@ -1,6 +1,5 @@
 package games.treasurehunt2015;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -13,7 +12,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Vector;
 
 import javax.script.ScriptEngine;
@@ -21,11 +19,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import com.jogamp.newt.event.MouseEvent;
-import com.jogamp.newt.event.MouseListener;
-
 import sage.app.BaseGame;
-import sage.audio.AudioManager;
 import sage.audio.AudioManagerFactory;
 import sage.audio.AudioResource;
 import sage.audio.AudioResourceType;
@@ -39,30 +33,15 @@ import sage.event.EventManager;
 import sage.event.IEventManager;
 import sage.input.IInputManager;
 import sage.input.InputManager;
-import sage.model.loader.OBJLoader;
 import sage.networking.IGameConnection.ProtocolType;
-import sage.physics.IPhysicsEngine;
 import sage.physics.IPhysicsObject;
-import sage.physics.PhysicsEngineFactory;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.HUDImage;
 import sage.scene.SceneNode;
-import sage.scene.SceneNode.CULL_MODE;
-import sage.scene.SkyBox;
-import sage.scene.SkyBox.Face;
-import sage.scene.TriMesh;
 import sage.scene.shape.Cube;
 import sage.scene.shape.Pyramid;
-import sage.scene.shape.Rectangle;
-import sage.scene.state.BlendState;
-import sage.scene.state.RenderState;
-import sage.scene.state.TextureState;
-import sage.terrain.AbstractHeightMap;
 import sage.terrain.HillHeightMap;
-import sage.terrain.TerrainBlock;
-import sage.texture.Texture;
-import sage.texture.TextureManager;
 import sage.util.VersionInfo;
 import engine.event.CrashEvent;
 import engine.graphics.GameDisplaySystem;
@@ -74,7 +53,6 @@ import engine.scene.controller.BounceController;
 import engine.scene.controller.ScaleController;
 import engine.scene.hud.HUDNumber;
 import engine.scene.physics.PhysicsManager;
-import engine.scene.shape.Axis;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
@@ -94,14 +72,14 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 	private IInputManager		im;																	// The input manager
 	private IEventManager		eventManager;
 	private IRenderer			renderer;
-	private boolean				finalBuild			= false;											// Determines if final build
+	private boolean				finalBuild			= true;											// Determines if final build
 	private float				time				= 0.0f;											// Stores the total time
 	private int					scoreP1				= 0;												// The total score
 	private int					numCrashes			= 0;
 	private Cursor				crossHairCursor;
 	private HUDNumber			hudNumberManager;
 	
-	private static String		directory			= "." + File.separator + "bin" + File.separator;
+	private static String		directory			= "." + File.separator ;
 	private static String		audio				= "audio";
 	
 	// Game World Objects
@@ -320,6 +298,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		super.update(elapsedTimeMS);
 		
 		camera1.setLocation(camera1.getLocation());
+		localPlayer.getTriMesh().updateAnimation(elapsedTimeMS*4);
 		
 		moveSkybox(camera1);
 		
@@ -464,7 +443,8 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		
 		// Add the player to the game world.
 		localPlayer = new Avatar("Player 1", sceneManager.addAvatar());
-		localPlayer.getTriMesh().translate(50, .8f, 10 + origin);
+		localPlayer.getTriMesh().translate(50, 4.0f, 10 + origin);
+		localPlayer.getTriMesh().startAnimation("my_animation");
 		addGameWorldObject(localPlayer.getTriMesh());
 	}
 	

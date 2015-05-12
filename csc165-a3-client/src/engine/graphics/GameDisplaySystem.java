@@ -1,6 +1,5 @@
 package engine.graphics;
 
-import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.DisplayMode;
 import java.awt.FlowLayout;
@@ -14,7 +13,6 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 

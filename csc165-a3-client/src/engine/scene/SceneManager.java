@@ -1,17 +1,16 @@
 package engine.scene;
 
-import engine.scene.physics.PhysicsManager;
-import graphicslib3D.Point3D;
-import graphicslib3D.Vector3D;
-
 import java.io.File;
+import java.util.Iterator;
 
 import sage.app.BaseGame;
 import sage.display.IDisplaySystem;
 import sage.model.loader.OBJLoader;
+import sage.model.loader.ogreXML.OgreXMLParser;
 import sage.scene.Group;
+import sage.scene.Model3DTriMesh;
+import sage.scene.SceneNode;
 import sage.scene.SkyBox;
-import sage.scene.SceneNode.CULL_MODE;
 import sage.scene.SkyBox.Face;
 import sage.scene.TriMesh;
 import sage.scene.shape.Rectangle;
@@ -23,6 +22,9 @@ import sage.terrain.TerrainBlock;
 import sage.texture.Texture;
 import sage.texture.Texture.WrapMode;
 import sage.texture.TextureManager;
+import engine.scene.physics.PhysicsManager;
+import graphicslib3D.Point3D;
+import graphicslib3D.Vector3D;
 
 /**
  * Helper class tasked with managing the state of the game world.
@@ -109,9 +111,23 @@ public class SceneManager {
 		ammoGroup.addChild(ammoBoxTM);
 	}
 	
-	public TriMesh addAvatar() {
-		TriMesh avatarTM = loader.loadModel(directory + dirModel + "avatar.obj");
-		avatarTM.updateLocalBound();
+	public Model3DTriMesh addAvatar() {
+		Model3DTriMesh avatarTM = null;
+		OgreXMLParser loader = new OgreXMLParser();
+		String baseDir = directory + dirModel;
+		
+		try {
+			Group model = loader.loadModel(baseDir + "Cube.mesh.xml", baseDir + "Material.001.material", baseDir + "Cube.skeleton.xml");
+			model.updateGeometricState(0, true);
+			Iterator<SceneNode> itr = model.iterator();
+			
+			avatarTM = (Model3DTriMesh)itr.next();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		avatarTexture.setApplyMode(Texture.ApplyMode.Replace);
 		avatarTM.setTexture(avatarTexture);
 		
 		return avatarTM;
