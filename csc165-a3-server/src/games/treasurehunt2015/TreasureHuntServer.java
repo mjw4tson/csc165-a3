@@ -154,4 +154,8 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
         System.out.println("Removing client: " + clientID);
         removeClient(clientID);
     }
+    
+    public void sendCheckForPlayerNear(){
+        
+    }
 }
