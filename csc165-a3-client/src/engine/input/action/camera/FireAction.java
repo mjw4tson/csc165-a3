@@ -21,6 +21,6 @@ public class FireAction extends AbstractInputAction {
 	 * This action toggles the state that determines whether or not the camera is locked.
 	 */
 	public void performAction( float time , Event event ) {
-		th.playFireSound();
+		th.fire();
 	}
 }

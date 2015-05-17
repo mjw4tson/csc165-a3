@@ -7,25 +7,34 @@ import java.util.UUID;
 
 import sage.networking.client.GameConnectionClient;
 import engine.objects.Avatar;
+import engine.objects.GhostNPC;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
 
 public class TreasureHuntClient extends GameConnectionClient {
     private TreasureHunt game;
     private UUID id;
-    private HashMap<UUID,Avatar> ghostAvatars;
+    private HashMap<UUID, Avatar> ghostAvatars;
+    private HashMap<Integer, GhostNPC> ghostNPCs; 
     
     public TreasureHuntClient(InetAddress remAddr, int remPort, ProtocolType pType, TreasureHunt game) throws IOException {
         super(remAddr, remPort, pType);
         
         this.game = game;
         this.id = UUID.randomUUID();
-        this.ghostAvatars = new HashMap<UUID,Avatar>();
+        this.ghostAvatars = new HashMap<UUID, Avatar>();
+        this.ghostNPCs = new HashMap<Integer, GhostNPC>();
     }
     
     @Override
     protected void processPacket(Object o) {
         String msg = (String)o;
+
+        System.out.println(msg);
+        
+        if (msg == null)
+        	return;
+        
         String msgTokens[] = msg.split(",");
         
         if (msgTokens.length > 0) {
@@ -45,10 +54,11 @@ public class TreasureHuntClient extends GameConnectionClient {
                 case "wsds":
                 	processWsds(UUID.fromString(msgTokens[1]));
                     break;
-
                 case "move":
                     processMove(UUID.fromString(msgTokens[1]), Float.parseFloat(msgTokens[2]), Float.parseFloat(msgTokens[3]), Float.parseFloat(msgTokens[4]));
                     break;
+                case "mnpc":
+                	processMoveNPC(Integer.parseInt(msgTokens[1]), Float.parseFloat(msgTokens[2]), Float.parseFloat(msgTokens[3]), Float.parseFloat(msgTokens[4]));
             }
         }
     }
@@ -98,6 +108,17 @@ public class TreasureHuntClient extends GameConnectionClient {
     		Matrix3D translate = new Matrix3D();
     		translate.translate(x, y, z);
     		ghost.getTriMesh().setLocalTranslation(translate);
+    	}
+    }
+    
+    private void processMoveNPC(Integer id, float x, float y, float z) {
+    	GhostNPC npc = ghostNPCs.get(id);
+    	
+    	if (npc != null) {
+    		npc.setPosition(new Vector3D(x, y, z));
+    	} else {
+    		npc = game.addNpcToGame(id, x, y, z);
+    		ghostNPCs.put(id, npc);
     	}
     }
     

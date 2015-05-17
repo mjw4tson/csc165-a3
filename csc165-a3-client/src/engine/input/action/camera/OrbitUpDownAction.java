@@ -15,22 +15,16 @@ public class OrbitUpDownAction extends AbstractInputAction {
 	private boolean				isPositive;
 	private float				cameraElevation;
 	private Camera3PController	ccontroller;
-	private SetLockedAction		lockedAction;
-	private SceneNode			player;
 	
-	public OrbitUpDownAction(boolean isC, boolean iP, Camera3PController cc, SetLockedAction l,
-			SceneNode player) {
+	public OrbitUpDownAction(boolean isC, boolean iP, Camera3PController cc) {
 		this.isController = isC;
 		this.isPositive = iP;
 		this.ccontroller = cc;
 		this.cameraElevation = cc.getCameraAzimuth();
-		this.lockedAction = l;
-		this.player = player;
 	}
 	
 	@Override
-	public void performAction(	float time,
-								Event evt) {
+	public void performAction(float time, Event evt) {
 		float rotAmount;
 		
 		// Keyboard
@@ -40,7 +34,7 @@ public class OrbitUpDownAction extends AbstractInputAction {
 			} else {
 				rotAmount = -0.5f;
 			}
-			// Controller
+		// Controller
 		} else {
 			if (evt.getValue() < -0.4) {
 				rotAmount = 0.5f;
@@ -51,19 +45,12 @@ public class OrbitUpDownAction extends AbstractInputAction {
 					rotAmount = 0.0f;
 				}
 			}
-			
 		}
-		
-		// Rotate the avatar the same amount if the camera is locked.
-		if(lockedAction.isLocked()){
-			player.rotate(rotAmount, new Vector3D(1,0,0));
-		}
-		
-		
+
 		cameraElevation = ccontroller.getCameraElevation();
-		cameraElevation += rotAmount;
-		cameraElevation = cameraElevation % 360;
-		ccontroller.setCameraElevation(this.cameraElevation);
+		
+        if (!(cameraElevation + rotAmount > 80 || cameraElevation + rotAmount < 1))
+    		ccontroller.setCameraElevation(cameraElevation + rotAmount);
 	}
 	
 }

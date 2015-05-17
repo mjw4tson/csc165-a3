@@ -1,5 +1,6 @@
 package event;
 
+import games.treasurehunt2015.NPCController;
 import games.treasurehunt2015.TreasureHuntServer;
 import graphicslib3D.Point3D;
 import sage.ai.behaviortrees.BTCondition;
@@ -19,7 +20,8 @@ public class PlayerNear extends BTCondition {
     protected boolean check() {
         Point3D npcP = new Point3D(npc.getX(), npc.getY(), npc.getZ());
         server.sendCheckForPlayerNear();
-        return npcc.isNearFlag();
+        //return npcc.isNearFlag();
+        return false;
     }
 
 }

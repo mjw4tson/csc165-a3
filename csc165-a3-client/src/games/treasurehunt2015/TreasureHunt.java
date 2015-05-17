@@ -48,6 +48,7 @@ import engine.graphics.GameDisplaySystem;
 import engine.input.InputHandler;
 import engine.input.action.camera.Camera3PController;
 import engine.objects.Avatar;
+import engine.objects.GhostNPC;
 import engine.scene.SceneManager;
 import engine.scene.controller.BounceController;
 import engine.scene.controller.ScaleController;
@@ -620,42 +621,39 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		removeGameWorldObject(ghost.getTriMesh());
 	}
 	
+	public GhostNPC addNpcToGame(int id, float x, float y, float z) {
+		GhostNPC npc = new GhostNPC(id, new Vector3D(x, y, z));
+		addGameWorldObject(npc);
+		return npc;
+	}
+	
 	public TreasureHuntClient getClient() {
 		return gameClient;
 	}
-	
-	public void playFireSound(){
+
+	public void fire() {
+//		Matrix3D matrix = localPlayer.getTriMesh().getLocalTranslation();
+//		localPlayer.getTriMesh();
+//		matrix.getCol(3);
+//		this.addGameWorldObject(new Projectile());
 		fire.play();
 	}
-
 
 	@Override
 	public void mouseClicked(java.awt.event.MouseEvent e) {
 		fire.play();
-		
 	}
 
+	// Unused interface methods
 	@Override
-	public void mouseEntered(java.awt.event.MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(java.awt.event.MouseEvent e) {}
 
 	@Override
-	public void mouseExited(java.awt.event.MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseExited(java.awt.event.MouseEvent e) {}
 
 	@Override
-	public void mousePressed(java.awt.event.MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mousePressed(java.awt.event.MouseEvent e) {}
 
 	@Override
-	public void mouseReleased(java.awt.event.MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseReleased(java.awt.event.MouseEvent e) {}
 }

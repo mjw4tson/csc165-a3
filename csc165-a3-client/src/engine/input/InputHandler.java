@@ -121,10 +121,8 @@ public class InputHandler {
 				bg.localPlayer.getTriMesh());
 		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked,
 				bg.localPlayer.getTriMesh());
-		OrbitUpDownAction orbitUp = new OrbitUpDownAction(false, true, bg.cc1, setLocked,
-				bg.localPlayer.getTriMesh());
-		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1, setLocked,
-				bg.localPlayer.getTriMesh());
+		OrbitUpDownAction orbitUp = new OrbitUpDownAction(false, true, bg.cc1);
+		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1);
 		FireAction fAction = new FireAction(bg);
 		
 		// Orbit Up.
@@ -195,8 +193,7 @@ public class InputHandler {
 		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1,
 				setLocked, bg.localPlayer.getTriMesh());
 		
-		OrbitUpDownAction orbitUpDown = new OrbitUpDownAction(true, false, bg.cc1, setLocked,
-				bg.localPlayer.getTriMesh());
+		OrbitUpDownAction orbitUpDown = new OrbitUpDownAction(true, false, bg.cc1);
 		
 		FireAction fAction = new FireAction(bg);
 		

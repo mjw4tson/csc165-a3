@@ -6,13 +6,26 @@ import java.util.UUID;
 
 import sage.networking.server.GameConnectionServer;
 import sage.networking.server.IClientInfo;
+import event.NPC;
 
 public class TreasureHuntServer extends GameConnectionServer<UUID> {
-
+    private long startTime;
+    private long lastUpdateTime;
+    private NPCController npcCtrl;
+    
+    
     public TreasureHuntServer(int localPort, ProtocolType protocolType) throws IOException {
         super(localPort, protocolType);
-        
         System.out.println("Listening for clients on port: " + localPort);
+        
+        startTime = System.nanoTime();
+        lastUpdateTime = startTime;
+        
+        npcCtrl = new NPCController(this);
+        
+        npcCtrl.spawnNpcs(10);
+        
+        npcLoop();
     }
     
     @Override
@@ -65,6 +78,7 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
                 
                 case "wsds":
                     sendWantsDetailsMsgs(UUID.fromString(msgTokens[1]));
+                    break;
             }
         }
     }
@@ -155,7 +169,37 @@ public class TreasureHuntServer extends GameConnectionServer<UUID> {
         removeClient(clientID);
     }
     
+    public void sendNPCInfo() {
+        // Format mnpc,id,x,y,z
+        for (NPC npc : npcCtrl.getNPCs()) {
+            try {
+                String msg = new String("mnpc," + Integer.toString(npc.getId()));
+                msg += "," + (npc.getX());
+                msg += "," + (npc.getY());
+                msg += "," + (npc.getZ());
+                System.out.println("Updating NPC location: " + msg);
+                sendPacketToAll(msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
     public void sendCheckForPlayerNear(){
         
+    }
+    
+    public void npcLoop() {
+        while(true) {
+            long frameStartTime = System.nanoTime();
+            float elapMilSecs = (frameStartTime - lastUpdateTime)/(1000000.0f);
+            
+            if (elapMilSecs >= 50.0f) {
+                npcCtrl.updateNPCs();
+                sendNPCInfo();
+            }
+            
+            Thread.yield();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package event;
 
+import games.treasurehunt2015.NPCController;
 import sage.ai.behaviortrees.BTCondition;
 
 public class OneSecPassed extends BTCondition {
@@ -16,9 +17,9 @@ public class OneSecPassed extends BTCondition {
 
     protected boolean check() {
         float elapsedMilliSecs = (System.nanoTime() - lastUpdateTime) / (1000000.0f);
-        if ( elapsedMilliSecs >= 500.0f ) {
+        if (elapsedMilliSecs >= 500.0f) {
             lastUpdateTime = System.nanoTime();
-            npcc.setNearFlag(false);
+            //npcc.setNearFlag(false);
             return true;
         } else
             return false;
