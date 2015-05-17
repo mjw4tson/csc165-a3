@@ -9,7 +9,7 @@ import engine.input.action.camera.SetLockedAction;
 import engine.input.action.camera.SetSpeedAction;
 import engine.input.action.camera.ZoomAction;
 import engine.scene.SceneManager;
-import games.treasurehunt2015.TreasureHunt;
+import games.circuitshooter.CircuitShooter;
 
 import java.util.ArrayList;
 
@@ -36,6 +36,7 @@ public class InputHandler {
 	private String					moName;
 	private ArrayList<Controller>	devices;
 	private boolean					finalBuild	= true;
+	private FireAction				fAction;
 	
 	public InputHandler(IInputManager inmanager) {
 		im = inmanager;
@@ -100,7 +101,7 @@ public class InputHandler {
 	 * @param bg base game
 	 * @param sm scene manager
 	 */
-	private void setupKeyboardMouse(TreasureHunt bg, SceneManager sm) {
+	private void setupKeyboard(CircuitShooter bg, SceneManager sm) {
 		// Quit game action
 		QuitGameAction qgAction = new QuitGameAction(bg);
 				
@@ -149,7 +150,7 @@ public class InputHandler {
 	 * @param bg
 	 * @param sm
 	 */
-	private void setupController(TreasureHunt bg, SceneManager sm) {
+	private void setupController(CircuitShooter bg, SceneManager sm) {
 		// Quit game action
 		QuitGameAction qgAction = new QuitGameAction(bg);
 				
@@ -169,10 +170,10 @@ public class InputHandler {
 		this.addControl(Button._1, null, null, setLocked, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY,	null, null);
 		
 		// Fire action
-		FireAction fAction = new FireAction(bg);
+		fAction = new FireAction(bg, bg.localPlayer);
 		
 		// Fire control
-		this.addControl(Button.TRIGGER, null, null, fAction, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Axis.Z, null, null, fAction, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
 		
 		// Move actions
 		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed, sm.getHillTerrain(), bg);
@@ -203,8 +204,8 @@ public class InputHandler {
 		this.addControl(Button._5, null, null, zoomOutP2, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
 	}
 	
-	public IInputManager setupControls(ICamera camera1, IInputManager im, TreasureHunt bg, SceneManager sm) {
-		setupKeyboardMouse(bg, sm);
+	public IInputManager setupControls(ICamera camera1, IInputManager im, CircuitShooter bg, SceneManager sm) {
+		setupKeyboard(bg, sm);
 		setupController(bg, sm);
 
 		return im;
@@ -219,4 +220,7 @@ public class InputHandler {
 		return im;
 	}
 	
+	public FireAction getFireAction() {
+		return fAction;
+	}
 }

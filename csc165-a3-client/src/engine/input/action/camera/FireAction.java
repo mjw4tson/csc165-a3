@@ -1,6 +1,7 @@
 package engine.input.action.camera;
 
-import games.treasurehunt2015.TreasureHunt;
+import engine.objects.Avatar;
+import games.circuitshooter.CircuitShooter;
 import net.java.games.input.Event;
 import sage.input.action.AbstractInputAction;
 
@@ -11,16 +12,27 @@ import sage.input.action.AbstractInputAction;
  *
  */
 public class FireAction extends AbstractInputAction {
-	private TreasureHunt	th;
+	private static long FIRE_RATE = 500; // 500 = 2 shots/second
+	private static long LAST_FIRE_TIME;
+	
+	private Avatar avatar;
+	private CircuitShooter	th;
 
-	public FireAction( TreasureHunt t ) {
-		this.th = t;
+	public FireAction(CircuitShooter th, Avatar avatar) {
+		this.avatar = avatar;
+		this.th = th;
+		LAST_FIRE_TIME = System.currentTimeMillis();
 	}
 
-	/*
-	 * This action toggles the state that determines whether or not the camera is locked.
+	/**
+	 * This action fires a projectile from the avatar in the direction it's facing.
 	 */
 	public void performAction( float time , Event event ) {
-		th.fire();
+		long currentTime = System.currentTimeMillis();
+
+		if (currentTime - LAST_FIRE_TIME > FIRE_RATE) {
+			th.fire(avatar);
+			LAST_FIRE_TIME = currentTime;
+		}
 	}
 }

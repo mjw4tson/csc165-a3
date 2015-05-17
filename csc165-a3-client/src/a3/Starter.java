@@ -1,10 +1,10 @@
 package a3;
 
-import games.treasurehunt2015.TreasureHunt;
+import games.circuitshooter.CircuitShooter;
 
 public class Starter {
 	public static void main( String[] args ) {
-		TreasureHunt thegame = new TreasureHunt();
+		CircuitShooter thegame = new CircuitShooter();
 		thegame.start();
 	}
 }

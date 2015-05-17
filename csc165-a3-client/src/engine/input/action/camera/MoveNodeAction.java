@@ -5,7 +5,7 @@ import sage.input.action.AbstractInputAction;
 import sage.scene.SceneNode;
 import sage.terrain.TerrainBlock;
 import engine.input.action.camera.MoveAction.Direction;
-import games.treasurehunt2015.TreasureHunt;
+import games.circuitshooter.CircuitShooter;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
@@ -15,12 +15,12 @@ public class MoveNodeAction extends AbstractInputAction {
 	private Direction		direction;					// Determines which direction to move.
 	private SetSpeedAction	runAction;
 	private TerrainBlock	terrain;
-	private TreasureHunt	bg;
+	private CircuitShooter	bg;
 	
 	private float			speed			= 0.03f;
 	private float			idleConstant	= 0.65f;	// Constant indicating the threshold of an idle axis value.
 														
-	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, TerrainBlock terrainBlock, TreasureHunt bg) {
+	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, TerrainBlock terrainBlock, CircuitShooter bg) {
 		avatar = n;
 		direction = d;
 		runAction = r;

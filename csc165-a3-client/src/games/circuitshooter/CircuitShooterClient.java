@@ -1,4 +1,4 @@
-package games.treasurehunt2015;
+package games.circuitshooter;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -11,13 +11,13 @@ import engine.objects.GhostNPC;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
 
-public class TreasureHuntClient extends GameConnectionClient {
-    private TreasureHunt game;
+public class CircuitShooterClient extends GameConnectionClient {
+    private CircuitShooter game;
     private UUID id;
     private HashMap<UUID, Avatar> ghostAvatars;
     private HashMap<Integer, GhostNPC> ghostNPCs; 
     
-    public TreasureHuntClient(InetAddress remAddr, int remPort, ProtocolType pType, TreasureHunt game) throws IOException {
+    public CircuitShooterClient(InetAddress remAddr, int remPort, ProtocolType pType, CircuitShooter game) throws IOException {
         super(remAddr, remPort, pType);
         
         this.game = game;

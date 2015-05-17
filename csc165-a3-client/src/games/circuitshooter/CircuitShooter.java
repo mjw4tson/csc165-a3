@@ -1,4 +1,4 @@
-package games.treasurehunt2015;
+package games.circuitshooter;
 
 import java.awt.Cursor;
 import java.awt.event.MouseWheelEvent;
@@ -48,6 +48,7 @@ import engine.input.InputHandler;
 import engine.input.action.camera.Camera3PController;
 import engine.objects.Avatar;
 import engine.objects.GhostNPC;
+import engine.objects.Projectile;
 import engine.scene.SceneManager;
 import engine.scene.controller.BounceController;
 import engine.scene.controller.ScaleController;
@@ -62,24 +63,22 @@ import graphicslib3D.Vector3D;
  *
  * @author ktajeran
  */
-public class TreasureHunt extends BaseGame implements MouseWheelListener, java.awt.event.MouseListener {
+public class CircuitShooter extends BaseGame implements MouseWheelListener, java.awt.event.MouseListener {
 	
 	// Engine objects.
 	public Camera3PController	cc1;
-	private IDisplaySystem		display;																// The game display.
-	private ICamera				camera1;																// The game camera.
+	private IDisplaySystem		display;															// The game display.
+	private ICamera				camera;																// The game camera.
 	private InputHandler		ih;																	// Input handler
 	private IInputManager		im;																	// The input manager
 	private IEventManager		eventManager;
 	private IRenderer			renderer;
 	private boolean				finalBuild			= true;											// Determines if final build
 	private float				time				= 0.0f;											// Stores the total time
-	private int					scoreP1				= 0;												// The total score
+	private int					scoreP1				= 0;											// The total score
 	private int					numCrashes			= 0;
 	private Cursor				crossHairCursor;
 	private HUDNumber			hudNumberManager;
-	
-	private static String		directory			= "." + File.separator ;
 	
 	// Game World Objects
 	public HillHeightMap		myHillHeightMap;
@@ -101,10 +100,11 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 	private Group				ammoGroup			= new Group("Ammo Box Group");
 	private Group				fenceGroup			= new Group("Fence Group");
 	private Group				healthGroup			= new Group("Health Box Group");
+	private Group				projectileGroup		= new Group("Projectile Group");
 	
-	// Directory related.
-	private String				dirHud				= "images" + File.separator + "hud"
-															+ File.separator;
+	// Directory related
+	private static String		directory			= "." + File.separator;
+	private String				dirHud				= "images" + File.separator + "hud" + File.separator;
 	private String				dirScripts			= "scripts" + File.separator;
 	private String				dirAudio			= "audio" + File.separator;
 	
@@ -117,7 +117,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 	private float				origin				= 65f;
 	
 	// Game Client
-	private TreasureHuntClient	gameClient;
+	private CircuitShooterClient	gameClient;
 	private String				serverAddr;
 	private int					serverPort;
 	private ProtocolType		pType;
@@ -130,10 +130,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 	// Physics
 	private PhysicsManager		phyManager;
 	
-	//Audio
+	// Audio
 	IAudioManager				audioMgr;
 	AudioResource				ambientResource, pickUpResource, fireResource;
-	private Sound						ambientSound, pickUp, fire;															// static and moving sound sources
+	private Sound				ambientSound, pickUp, fire;											// static and moving sound sources
 																										
 	/**
 	 * Sets up the initial game.
@@ -148,7 +148,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		initGameEntities(); // Populate the game world.
 		addEventHandlers();
 		initEventManager(); // Get event manager.
-		cc1 = new Camera3PController(camera1, localPlayer.getTriMesh());
+		cc1 = new Camera3PController(camera, localPlayer.getTriMesh());
 		setupControls(); // Set up the game world controls.
 		initAudio();
 
@@ -176,13 +176,11 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		serverAddr = ((GameDisplaySystem) display).getServerIP();
 		serverPort = ((GameDisplaySystem) display).getServerPort();
 		System.out.println("Lauching multiplayer, connecting to " + serverAddr + ":" + serverPort);
-		
-		pType = ProtocolType.TCP;
-		
+
 		pType = ProtocolType.TCP;
 		
 		try {
-			gameClient = new TreasureHuntClient(InetAddress.getByName(serverAddr), serverPort,
+			gameClient = new CircuitShooterClient(InetAddress.getByName(serverAddr), serverPort,
 					pType, this);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -227,19 +225,18 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 	 */
 	private void initEventManager() {
 		eventManager = EventManager.getInstance();
-		// Add an event listener as such:
-		
-		//eventManager.addListener(treasureChest, CrashEvent.class);
 		
 		super.update(0.0f);
 	}
 	
 	public void initAudio() {
 		audioMgr = AudioManagerFactory.createAudioManager("sage.audio.joal.JOALAudioManager");
+		
 		if (!audioMgr.initialize()) {
 			System.out.println("Audio Manager failed to initialize!");
 			return;
 		}
+		
 		ambientResource = audioMgr.createAudioResource(directory + dirAudio +"test.wav", AudioResourceType.AUDIO_SAMPLE);
 		pickUpResource = audioMgr.createAudioResource(directory + dirAudio +"get.wav", AudioResourceType.AUDIO_SAMPLE);
 		fireResource = audioMgr.createAudioResource(directory + dirAudio +"fire.wav", AudioResourceType.AUDIO_SAMPLE);
@@ -295,10 +292,10 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		time += elapsedTimeMS;
 		super.update(elapsedTimeMS);
 		
-		camera1.setLocation(camera1.getLocation());
+		camera.setLocation(camera.getLocation());
 		localPlayer.getTriMesh().updateAnimation(elapsedTimeMS*4);
 		
-		moveSkybox(camera1);
+		moveSkybox(camera);
 		
 		Iterator<SceneNode> iterator = getGameWorld().iterator();
 		SceneNode s;
@@ -328,7 +325,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		}
 		
 		// Updates the time and score states on the hud.
-		// TODO optimize how the hud is updated. 
 		int timeTemp = (int) time / 1000;
 		
 		removeGameWorldObject(hudGroupTeamOne);
@@ -364,9 +360,9 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		crossHairCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 		renderer.getCanvas().setCursor(crossHairCursor);
 		
-		camera1 = new JOGLCamera(renderer);
-		camera1.setPerspectiveFrustum(60, 2, 1, 1000);
-		camera1.setViewport(0.0, 1.0, 0.0, 1.0);
+		camera = new JOGLCamera(renderer);
+		camera.setPerspectiveFrustum(60, 2, 1, 1000);
+		camera.setViewport(0.0, 1.0, 0.0, 1.0);
 	}
 	
 	/**
@@ -383,7 +379,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		p1Time.rotateImage(180);
 		p1Time.scale(.156f, .0575f, .1f);
 		p1Time.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
-		camera1.addToHUD(p1Time);
+		camera.addToHUD(p1Time);
 		
 		// Add P1 Score
 		p1Score = new HUDImage(directory + dirHud + "p1_score.png");
@@ -392,7 +388,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		p1Score.rotateImage(180);
 		p1Score.scale(.1570f, .0575f, .1f);
 		p1Score.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
-		camera1.addToHUD(p1Score);
+		camera.addToHUD(p1Score);
 		
 		hudGroupTeamOne = hudNumberManager.printValues(0, -0.850f, -0.88f);
 		hudGroupTeamOneTime = hudNumberManager.printValues(0, 0.050f, 0.90f);
@@ -427,6 +423,9 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		// Adding fences to the game world.
 		sceneManager.addFencing(fenceGroup);
 		addGameWorldObject(fenceGroup);
+		
+		// Add projectile group to game world
+		addGameWorldObject(projectileGroup);
 		
 		// Add SceneNode controllers to each group.
 		scSNController.addControlledNode(pyGroup);
@@ -506,14 +505,14 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 	private void setupControls() {
 		im = getInputManager();
 		ih = new InputHandler(im);
-		im = ih.setupControls(camera1, im, this, sceneManager);
+		im = ih.setupControls(camera, im, this, sceneManager);
 	}
 	
 	/**
 	 * Handles game rendering.
 	 */
 	protected void render() {
-		renderer.setCamera(camera1);
+		renderer.setCamera(camera);
 		super.render();
 	}
 	
@@ -600,9 +599,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		return isConnected;
 	}
 	
-	public Avatar addGhostToGame(	float x,
-									float y,
-									float z) {
+	public Avatar addGhostToGame(float x, float y, float z) {
 		Avatar ghost = new Avatar("Ghost " + ++ghostCount, sceneManager.addAvatar());
 		ghost.getTriMesh().translate(x, y, z);
 		addGameWorldObject(ghost.getTriMesh());
@@ -620,21 +617,20 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		return npc;
 	}
 	
-	public TreasureHuntClient getClient() {
+	public CircuitShooterClient getClient() {
 		return gameClient;
 	}
 
-	public void fire() {
-//		Matrix3D matrix = localPlayer.getTriMesh().getLocalTranslation();
-//		localPlayer.getTriMesh();
-//		matrix.getCol(3);
-//		this.addGameWorldObject(new Projectile());
+	public void fire(Avatar player) {
+		Projectile projectile = new Projectile(player);
+		addGameWorldObject(projectile);
+
 		fire.play();
 	}
 
 	@Override
 	public void mouseClicked(java.awt.event.MouseEvent e) {
-		fire();
+		ih.getFireAction().performAction(0, null);
 	}
 
 	// Unused interface methods
