@@ -6,11 +6,9 @@ import sage.scene.shape.Sphere;
 
 public class GhostNPC extends Sphere {
 	private int id;
-	private boolean isBig;
 	
 	public GhostNPC(int id, Vector3D position) {
 		this.id = id;
-		this.isBig = false;
 		setPosition(position);
 	}
 	

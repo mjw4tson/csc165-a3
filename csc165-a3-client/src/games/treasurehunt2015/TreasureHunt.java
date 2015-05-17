@@ -34,7 +34,6 @@ import sage.event.IEventManager;
 import sage.input.IInputManager;
 import sage.input.InputManager;
 import sage.networking.IGameConnection.ProtocolType;
-import sage.physics.IPhysicsObject;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.HUDImage;
@@ -81,7 +80,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 	private HUDNumber			hudNumberManager;
 	
 	private static String		directory			= "." + File.separator ;
-	private static String		audio				= "audio";
 	
 	// Game World Objects
 	public HillHeightMap		myHillHeightMap;
@@ -131,7 +129,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 	
 	// Physics
 	private PhysicsManager		phyManager;
-	private IPhysicsObject		worldFloor;
 	
 	//Audio
 	IAudioManager				audioMgr;
@@ -416,10 +413,6 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 		sceneManager.addGameFloor(environmentGroup);
 		addGameWorldObject(environmentGroup);
 		
-		if (phyManager.isPhysicsEngineEnabled()) {
-			worldFloor = phyManager.bindFloorPhysics(sceneManager.getFloor());
-		}
-		
 		// Get and build game world objects
 		buildEnvironmentFromScript();
 		
@@ -641,7 +634,7 @@ public class TreasureHunt extends BaseGame implements MouseWheelListener, java.a
 
 	@Override
 	public void mouseClicked(java.awt.event.MouseEvent e) {
-		fire.play();
+		fire();
 	}
 
 	// Unused interface methods

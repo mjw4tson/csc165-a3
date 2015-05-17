@@ -1,9 +1,7 @@
 package engine.input.action.camera;
 
-import graphicslib3D.Vector3D;
 import net.java.games.input.Event;
 import sage.input.action.AbstractInputAction;
-import sage.scene.SceneNode;
 
 /**
  * Handles the calculations to orbit the 3P camera up and down.
