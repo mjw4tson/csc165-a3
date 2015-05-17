@@ -49,9 +49,9 @@ public class MoveNodeAction extends AbstractInputAction {
 		
 		// Determine if the player is running.
 		if (runAction.isRunning() && runAction.getPlayer() == this.avatar) {
-			speed = .087f *  mult;
+			speed = .15f *  mult;
 		} else {
-			speed = .010f * mult;
+			speed = .087f * mult;
 		}
 		
 		
@@ -164,8 +164,7 @@ public class MoveNodeAction extends AbstractInputAction {
 	/*
 	 * Starts logic to move the avatar.
 	 */
-	public void performAction(	float time,
-								Event e) {
+	public void performAction(float time, Event e) {
 		findSpeedAndDirection(e, time);
 	}
 }

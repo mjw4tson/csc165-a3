@@ -43,24 +43,29 @@ public class Camera3PController {
 	}
 	
 	/**
-	 * Zooms the camera out.
+	 * Zooms the camera out, limited to 100.0 from target
 	 * @param magnitude
 	 */
 	public void zoomOut(float magnitude){
-		this.cameraDistanceFromTarget = this.cameraDistanceFromTarget + 1 * magnitude;
+		float value = this.cameraDistanceFromTarget + 1 * magnitude;
+		
+		if (value <= 100.0f)
+			this.cameraDistanceFromTarget = value;
+		else
+			cameraDistanceFromTarget = 100.0f;
 	}
 	
 	/**
-	 * Zooms the camera in, will not zoom any further if the distance is below 0.
+	 * Zooms the camera in, will not zoom any further if the distance is below 5.
 	 * @param magnitude
 	 */
 	public void zoomIn(float magnitude){
 		float value = this.cameraDistanceFromTarget - 1 * magnitude;
-		if(value >= .00001f){
-			this.cameraDistanceFromTarget = this.cameraDistanceFromTarget - 1 * magnitude;
-		} else {
-			this.cameraDistanceFromTarget = .00001f;
-		}
+		
+		if(value >= 5.0f)
+			this.cameraDistanceFromTarget = value;
+		else
+			this.cameraDistanceFromTarget = 5.0f;
 	}
 
 	/**
