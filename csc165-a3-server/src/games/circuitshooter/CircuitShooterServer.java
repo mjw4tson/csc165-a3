@@ -1,4 +1,4 @@
-package games.treasurehunt2015;
+package games.circuitshooter;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -8,13 +8,13 @@ import sage.networking.server.GameConnectionServer;
 import sage.networking.server.IClientInfo;
 import event.NPC;
 
-public class TreasureHuntServer extends GameConnectionServer<UUID> {
+public class CircuitShooterServer extends GameConnectionServer<UUID> {
     private long startTime;
     private long lastUpdateTime;
     private NPCController npcCtrl;
     
     
-    public TreasureHuntServer(int localPort, ProtocolType protocolType) throws IOException {
+    public CircuitShooterServer(int localPort, ProtocolType protocolType) throws IOException {
         super(localPort, protocolType);
         System.out.println("Listening for clients on port: " + localPort);
         

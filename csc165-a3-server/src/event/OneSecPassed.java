@@ -1,6 +1,6 @@
 package event;
 
-import games.treasurehunt2015.NPCController;
+import games.circuitshooter.NPCController;
 import sage.ai.behaviortrees.BTCondition;
 
 public class OneSecPassed extends BTCondition {

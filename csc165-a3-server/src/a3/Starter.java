@@ -1,6 +1,6 @@
 package a3;
 
-import games.treasurehunt2015.TreasureHuntServer;
+import games.circuitshooter.CircuitShooterServer;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -25,7 +25,7 @@ public class Starter {
         s.close();
         
         try {
-            new TreasureHuntServer(port, ProtocolType.TCP);
+            new CircuitShooterServer(port, ProtocolType.TCP);
         } catch(IOException e) {
             e.printStackTrace();
         }

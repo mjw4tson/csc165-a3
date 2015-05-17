@@ -1,4 +1,4 @@
-package games.treasurehunt2015;
+package games.circuitshooter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +10,11 @@ import event.NPC;
 public class NPCController {
     private ArrayList<NPC> npcs;
     private BehaviorTree bt;
-    private TreasureHuntServer server;
+    private CircuitShooterServer server;
     private long startTime;
     private long lastUpdateTime;
     
-    public NPCController(TreasureHuntServer server) {
+    public NPCController(CircuitShooterServer server) {
         npcs = new ArrayList<NPC>();
         bt = new BehaviorTree(BTCompositeType.SELECTOR);
         this.server = server;
