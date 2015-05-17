@@ -622,8 +622,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		projectileGroup.addChild(projectile);
 		fire.play();
 		
-		if (client != null) {
-			
+		if (gameClient != null) {
+			gameClient.sendProjectileMsg();
 		}
 	}
 
