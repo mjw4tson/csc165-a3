@@ -21,10 +21,8 @@ public class MoveAction extends AbstractInputAction {
 	/**
 	 * The ForwardAction constructor, sets the local variables from the passed in parameters.
 	 *
-	 * @param c
-	 *            - The ICamera object.
-	 * @param r
-	 *            - The SetSpeedAction.
+	 * @param c - The ICamera object.
+	 * @param r - The SetSpeedAction.
 	 */
 	public MoveAction( ICamera c, SetSpeedAction r, Direction d ) {
 		camera = c;
@@ -105,15 +103,11 @@ public class MoveAction extends AbstractInputAction {
 	/**
 	 * This method handles the actual logic for moving in a specified direction.
 	 * 
-	 * @param dir
-	 *            - The direction.
-	 * @param negativeAxis
-	 *            - Is the direction negative?
-	 * @param moveVal
-	 *            - The distance traveled.
-	 * @param timeVal
-	 *            - The amount of time elapsed.
-	 * @return - A Vector3D that contains the new location of the camera.
+	 * @param dir 			- The direction.
+	 * @param negativeAxis	- Is the direction negative?
+	 * @param moveVal		- The distance traveled.
+	 * @param timeVal		- The amount of time elapsed.
+	 * @return 				- A Vector3D that contains the new location of the camera.
 	 */
 	private Vector3D moveDirection( Direction dir , Boolean negativeAxis , float moveVal , float timeVal ) {
 		Vector3D viewDir;

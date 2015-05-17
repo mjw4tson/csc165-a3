@@ -16,12 +16,10 @@ public class BounceController extends Controller {
 	
 	@Override
 	public void update(double amount) {
-		
 		int value;
 		
 		if (!postiveBounce) {
 			value = -1;
-			
 		} else {
 			value = 1;
 		}
@@ -33,9 +31,6 @@ public class BounceController extends Controller {
 				postiveBounce = !postiveBounce;
 				i = 0;
 			}
-			
 		}
-		
 	}
-	
 }

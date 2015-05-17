@@ -66,74 +66,74 @@ import graphicslib3D.Vector3D;
 public class CircuitShooter extends BaseGame implements MouseWheelListener, java.awt.event.MouseListener {
 	
 	// Engine objects.
-	public Camera3PController	cc1;
-	private IDisplaySystem		display;															// The game display.
-	private ICamera				camera;																// The game camera.
-	private InputHandler		ih;																	// Input handler
-	private IInputManager		im;																	// The input manager
-	private IEventManager		eventManager;
-	private IRenderer			renderer;
-	private boolean				finalBuild			= true;											// Determines if final build
-	private float				time				= 0.0f;											// Stores the total time
-	private int					scoreP1				= 0;											// The total score
-	private int					numCrashes			= 0;
-	private Cursor				crossHairCursor;
-	private HUDNumber			hudNumberManager;
+	public Camera3PController	 cc1;
+	private IDisplaySystem		 display;															// The game display.
+	private ICamera				 camera;																// The game camera.
+	private InputHandler		 ih;																	// Input handler
+	private IInputManager		 im;																	// The input manager
+	private IEventManager		 eventManager;
+	private IRenderer			 renderer;
+	private boolean				 finalBuild			= true;											// Determines if final build
+	private float				 time				= 0.0f;											// Stores the total time
+	private int					 scoreP1				= 0;											// The total score
+	private int					 numCrashes			= 0;
+	private Cursor				 crossHairCursor;
+	private HUDNumber			 hudNumberManager;
 	
 	// Game World Objects
-	public HillHeightMap		myHillHeightMap;
+	public HillHeightMap		 myHillHeightMap;
 	
 	// Players
-	public Avatar				localPlayer;
-	public Vector<Avatar>		ghostPlayers;
+	public Avatar				 localPlayer;
+	public Vector<Avatar>		 ghostPlayers;
 	
 	// SceneNode Controllers
-	private BounceController	roSNController		= new BounceController();
-	private ScaleController		scSNController		= new ScaleController();
+	private BounceController	 roSNController		= new BounceController();
+	private ScaleController		 scSNController		= new ScaleController();
 	
 	// SceneNode Groups
-	private Group				cuGroup				= new Group("Cube Group");
-	private Group				pyGroup				= new Group("Pyramid Group");
-	private Group				hudGroupTeamOne		= new Group("Team One Group");
-	private Group				environmentGroup	= new Group("Environment Group");
-	private Group				hudGroupTeamOneTime	= new Group("Team One Group Time");
-	private Group				ammoGroup			= new Group("Ammo Box Group");
-	private Group				fenceGroup			= new Group("Fence Group");
-	private Group				healthGroup			= new Group("Health Box Group");
-	private Group				projectileGroup		= new Group("Projectile Group");
+	private Group				 cuGroup				= new Group("Cube Group");
+	private Group				 pyGroup				= new Group("Pyramid Group");
+	private Group				 hudGroupTeamOne		= new Group("Team One Group");
+	private Group				 environmentGroup	= new Group("Environment Group");
+	private Group				 hudGroupTeamOneTime	= new Group("Team One Group Time");
+	private Group				 ammoGroup			= new Group("Ammo Box Group");
+	private Group				 fenceGroup			= new Group("Fence Group");
+	private Group				 healthGroup			= new Group("Health Box Group");
+	private Group				 projectileGroup		= new Group("Projectile Group");
 	
 	// Directory related
-	private static String		directory			= "." + File.separator;
-	private String				dirHud				= "images" + File.separator + "hud" + File.separator;
-	private String				dirScripts			= "scripts" + File.separator;
-	private String				dirAudio			= "audio" + File.separator;
+	private static String		 directory			= "." + File.separator;
+	private String				 dirHud				= "images" + File.separator + "hud" + File.separator;
+	private String				 dirScripts			= "scripts" + File.separator;
+	private String				 dirAudio			= "audio" + File.separator;
 	
 	// Scripting
-	private ScriptEngine		jsEngine;
+	private ScriptEngine		 jsEngine;
 	
 	// HUD
-	private HUDImage			p1Time;
-	private HUDImage			p1Score;
-	private float				origin				= 65f;
+	private HUDImage			 p1Time;
+	private HUDImage			 p1Score;
+	private float				 origin				= 65f;
 	
 	// Game Client
-	private CircuitShooterClient	gameClient;
-	private String				serverAddr;
-	private int					serverPort;
-	private ProtocolType		pType;
-	private boolean				isConnected;
-	private static int			ghostCount			= 0;
+	private CircuitShooterClient gameClient;
+	private String				 serverAddr;
+	private int					 serverPort;
+	private ProtocolType		 pType;
+	private boolean				 isConnected;
+	private static int			 ghostCount			= 0;
 	
 	// Environment
-	private SceneManager		sceneManager;
+	private SceneManager		 sceneManager;
 	
 	// Physics
-	private PhysicsManager		phyManager;
+	private PhysicsManager		 phyManager;
 	
 	// Audio
-	IAudioManager				audioMgr;
-	AudioResource				ambientResource, pickUpResource, fireResource;
-	private Sound				ambientSound, pickUp, fire;											// static and moving sound sources
+	IAudioManager				 audioMgr;
+	AudioResource				 ambientResource, pickUpResource, fireResource;
+	private Sound				 ambientSound, pickUp, fire;											// static and moving sound sources
 																										
 	/**
 	 * Sets up the initial game.
@@ -201,9 +201,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		if (gameClient != null) {
 			gameClient.processPackets();
 		}
-		
+
 		phyManager.updatePhysicsState(getGameWorld());
-		super.update(time);
 		
 		updateGameWorld(elapsedTimeMS);
 		updateSceneNodeControllers();
@@ -446,8 +445,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 	 */
 	protected void initSystem() {
 		// call a local method to create a DisplaySystem object
-		display = new GameDisplaySystem(1920, 1080, 32, 60, false,
-				"sage.renderer.jogl.JOGLRenderer", "Treasure Hunt 2015");
+		display = new GameDisplaySystem(1920, 1080, 32, 60, false, "sage.renderer.jogl.JOGLRenderer", "Circuit Shooter");
 		((GameDisplaySystem) display).waitForInitialization();
 		setDisplaySystem(display);
 		
@@ -541,8 +539,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		
 		System.out.println("Script Engine Factories found:");
 		for (ScriptEngineFactory f : list) {
-			System.out.println(" Name = " + f.getEngineName() + " language = "
-					+ f.getLanguageName() + " extensions = " + f.getExtensions());
+			System.out.println(" Name = " + f.getEngineName() + " language = " + f.getLanguageName() + " extensions = " + f.getExtensions());
 		}
 		
 		//Get the JS engine
@@ -564,8 +561,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 	 * @param scriptFileName
 	 *            - The file name of the script.
 	 */
-	private void executeScript(	ScriptEngine engine,
-								String scriptFileName) {
+	private void executeScript(ScriptEngine engine, String scriptFileName) {
 		try {
 			FileReader fileReader = new FileReader(scriptFileName);
 			engine.eval(fileReader); //execute the script statements in the file
@@ -622,10 +618,13 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 	}
 
 	public void fire(Avatar player) {
-		Projectile projectile = new Projectile(player);
-		addGameWorldObject(projectile);
-
+		Projectile projectile = new Projectile(this, player);
+		projectileGroup.addChild(projectile);
 		fire.play();
+		
+		if (client != null) {
+			
+		}
 	}
 
 	@Override

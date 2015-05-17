@@ -199,4 +199,13 @@ public class CircuitShooterClient extends GameConnectionClient {
             e.printStackTrace();
         }
     }
+    
+    public void sendProjectileMsg() {
+//    	// Format proj,localID,
+//    	try {
+//    		String msg = new String("proj," + id.toString());
+//    		msg += ","
+//    		
+//    	}
+    }
 }

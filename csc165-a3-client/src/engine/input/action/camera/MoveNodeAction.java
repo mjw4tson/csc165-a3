@@ -31,8 +31,7 @@ public class MoveNodeAction extends AbstractInputAction {
 	/**
 	 * Finds the speed and direction of this instance of a movement.
 	 *
-	 * @param e
-	 *            - The event information detailing the controller type.
+	 * @param e - The event information detailing the controller type.
 	 */
 	private void findSpeedAndDirection(Event e, float t) {
 		float componentValue = e.getValue(); // The value of the component.
@@ -44,7 +43,6 @@ public class MoveNodeAction extends AbstractInputAction {
 		
 		if(isXAxis || isYAxis){
 			mult = .25f;
-			
 		}
 		
 		// Determine if the player is running.
@@ -53,8 +51,6 @@ public class MoveNodeAction extends AbstractInputAction {
 		} else {
 			speed = .087f * mult;
 		}
-		
-		
 		
 		if (isXAxis) {
 			if (componentValue < -idleConstant) {
@@ -102,25 +98,18 @@ public class MoveNodeAction extends AbstractInputAction {
 			default:
 				break;
 		}
-
 	}
 	
 	/**
 	 * This method handles the actual logic for moving in a specified direction.
 	 *
-	 * @param dir
-	 *            - The direction.
-	 * @param negativeAxis
-	 *            - Is the direction negative?
-	 * @param moveVal
-	 *            - The distance traveled.
-	 * @param timeVal
-	 *            - The amount of time elapsed.
+	 * @param dir 			- The direction.
+	 * @param negativeAxis 	- Is the direction negative?
+	 * @param moveVal 		- The distance traveled.
+	 * @param timeVal		- The amount of time elapsed.
 	 * @return - A Vector3D that contains the new location of the camera.
 	 */
-	private void moveDirection(	Direction d,
-								float t,
-								float s) {
+	private void moveDirection(	Direction d, float t, float s) {
 		Matrix3D rot = avatar.getLocalRotation();
 		Vector3D dir;
 		
@@ -130,15 +119,12 @@ public class MoveNodeAction extends AbstractInputAction {
 			dir = new Vector3D(1, 0, 0);
 		}
 				
-		if (d == Direction.IDLE) {
-			
-		} else {
+		if (d != Direction.IDLE) {
 			dir = dir.mult(rot);
 			dir.scale(s * t);
 			avatar.translate((float) dir.getX(), (float) dir.getY(), (float) dir.getZ());
 			updateVerticalPosition();
 		}
-		
 	}
 	
 	/**
@@ -150,9 +136,8 @@ public class MoveNodeAction extends AbstractInputAction {
 		float z = (float) avLoc.getZ();
 		float terHeight = terrain.getHeightFromWorld(new Point3D(x,0,z));
 		float desiredHeight = terHeight + (float) terrain.getOrigin().getY() + 1.5f;
-		if (Float.isNaN(desiredHeight)) {
-			
-		} else {
+		
+		if (!Float.isNaN(desiredHeight)) {
 			avatar.getLocalTranslation().setElementAt(1, 3, desiredHeight);
 		}
 		
