@@ -79,7 +79,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	private IRenderer				renderer;
 	private boolean					finalBuild			= true;							// Determines if final build
 	private float					time				= 0.0f;							// Stores the total time
-	private int						scoreP1				= 0;								// The total score
 	private int						numCrashes			= 0;
 	private Cursor					crossHairCursor;
 	private HUDNumber				hudNumberManager;
@@ -355,7 +354,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		removeGameWorldObject(hudGroupTeamOne);
 		removeGameWorldObject(hudGroupTeamOneTime);
 		
-		hudGroupTeamOne = hudNumberManager.printValues(scoreP1, -0.850f, -0.88f);
+		hudGroupTeamOne = hudNumberManager.printValues((int) localPlayer.getHealth(), -0.850f, -0.88f);
 		hudGroupTeamOneTime = hudNumberManager.printValues(timeTemp, 0.050f, 0.90f);
 		
 		addGameWorldObject(hudGroupTeamOne);
