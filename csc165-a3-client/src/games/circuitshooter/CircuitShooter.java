@@ -136,6 +136,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	AudioResource					ambientResource, pickUpResource, fireResource;
 	private Sound					ambientSound, pickUp, fire;							// static and moving sound sources
 	private Group	solarSystemGroup;
+
 			
 	/**
 	 * Sets up the initial game.
@@ -219,7 +220,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	private void updateSceneNodeControllers() {
 		roSNController.update(0.4f);
 		scSNController.update(1.072f);
-		children = solarSystemGroup.getChildren();
 		solarSystemGroup.rotate(1.01f, new Vector3D(0,1,0));
 	}
 	
