@@ -63,78 +63,80 @@ import graphicslib3D.Vector3D;
  *
  * @author ktajeran
  */
-public class CircuitShooter extends BaseGame implements MouseWheelListener, java.awt.event.MouseListener {
+public class CircuitShooter extends BaseGame implements MouseWheelListener,
+		java.awt.event.MouseListener {
 	
 	// Engine objects.
-	public Camera3PController	 cc1;
-	private IDisplaySystem		 display;															// The game display.
-	private ICamera				 camera;																// The game camera.
-	private InputHandler		 ih;																	// Input handler
-	private IInputManager		 im;																	// The input manager
-	private IEventManager		 eventManager;
-	private IRenderer			 renderer;
-	private boolean				 finalBuild			= true;											// Determines if final build
-	private float				 time				= 0.0f;											// Stores the total time
-	private int					 scoreP1				= 0;											// The total score
-	private int					 numCrashes			= 0;
-	private Cursor				 crossHairCursor;
-	private HUDNumber			 hudNumberManager;
+	public Camera3PController		cc1;
+	private IDisplaySystem			display;												// The game display.
+	private ICamera					camera;												// The game camera.
+	private InputHandler			ih;													// Input handler
+	private IInputManager			im;													// The input manager
+	private IEventManager			eventManager;
+	private IRenderer				renderer;
+	private boolean					finalBuild			= true;							// Determines if final build
+	private float					time				= 0.0f;							// Stores the total time
+	private int						scoreP1				= 0;								// The total score
+	private int						numCrashes			= 0;
+	private Cursor					crossHairCursor;
+	private HUDNumber				hudNumberManager;
 	
 	// Game World Objects
-	public HillHeightMap		 myHillHeightMap;
+	public HillHeightMap			myHillHeightMap;
 	
 	// Players
-	public Avatar				 localPlayer;
-	public Vector<Avatar>		 ghostPlayers;
+	public Avatar					localPlayer;
+	public Vector<Avatar>			ghostPlayers;
 	
 	// SceneNode Controllers
-	private BounceController	 roSNController		= new BounceController();
-	private ScaleController		 scSNController		= new ScaleController();
+	private BounceController		roSNController		= new BounceController();
+	private ScaleController			scSNController		= new ScaleController();
 	
 	// SceneNode Groups
-	private Group				 cuGroup				= new Group("Cube Group");
-	private Group				 pyGroup				= new Group("Pyramid Group");
-	private Group				 hudGroupTeamOne		= new Group("Team One Group");
-	private Group				 environmentGroup	= new Group("Environment Group");
-	private Group				 hudGroupTeamOneTime	= new Group("Team One Group Time");
-	private Group				 ammoGroup			= new Group("Ammo Box Group");
-	private Group				 fenceGroup			= new Group("Fence Group");
-	private Group				 healthGroup			= new Group("Health Box Group");
-	private Group				 projectileGroup		= new Group("Projectile Group");
+	private Group					hudGroupTeamOne		= new Group("Team One Group");
+	private Group					environmentGroup	= new Group("Environment Group");
+	private Group					hudGroupTeamOneTime	= new Group("Team One Group Time");
+	private Group					ammoGroup			= new Group("Ammo Box Group");
+	private Group					fenceGroup			= new Group("Fence Group");
+	private Group					healthGroup			= new Group("Health Box Group");
+	private Group					projectileGroup		= new Group("Projectile Group");
+	private Group					boundaryGroup		= new Group("Boudnary Group");
 	
 	// Directory related
-	private static String		 directory			= "." + File.separator;
-	private String				 dirHud				= "images" + File.separator + "hud" + File.separator;
-	private String				 dirScripts			= "scripts" + File.separator;
-	private String				 dirAudio			= "audio" + File.separator;
+	private static String			directory			= "." + File.separator;
+	private String					dirHud				= "images" + File.separator + "hud"
+																+ File.separator;
+	private String					dirScripts			= "scripts" + File.separator;
+	private String					dirAudio			= "audio" + File.separator;
 	
 	// Scripting
-	private ScriptEngine		 jsEngine;
+	private ScriptEngine			jsEngine;
 	
 	// HUD
-	private HUDImage			 p1Time;
-	private HUDImage			 p1Score;
-	private float				 origin				= 65f;
+	private HUDImage				p1Time;
+	private HUDImage				p1Score;
+	private float					origin				= 65f;
 	
 	// Game Client
-	private CircuitShooterClient gameClient;
-	private String				 serverAddr;
-	private int					 serverPort;
-	private ProtocolType		 pType;
-	private boolean				 isConnected;
-	private static int			 ghostCount			= 0;
+	private CircuitShooterClient	gameClient;
+	private String					serverAddr;
+	private int						serverPort;
+	private ProtocolType			pType;
+	private boolean					isConnected;
+	private static int				ghostCount			= 0;
 	
 	// Environment
-	private SceneManager		 sceneManager;
+	private SceneManager			sceneManager;
 	
 	// Physics
-	private PhysicsManager		 phyManager;
+	private PhysicsManager			phyManager;
 	
 	// Audio
-	IAudioManager				 audioMgr;
-	AudioResource				 ambientResource, pickUpResource, fireResource;
-	private Sound				 ambientSound, pickUp, fire;											// static and moving sound sources
-																										
+	IAudioManager					audioMgr;
+	AudioResource					ambientResource, pickUpResource, fireResource;
+	private Sound					ambientSound, pickUp, fire;							// static and moving sound sources
+	private Group	solarSystemGroup;
+			
 	/**
 	 * Sets up the initial game.
 	 */
@@ -151,7 +153,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		cc1 = new Camera3PController(camera, localPlayer.getTriMesh());
 		setupControls(); // Set up the game world controls.
 		initAudio();
-
+		
 	}
 	
 	private void initPhysics() {
@@ -176,7 +178,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		serverAddr = ((GameDisplaySystem) display).getServerIP();
 		serverPort = ((GameDisplaySystem) display).getServerPort();
 		System.out.println("Lauching multiplayer, connecting to " + serverAddr + ":" + serverPort);
-
+		
 		pType = ProtocolType.TCP;
 		
 		try {
@@ -201,7 +203,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		if (gameClient != null) {
 			gameClient.processPackets();
 		}
-
+		
 		phyManager.updatePhysicsState(getGameWorld());
 		
 		updateGameWorld(elapsedTimeMS);
@@ -217,6 +219,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 	private void updateSceneNodeControllers() {
 		roSNController.update(0.4f);
 		scSNController.update(1.072f);
+		children = solarSystemGroup.getChildren();
+		solarSystemGroup.rotate(1.01f, new Vector3D(0,1,0));
 	}
 	
 	/**
@@ -236,9 +240,12 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 			return;
 		}
 		
-		ambientResource = audioMgr.createAudioResource(directory + dirAudio +"test.wav", AudioResourceType.AUDIO_SAMPLE);
-		pickUpResource = audioMgr.createAudioResource(directory + dirAudio +"get.wav", AudioResourceType.AUDIO_SAMPLE);
-		fireResource = audioMgr.createAudioResource(directory + dirAudio +"fire.wav", AudioResourceType.AUDIO_SAMPLE);
+		ambientResource = audioMgr.createAudioResource(directory + dirAudio + "test.wav",
+				AudioResourceType.AUDIO_SAMPLE);
+		pickUpResource = audioMgr.createAudioResource(directory + dirAudio + "get.wav",
+				AudioResourceType.AUDIO_SAMPLE);
+		fireResource = audioMgr.createAudioResource(directory + dirAudio + "fire.wav",
+				AudioResourceType.AUDIO_SAMPLE);
 		
 		ambientSound = new Sound(ambientResource, SoundType.SOUND_MUSIC, 5, true);
 		pickUp = new Sound(pickUpResource, SoundType.SOUND_EFFECT, 5, false);
@@ -255,10 +262,10 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		fire.setMaxDistance(50.0f);
 		fire.setMinDistance(3.0f);
 		fire.setRollOff(5.0f);
-	
+		
 		setEarParameters();
 		ambientSound.play();
-
+		
 	}
 	
 	public void setEarParameters() {
@@ -267,7 +274,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		avDir.rotateY(180.0f - camAz);
 		Vector3D camDir = new Vector3D(0, 0, 1);
 		camDir = camDir.mult(avDir);
-		audioMgr.getEar().setLocation(new Point3D(0,0,0));
+		audioMgr.getEar().setLocation(new Point3D(0, 0, 0));
 		audioMgr.getEar().setOrientation(camDir, new Vector3D(0, 1, 0));
 	}
 	
@@ -292,7 +299,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		super.update(elapsedTimeMS);
 		
 		camera.setLocation(camera.getLocation());
-		localPlayer.getTriMesh().updateAnimation(elapsedTimeMS*4);
+		localPlayer.getTriMesh().updateAnimation(elapsedTimeMS * 4);
 		
 		moveSkybox(camera);
 		
@@ -425,14 +432,15 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		
 		// Add projectile group to game world
 		addGameWorldObject(projectileGroup);
+
+		addGameWorldObject(boundaryGroup);
+		sceneManager.updateBoundaryEnvironment(boundaryGroup);
 		
-		// Add SceneNode controllers to each group.
-		scSNController.addControlledNode(pyGroup);
-		roSNController.addControlledNode(cuGroup);
-		
-		addGameWorldObject(pyGroup);
-		addGameWorldObject(cuGroup);
-		
+		solarSystemGroup = sceneManager.createSolarSystem();
+		solarSystemGroup.translate(600, 300, 1000);
+		solarSystemGroup.scale(.5f, .5f, .5f);
+		addGameWorldObject(solarSystemGroup);
+
 		// Add the player to the game world.
 		localPlayer = new Avatar("Player 1", sceneManager.addAvatar());
 		localPlayer.getTriMesh().translate(50, 4.0f, 10 + origin);
@@ -445,7 +453,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 	 */
 	protected void initSystem() {
 		// call a local method to create a DisplaySystem object
-		display = new GameDisplaySystem(1920, 1080, 32, 60, false, "sage.renderer.jogl.JOGLRenderer", "Circuit Shooter");
+		display = new GameDisplaySystem(1920, 1080, 32, 60, false,
+				"sage.renderer.jogl.JOGLRenderer", "Circuit Shooter");
 		((GameDisplaySystem) display).waitForInitialization();
 		setDisplaySystem(display);
 		
@@ -539,7 +548,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		
 		System.out.println("Script Engine Factories found:");
 		for (ScriptEngineFactory f : list) {
-			System.out.println(" Name = " + f.getEngineName() + " language = " + f.getLanguageName() + " extensions = " + f.getExtensions());
+			System.out.println(" Name = " + f.getEngineName() + " language = "
+					+ f.getLanguageName() + " extensions = " + f.getExtensions());
 		}
 		
 		//Get the JS engine
@@ -549,8 +559,9 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		
 		this.executeScript(jsEngine, scriptFileName);
 		
-		cuGroup = (Group) jsEngine.get("cubeGroup");
-		pyGroup = (Group) jsEngine.get("pyramidGroup");
+		boundaryGroup = (Group) jsEngine.get("boundaryGroup");
+
+		
 	}
 	
 	/**
@@ -561,7 +572,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 	 * @param scriptFileName
 	 *            - The file name of the script.
 	 */
-	private void executeScript(ScriptEngine engine, String scriptFileName) {
+	private void executeScript(	ScriptEngine engine,
+								String scriptFileName) {
 		try {
 			FileReader fileReader = new FileReader(scriptFileName);
 			engine.eval(fileReader); //execute the script statements in the file
@@ -583,7 +595,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		return new Vector3D(position.getX(), position.getY(), position.getZ());
 	}
 	
-	public IAudioManager getAudioManager(){
+	public IAudioManager getAudioManager() {
 		return this.audioMgr;
 	}
 	
@@ -595,7 +607,9 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		return isConnected;
 	}
 	
-	public Avatar addGhostToGame(float x, float y, float z) {
+	public Avatar addGhostToGame(	float x,
+									float y,
+									float z) {
 		Avatar ghost = new Avatar("Ghost " + ++ghostCount, sceneManager.addAvatar());
 		ghost.getTriMesh().translate(x, y, z);
 		addGameWorldObject(ghost.getTriMesh());
@@ -607,7 +621,10 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 		removeGameWorldObject(ghost.getTriMesh());
 	}
 	
-	public GhostNPC addNpcToGame(int id, float x, float y, float z) {
+	public GhostNPC addNpcToGame(	int id,
+									float x,
+									float y,
+									float z) {
 		GhostNPC npc = new GhostNPC(id, new Vector3D(x, y, z));
 		addGameWorldObject(npc);
 		return npc;
@@ -616,7 +633,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 	public CircuitShooterClient getClient() {
 		return gameClient;
 	}
-
+	
 	public void fire(Avatar player) {
 		Projectile projectile = new Projectile(this, player);
 		projectileGroup.addChild(projectile);
@@ -626,22 +643,26 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener, java
 			gameClient.sendProjectileMsg();
 		}
 	}
-
+	
 	@Override
 	public void mouseClicked(java.awt.event.MouseEvent e) {
 		ih.getFireAction().performAction(0, null);
 	}
-
+	
 	// Unused interface methods
 	@Override
-	public void mouseEntered(java.awt.event.MouseEvent e) {}
-
+	public void mouseEntered(java.awt.event.MouseEvent e) {
+	}
+	
 	@Override
-	public void mouseExited(java.awt.event.MouseEvent e) {}
-
+	public void mouseExited(java.awt.event.MouseEvent e) {
+	}
+	
 	@Override
-	public void mousePressed(java.awt.event.MouseEvent e) {}
-
+	public void mousePressed(java.awt.event.MouseEvent e) {
+	}
+	
 	@Override
-	public void mouseReleased(java.awt.event.MouseEvent e) {}
+	public void mouseReleased(java.awt.event.MouseEvent e) {
+	}
 }

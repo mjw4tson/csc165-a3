@@ -1,5 +1,6 @@
 package engine.scene;
 
+import java.awt.Color;
 import java.io.File;
 import java.util.Iterator;
 
@@ -9,11 +10,16 @@ import sage.model.loader.OBJLoader;
 import sage.model.loader.ogreXML.OgreXMLParser;
 import sage.scene.Group;
 import sage.scene.Model3DTriMesh;
+import sage.scene.RotationController;
 import sage.scene.SceneNode;
+import sage.scene.SceneNode.CULL_MODE;
 import sage.scene.SkyBox;
 import sage.scene.SkyBox.Face;
 import sage.scene.TriMesh;
+import sage.scene.shape.Cube;
+import sage.scene.shape.Pyramid;
 import sage.scene.shape.Rectangle;
+import sage.scene.shape.Sphere;
 import sage.scene.state.RenderState;
 import sage.scene.state.TextureState;
 import sage.terrain.AbstractHeightMap;
@@ -22,6 +28,8 @@ import sage.terrain.TerrainBlock;
 import sage.texture.Texture;
 import sage.texture.Texture.WrapMode;
 import sage.texture.TextureManager;
+import engine.event.CrashEvent;
+import engine.scene.controller.ScaleController;
 import engine.scene.physics.PhysicsManager;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
@@ -51,6 +59,7 @@ public class SceneManager {
 	private Texture			sandTexture;
 	private Texture			fenceTexture;
 	private Texture			medicTexture;
+	private Texture			wallTexture;
 	
 	// Game World SceneNodes
 	private SkyBox			skyBox;
@@ -79,6 +88,7 @@ public class SceneManager {
 		String sand = directory + dirEnvironment + "ground.jpg";
 		String fence = directory + dirModel + "fence.png";
 		String medic = directory + dirModel + "medic.png";
+		String wall = directory + dirEnvironment + "wall.png";
 		
 		// Load Textures
 		skyBoxTextureTop = TextureManager.loadTexture2D(skyTop);
@@ -94,6 +104,23 @@ public class SceneManager {
 		sandTexture.setWrapMode(WrapMode.Repeat);
 		fenceTexture = TextureManager.loadTexture2D(fence);
 		medicTexture = TextureManager.loadTexture2D(medic);
+		wallTexture = TextureManager.loadTexture2D(wall);
+	}
+	
+	/**
+	 * Updates the game bound world.
+	 * @param wallGroup
+	 */
+	public void updateBoundaryEnvironment(Group wallGroup){
+		Iterator<SceneNode> children = wallGroup.getChildren();
+		
+		Rectangle s;
+		
+		while (children.hasNext()){
+			s = (Rectangle) children.next();
+			s.setTexture(wallTexture);
+			s.setCullMode(CULL_MODE.NEVER);
+		}
 	}
 	
 	/**
@@ -199,11 +226,49 @@ public class SceneManager {
 	}
 	
 	/**
+	 * Create a hierarchical structured solar system.
+	 * @return
+	 */
+	public Group createSolarSystem(){
+		Group temp = new Group("Solar System");
+		Group temp2 = new Group("Planet System Rotation 1");
+		Group temp3 = new Group("Planet System Rotation 2");
+		Group temp4 = new Group("Moon");
+		
+		Sphere sun = new Sphere("Sun", 60, 30, 30, Color.ORANGE);
+		sun.translate(20, 0, 0);
+		Sphere planet = new Sphere("Planet", 30, 20, 20, Color.MAGENTA);
+		planet.translate(-80, 20, 20);
+		planet.scale(.6f, .6f, .6f);
+		Sphere moon = new Sphere("Moon", 10, 30, 30, Color.GRAY);
+		moon.translate(-110, 40, -5);
+		moon.scale(.5f, .5f, .5f);
+		
+		temp.addChild(sun);
+		temp.addChild(temp2);
+		temp.addChild(temp3);
+		temp3.addChild(planet);
+		temp3.addChild(temp4);
+		temp4.addChild(moon);
+		
+		temp.setIsTransformSpaceParent(true);
+		temp2.setIsTransformSpaceParent(true);
+		temp3.setIsTransformSpaceParent(true);
+		temp4.setIsTransformSpaceParent(true);
+		sun.setIsTransformSpaceParent(true);
+		planet.setIsTransformSpaceParent(true);
+		moon.setIsTransformSpaceParent(true);
+		
+		return temp;
+
+	}
+	
+	/**
 	 * Initializes the terrain.
 	 */
 	public TerrainBlock initTerrain(IDisplaySystem display) { // create height map and terrain block
-		HillHeightMap myHillHeightMap = new HillHeightMap(229, 2000, 10.0f, 20.0f, (byte) 2, 12345);
-		myHillHeightMap.setHeightScale(0.1f);
+		HillHeightMap myHillHeightMap = new HillHeightMap(429, 2000, 40.0f, 50.0f, (byte) 2, 12345);
+		myHillHeightMap.setHeightScale(1.1f);
 		hillTerrain = createTerBlock(myHillHeightMap);
 		
 		// create texture and texture state to color the terrain
@@ -226,7 +291,7 @@ public class SceneManager {
 	 * @return
 	 */
 	private TerrainBlock createTerBlock(AbstractHeightMap heightMap) {
-		float heightScale = 0.15f;
+		float heightScale = 1.19f;
 		Vector3D terrainScale = new Vector3D(1, heightScale, 1);
 		
 		// use the size of the height map as the size of the terrain
@@ -234,7 +299,7 @@ public class SceneManager {
 		
 		// specify terrain origin so heightmap (0,0) is at world origin
 		float cornerHeight = heightMap.getTrueHeightAtPoint(0, 0) * heightScale;
-		Point3D terrainOrigin = new Point3D(0, -cornerHeight, 0);
+		Point3D terrainOrigin = new Point3D(200, -cornerHeight, 700);
 		
 		// create a terrain block using the height map
 		String name = "Terrain:" + heightMap.getClass().getSimpleName();
