@@ -1,5 +1,6 @@
 package engine.scene.physics;
 
+import engine.objects.Avatar;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
 
@@ -45,7 +46,7 @@ public class PhysicsManager {
 			Vector3D translateVec;
 			physicsEngine.update(20.0f);
 			for (SceneNode s : sceneNodes) {
-				if(s instanceof Group){
+				if(s instanceof Group ){
 					Iterator<SceneNode> i = ((Group) s).getChildren();
 					while(i.hasNext()){
 						SceneNode n = i.next();
@@ -83,7 +84,7 @@ public class PhysicsManager {
 		if(this.physicsEngineEnabled != false){
 			pObject = physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, object
 					.getWorldTransform().getValues(), 1.0f);
-			pObject.setBounciness(.5f);
+			pObject.setBounciness(.8f);
 			object.setPhysicsObject(pObject);
 		}
 

@@ -134,7 +134,6 @@ public class SceneManager {
 		ammoBoxTM.setTexture(ammoBoxTexture);
 		ammoBoxTM.translate(60, .8f, 75 );
 		ammoBoxTM.scale(6, 6, 6);
-		pMan.bindPhysicsProperty(ammoBoxTM, 5.0f);
 		ammoGroup.addChild(ammoBoxTM);
 	}
 	
@@ -153,7 +152,6 @@ public class SceneManager {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
 		avatarTexture.setApplyMode(Texture.ApplyMode.Replace);
 		avatarTM.setTexture(avatarTexture);
 		
@@ -170,7 +168,6 @@ public class SceneManager {
 		healthBoxTM.updateLocalBound();
 		healthBoxTM.setTexture(medicTexture);
 		healthBoxTM.translate(40, 0.5f, 50);
-		healthBoxTM.scale(8, 8, 8);
 		pMan.bindPhysicsProperty(healthBoxTM, 5.0f);
 		healthGroup.addChild(healthBoxTM);
 	}
@@ -215,13 +212,14 @@ public class SceneManager {
 	 * 
 	 * @return
 	 */
-	public void addGameFloor(Group environmentGroup) {
+	public void addGameFloor(Group environmentGroup, PhysicsManager pMan) {
 		// Create the world
 		floor = new Rectangle();
 		floor.scale(2600, 1400, 10);
 		floor.rotate(90, new Vector3D(1, 0, 0));
 		floor.translate(0, -.8f, 0);
 		floor.setTexture(groundTexture);
+		pMan.bindFloorPhysics(floor);
 		environmentGroup.addChild(floor);
 	}
 	
@@ -258,6 +256,10 @@ public class SceneManager {
 		sun.setIsTransformSpaceParent(true);
 		planet.setIsTransformSpaceParent(true);
 		moon.setIsTransformSpaceParent(true);
+		
+		temp2.scale(2, 2, 2);
+		temp3.scale(3,3,3);
+		temp4.rotate(20, new Vector3D(0,1,0));
 		
 		return temp;
 
@@ -299,7 +301,7 @@ public class SceneManager {
 		
 		// specify terrain origin so heightmap (0,0) is at world origin
 		float cornerHeight = heightMap.getTrueHeightAtPoint(0, 0) * heightScale;
-		Point3D terrainOrigin = new Point3D(200, -cornerHeight, 700);
+		Point3D terrainOrigin = new Point3D(200, -cornerHeight, 720);
 		
 		// create a terrain block using the height map
 		String name = "Terrain:" + heightMap.getClass().getSimpleName();

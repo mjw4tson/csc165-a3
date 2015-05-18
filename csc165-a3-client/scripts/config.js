@@ -9,20 +9,20 @@ with (JavaPackages){
 	var origin = 65;
 	
 	// Adds the game boundaries to the world.
-	var cu1 = new Rectangle("Longer Wall",2600, 120);
+	var cu1 = new Rectangle("N Longer Wall",2600, 120);
 	cu1.translate(0, 1, 700);
 	
 	// Adds the game boundaries to the world.
-	var cu2 = new Rectangle("Longer Wall",2600, 120);
+	var cu2 = new Rectangle("S Longer Wall",2600, 120);
 	cu2.translate(0, 1, -700);
 		
 	// Adds the game boundaries to the world.
-	var cu3 = new Rectangle("Shorter Wall",1400, 120);
+	var cu3 = new Rectangle("E Shorter Wall",1400, 120);
 	cu3.rotate(90, new Vector3D(0, 1, 0));
 	cu3.translate(-1300, 1, 0);
 	
 	// Adds the game boundaries to the world.
-	var cu4 = new Rectangle("Shorter Wall",1400, 120);
+	var cu4 = new Rectangle("W Shorter Wall",1400, 120);
 	cu4.rotate(90, new Vector3D(0, 1, 0));
 	cu4.translate(1300, 1, 0);
 

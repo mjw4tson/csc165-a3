@@ -37,9 +37,12 @@ import sage.networking.IGameConnection.ProtocolType;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.HUDImage;
+import sage.scene.Model3DTriMesh;
 import sage.scene.SceneNode;
+import sage.scene.TriMesh;
 import sage.scene.shape.Cube;
 import sage.scene.shape.Pyramid;
+import sage.scene.shape.Rectangle;
 import sage.terrain.HillHeightMap;
 import sage.util.VersionInfo;
 import engine.event.CrashEvent;
@@ -127,6 +130,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	
 	// Environment
 	private SceneManager			sceneManager;
+	private float					xBound				= 1300f;
+	private float					yBound				= 700f;
 	
 	// Physics
 	private PhysicsManager			phyManager;
@@ -135,9 +140,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	IAudioManager					audioMgr;
 	AudioResource					ambientResource, pickUpResource, fireResource;
 	private Sound					ambientSound, pickUp, fire;							// static and moving sound sources
-	private Group	solarSystemGroup;
-
-			
+	private Group					solarSystemGroup;
+	
 	/**
 	 * Sets up the initial game.
 	 */
@@ -220,7 +224,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	private void updateSceneNodeControllers() {
 		roSNController.update(0.4f);
 		scSNController.update(1.072f);
-		solarSystemGroup.rotate(1.01f, new Vector3D(0,1,0));
+		solarSystemGroup.rotate(1.01f, new Vector3D(0, 1, 0));
 	}
 	
 	/**
@@ -228,7 +232,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	 */
 	private void initEventManager() {
 		eventManager = EventManager.getInstance();
-		
+		eventManager.addListener(localPlayer, CrashEvent.class);
 		super.update(0.0f);
 	}
 	
@@ -297,7 +301,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	private void updateGameWorld(float elapsedTimeMS) {
 		time += elapsedTimeMS;
 		super.update(elapsedTimeMS);
-		
+		float temp;
 		camera.setLocation(camera.getLocation());
 		localPlayer.getTriMesh().updateAnimation(elapsedTimeMS * 4);
 		
@@ -317,14 +321,29 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 				while (groupChildren.hasNext()) {
 					gs = groupChildren.next();
 					
+					// Check if we hit a medic kit.
 					if (gs.getWorldBound() != null && gs.getWorldBound().contains(locP1)
-							&& (gs instanceof Cube || gs instanceof Pyramid)) {
-						this.scoreP1 = this.scoreP1 + 1;
+							&& (gs instanceof TriMesh && s.getName().equals("Health Box Group")) ) {
 						groupChildren.remove();
 						this.removeGameWorldObject(gs);
 						CrashEvent newCrash = new CrashEvent(numCrashes);
 						eventManager.triggerEvent(newCrash);
 						pickUp.play();
+					}
+					// Check if we hit a wall, move backwards away from the wall if we do. This can be improved by utilizing the 
+					// physics engine if time permits.
+					if (locP1.getX() >= xBound) {
+						temp = (float) ((locP1.getX() - xBound) * -1);
+						localPlayer.getTriMesh().translate(temp, 0, 0);
+					} else if (locP1.getX() <= -xBound) {
+						temp = (float) ((locP1.getX() + xBound) * -1);
+						localPlayer.getTriMesh().translate(temp, 0, 0);
+					} else if (locP1.getZ() >= yBound) {
+						temp = (float) ((locP1.getZ() - yBound) * -1);
+						localPlayer.getTriMesh().translate(0, 0, temp);
+					} else if (locP1.getZ() <= -yBound) {
+						temp = (float) ((locP1.getZ() + yBound) * -1);
+						localPlayer.getTriMesh().translate(0, 0, temp);
 					}
 				}
 			}
@@ -353,6 +372,9 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		buildHUD();
 		loadGameWorldObjects();
 		addGameWorldObject(sceneManager.initTerrain(display));
+		
+		
+		
 	}
 	
 	/**
@@ -412,27 +434,20 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		addGameWorldObject(sceneManager.addSkybox(this, origin));
 		
 		// Create the game world floor.
-		sceneManager.addGameFloor(environmentGroup);
+		sceneManager.addGameFloor(environmentGroup, phyManager);
 		addGameWorldObject(environmentGroup);
 		
 		// Get and build game world objects
 		buildEnvironmentFromScript();
 		
-		// Adding ammo box to the game world.
-		sceneManager.addAmmoBoxes(ammoGroup, phyManager);
-		addGameWorldObject(ammoGroup);
-		
 		// Adding health box to the game world.
 		sceneManager.addHealthBoxes(healthGroup, phyManager);
+		healthGroup.scale(10, 10, 10);
 		addGameWorldObject(healthGroup);
-		
-		// Adding fences to the game world.
-		sceneManager.addFencing(fenceGroup);
-		addGameWorldObject(fenceGroup);
 		
 		// Add projectile group to game world
 		addGameWorldObject(projectileGroup);
-
+		
 		addGameWorldObject(boundaryGroup);
 		sceneManager.updateBoundaryEnvironment(boundaryGroup);
 		
@@ -440,7 +455,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		solarSystemGroup.translate(600, 300, 1000);
 		solarSystemGroup.scale(.5f, .5f, .5f);
 		addGameWorldObject(solarSystemGroup);
-
+		
 		// Add the player to the game world.
 		localPlayer = new Avatar("Player 1", sceneManager.addAvatar());
 		localPlayer.getTriMesh().translate(50, 4.0f, 10 + origin);
@@ -560,7 +575,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		this.executeScript(jsEngine, scriptFileName);
 		
 		boundaryGroup = (Group) jsEngine.get("boundaryGroup");
-
 		
 	}
 	
