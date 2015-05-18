@@ -165,11 +165,24 @@ public class SceneManager {
 	 */
 	public void addHealthBoxes(Group healthGroup, PhysicsManager pMan) {
 		TriMesh healthBoxTM = loader.loadModel(directory + dirModel + "medic.obj");
+		TriMesh healthBoxTM2 = loader.loadModel(directory + dirModel + "medic.obj");
+		TriMesh healthBoxTM3 = loader.loadModel(directory + dirModel + "medic.obj");
 		healthBoxTM.updateLocalBound();
 		healthBoxTM.setTexture(medicTexture);
 		healthBoxTM.translate(40, 0.5f, 50);
+		healthBoxTM2.updateLocalBound();
+		healthBoxTM2.setTexture(medicTexture);
+		healthBoxTM2.translate(800, 0.5f, 120);
+		healthBoxTM3.updateLocalBound();
+		healthBoxTM3.setTexture(medicTexture);
+		healthBoxTM3.translate(-900, 0.5f, -250);
+		
 		pMan.bindPhysicsProperty(healthBoxTM, 5.0f);
+		pMan.bindPhysicsProperty(healthBoxTM2, 5.0f);
+		pMan.bindPhysicsProperty(healthBoxTM3, 5.0f);
 		healthGroup.addChild(healthBoxTM);
+		healthGroup.addChild(healthBoxTM2);
+		healthGroup.addChild(healthBoxTM3);
 	}
 	
 	

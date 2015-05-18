@@ -348,14 +348,11 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 			}
 		}
 		
-		// Updates the time and score states on the hud.
-		int timeTemp = (int) time / 1000;
-		
 		removeGameWorldObject(hudGroupTeamOne);
 		removeGameWorldObject(hudGroupTeamOneTime);
 		
 		hudGroupTeamOne = hudNumberManager.printValues((int) localPlayer.getHealth(), -0.850f, -0.88f);
-		hudGroupTeamOneTime = hudNumberManager.printValues(timeTemp, 0.050f, 0.90f);
+		hudGroupTeamOneTime = hudNumberManager.printValues(localPlayer.getTotalKills(), 0.050f, 0.90f);
 		
 		addGameWorldObject(hudGroupTeamOne);
 		addGameWorldObject(hudGroupTeamOneTime);

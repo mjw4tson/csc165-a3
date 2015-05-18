@@ -13,6 +13,7 @@ public class Avatar implements IEventListener {
 	private float			health;
 	private IPhysicsObject	physicsObject;
 	private Model3DTriMesh	triMesh;
+	private int totalKills = 0;
 	
 	public Avatar(String name, Model3DTriMesh triMesh) {
 		this.triMesh = triMesh;
@@ -69,5 +70,13 @@ public class Avatar implements IEventListener {
 		}
 			
 		return true;
+	}
+
+	public int getTotalKills() {
+		return totalKills;
+	}
+
+	public void setTotalKills(int totalKills) {
+		this.totalKills = totalKills;
 	}
 }
