@@ -1,8 +1,11 @@
 package engine.objects;
 
+import java.util.Random;
 import java.util.UUID;
 
 import engine.event.CrashEvent;
+import graphicslib3D.Point3D;
+import graphicslib3D.Vector3D;
 import sage.event.IEventListener;
 import sage.event.IGameEvent;
 import sage.physics.IPhysicsObject;
@@ -14,6 +17,7 @@ public class Avatar implements IEventListener {
 	private IPhysicsObject	physicsObject;
 	private Model3DTriMesh	triMesh;
 	private int totalKills = 0;
+	private Random r = new Random();
 	
 	public Avatar(String name, Model3DTriMesh triMesh) {
 		this.triMesh = triMesh;
@@ -74,6 +78,14 @@ public class Avatar implements IEventListener {
 
 	public int getTotalKills() {
 		return totalKills;
+	}
+
+	public boolean isDead(){
+		if(this.health <= 0){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public void setTotalKills(int totalKills) {

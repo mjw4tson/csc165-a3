@@ -50,4 +50,12 @@ public class Projectile extends Sphere {
         dir.scale((double) (speed * .1));
         translate((float)dir.getX(), (float)dir.getY(), (float)dir.getZ());
     }
+
+	public Avatar getSourceAvatar() {
+		return sourceAvatar;
+	}
+
+	public void setSourceAvatar(Avatar sourceAvatar) {
+		this.sourceAvatar = sourceAvatar;
+	}
 }
