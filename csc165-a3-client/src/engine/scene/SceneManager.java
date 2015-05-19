@@ -13,6 +13,7 @@ import sage.scene.Model3DTriMesh;
 import sage.scene.RotationController;
 import sage.scene.SceneNode;
 import sage.scene.SceneNode.CULL_MODE;
+import sage.scene.SceneNode.RENDER_MODE;
 import sage.scene.SkyBox;
 import sage.scene.SkyBox.Face;
 import sage.scene.TriMesh;
@@ -209,7 +210,7 @@ public class SceneManager {
 	public SkyBox addSkybox(BaseGame bg,
 							float origin) {
 		skyBox = new SkyBox();
-		skyBox.scale(550, 550, 550);
+		skyBox.scale(550,550, 550);
 		skyBox.translate(65, 0, 55 + origin);
 		skyBox.setTexture(Face.Up, skyBoxTextureTop);
 		skyBox.setTexture(Face.Down, skyBoxTextureBot);
@@ -217,6 +218,8 @@ public class SceneManager {
 		skyBox.setTexture(Face.North, skyBoxTextureFront);
 		skyBox.setTexture(Face.West, skyBoxTextureWest);
 		skyBox.setTexture(Face.South, skyBoxTextureBack);
+		skyBox.setZBufferStateEnabled(false);
+
 		return skyBox;
 	}
 	

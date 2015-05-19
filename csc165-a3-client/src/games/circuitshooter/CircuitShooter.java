@@ -320,6 +320,18 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 				while (groupChildren.hasNext()) {
 					gs = groupChildren.next();
 					
+					// Check if a bullet hit the local player.
+					if (gs.getWorldBound() != null && gs.getWorldBound().contains(locP1)
+							&& (gs instanceof Projectile) ) {
+						Avatar bulletOwner = ((Projectile) (gs)).getSourceAvatar();
+						
+						if(bulletOwner != localPlayer){
+							System.out.println("Damaged by: " + bulletOwner.getUUID());
+							localPlayer.setHealth(localPlayer.getHealth() - 30);
+						}
+						
+					}
+					
 					// Check if we hit a medic kit.
 					if (gs.getWorldBound() != null && gs.getWorldBound().contains(locP1)
 							&& (gs instanceof TriMesh && s.getName().equals("Health Box Group")) ) {

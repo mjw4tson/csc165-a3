@@ -15,14 +15,15 @@ public class Projectile extends Sphere {
 	private Avatar			sourceAvatar;
 	
 	public Projectile(CircuitShooter cs, Avatar avatar) {
-		super(1, 10, 10, Color.RED);
+		super(1, 10, 10, Color.GREEN);
+		super.scale(.5f, .7f, 1);
 
 		sourceAvatar = avatar;
 		age = 10;
 		speed = 10;
 		
 		if (sourceAvatar != cs.localPlayer)
-			setColor(Color.GREEN);
+			setColor(Color.RED);
 		
 		Matrix3D translate = new Matrix3D();
 		Vector3D translation = avatar.getTriMesh().getLocalTranslation().getCol(3);
