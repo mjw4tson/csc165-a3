@@ -132,7 +132,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	private SceneManager			sceneManager;
 	private float					xBound				= 1300f;
 	private float					yBound				= 700f;
-	private Random r = new Random();
+	private Random					r					= new Random();
 	
 	// Physics
 	private PhysicsManager			phyManager;
@@ -140,7 +140,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	// Audio
 	IAudioManager					audioMgr;
 	AudioResource					ambientResource, pickUpResource, fireResource, deadResource;
-	private Sound					ambientSound, pickUp, fire, dead;							// static and moving sound sources
+	private Sound					ambientSound, pickUp, fire, dead;								// static and moving sound sources
 	private Group					solarSystemGroup;
 	
 	/**
@@ -597,6 +597,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		this.executeScript(jsEngine, scriptFileName);
 		
 		boundaryGroup = (Group) jsEngine.get("boundaryGroup");
+		xBound = (int) jsEngine.get("xBound");
+		yBound = (int) jsEngine.get("yBound");
 		
 	}
 	
@@ -702,22 +704,33 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	public void mouseReleased(java.awt.event.MouseEvent e) {
 	}
 	
-	private void respawn() {
-		dead.play();
-		localPlayer.setHealth(100);
-		int temp = r.nextInt(1200);
-		int temp2 = r.nextInt(600);
+	/**
+	 * Obtains a random positive/negative integer
+	 */
+	private int getRandomSignedInteger(int limit) {
+		int temp = r.nextInt(limit);
 		
 		if (r.nextBoolean()) {
 			temp = -temp;
 		}
 		
-		if (r.nextBoolean()) {
-			temp2 = -temp2;
-		}
-
+		return temp;
+	}
+	
+	private void respawn() {
+		dead.play();
+		localPlayer.setHealth(100);
+		
 		Point3D locP1 = new Point3D(localPlayer.getTriMesh().getLocalTranslation().getCol(3));
-		Vector3D newLoc = new Vector3D(temp, locP1.getY(), temp2);
-		localPlayer.getTriMesh().translate((float)(newLoc.getX() - locP1.getX()), 0, (float)(newLoc.getZ() - locP1.getZ()));
+		Vector3D newLoc = new Vector3D(getRandomSignedInteger(1200), locP1.getY(),
+				getRandomSignedInteger(600));
+		move(localPlayer.getTriMesh(), locP1, newLoc);
+	}
+	
+	private void move(	TriMesh object,
+						Point3D oldLocation,
+						Vector3D newLocation) {
+		object.translate((float) (newLocation.getX() - oldLocation.getX()), 0,
+				(float) (newLocation.getZ() - oldLocation.getZ()));
 	}
 }

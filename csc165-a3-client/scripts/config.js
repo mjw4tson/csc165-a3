@@ -8,12 +8,16 @@ with (JavaPackages){
 	var boundaryGroup = new Group();
 	var origin = 65;
 	
+	// Set the wall boundaries
+	var xBound = 1300;
+	var yBound = 700;
+	
 	// Adds the game boundaries to the world.
-	var cu1 = new Rectangle("N Longer Wall",2600, 120);
+	var cu1 = new Rectangle("1300",2600, 120);
 	cu1.translate(0, 1, 700);
 	
 	// Adds the game boundaries to the world.
-	var cu2 = new Rectangle("S Longer Wall",2600, 120);
+	var cu2 = new Rectangle("1300",2600, 120);
 	cu2.translate(0, 1, -700);
 		
 	// Adds the game boundaries to the world.

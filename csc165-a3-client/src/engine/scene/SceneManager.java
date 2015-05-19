@@ -3,6 +3,7 @@ package engine.scene;
 import java.awt.Color;
 import java.io.File;
 import java.util.Iterator;
+import java.util.Random;
 
 import sage.app.BaseGame;
 import sage.display.IDisplaySystem;
@@ -70,6 +71,9 @@ public class SceneManager {
 	// Modeling
 	private OBJLoader		loader			= new OBJLoader();
 	
+	//Other
+	private Random			r				= new Random();
+	
 	public SceneManager(String dir) {
 		directory = dir;
 		setupTextures();
@@ -110,14 +114,15 @@ public class SceneManager {
 	
 	/**
 	 * Updates the game bound world.
+	 * 
 	 * @param wallGroup
 	 */
-	public void updateBoundaryEnvironment(Group wallGroup){
+	public void updateBoundaryEnvironment(Group wallGroup) {
 		Iterator<SceneNode> children = wallGroup.getChildren();
 		
 		Rectangle s;
 		
-		while (children.hasNext()){
+		while (children.hasNext()) {
 			s = (Rectangle) children.next();
 			s.setTexture(wallTexture);
 			s.setCullMode(CULL_MODE.NEVER);
@@ -129,11 +134,12 @@ public class SceneManager {
 	 * 
 	 * @param ammoGroup
 	 */
-	public void addAmmoBoxes(Group ammoGroup, PhysicsManager pMan) {
+	public void addAmmoBoxes(	Group ammoGroup,
+								PhysicsManager pMan) {
 		TriMesh ammoBoxTM = loader.loadModel(directory + dirModel + "ammo.obj");
 		ammoBoxTM.updateLocalBound();
 		ammoBoxTM.setTexture(ammoBoxTexture);
-		ammoBoxTM.translate(60, .8f, 75 );
+		ammoBoxTM.translate(60, .8f, 75);
 		ammoBoxTM.scale(6, 6, 6);
 		ammoGroup.addChild(ammoBoxTM);
 	}
@@ -144,11 +150,12 @@ public class SceneManager {
 		String baseDir = directory + dirModel;
 		
 		try {
-			Group model = loader.loadModel(baseDir + "Cube.mesh.xml", baseDir + "Material.001.material", baseDir + "Cube.skeleton.xml");
+			Group model = loader.loadModel(baseDir + "Cube.mesh.xml", baseDir
+					+ "Material.001.material", baseDir + "Cube.skeleton.xml");
 			model.updateGeometricState(0, true);
 			Iterator<SceneNode> itr = model.iterator();
 			
-			avatarTM = (Model3DTriMesh)itr.next();
+			avatarTM = (Model3DTriMesh) itr.next();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -164,19 +171,20 @@ public class SceneManager {
 	 * 
 	 * @param ammoGroup
 	 */
-	public void addHealthBoxes(Group healthGroup, PhysicsManager pMan) {
+	public void addHealthBoxes(	Group healthGroup,
+								PhysicsManager pMan) {
 		TriMesh healthBoxTM = loader.loadModel(directory + dirModel + "medic.obj");
 		TriMesh healthBoxTM2 = loader.loadModel(directory + dirModel + "medic.obj");
 		TriMesh healthBoxTM3 = loader.loadModel(directory + dirModel + "medic.obj");
 		healthBoxTM.updateLocalBound();
 		healthBoxTM.setTexture(medicTexture);
-		healthBoxTM.translate(40, 0.5f, 50);
+		healthBoxTM.translate(getRandomSignedInteger(1300), 0.5f, getRandomSignedInteger(700));
 		healthBoxTM2.updateLocalBound();
 		healthBoxTM2.setTexture(medicTexture);
-		healthBoxTM2.translate(800, 0.5f, 120);
+		healthBoxTM2.translate(getRandomSignedInteger(1300), 0.5f, getRandomSignedInteger(700));
 		healthBoxTM3.updateLocalBound();
 		healthBoxTM3.setTexture(medicTexture);
-		healthBoxTM3.translate(-900, 0.5f, -250);
+		healthBoxTM3.translate(getRandomSignedInteger(1300), 0.5f, getRandomSignedInteger(700));
 		
 		pMan.bindPhysicsProperty(healthBoxTM, 5.0f);
 		pMan.bindPhysicsProperty(healthBoxTM2, 5.0f);
@@ -186,12 +194,12 @@ public class SceneManager {
 		healthGroup.addChild(healthBoxTM3);
 	}
 	
-	
 	/**
 	 * Adds fencing to the game world.
+	 * 
 	 * @param fenceGroup
 	 */
-	public void addFencing(Group fenceGroup){
+	public void addFencing(Group fenceGroup) {
 		TriMesh fenceTM = loader.loadModel(directory + dirModel + "fence.obj");
 		fenceTM.updateLocalBound();
 		fenceTM.setTexture(fenceTexture);
@@ -210,7 +218,7 @@ public class SceneManager {
 	public SkyBox addSkybox(BaseGame bg,
 							float origin) {
 		skyBox = new SkyBox();
-		skyBox.scale(550,550, 550);
+		skyBox.scale(550, 550, 550);
 		skyBox.translate(65, 0, 55 + origin);
 		skyBox.setTexture(Face.Up, skyBoxTextureTop);
 		skyBox.setTexture(Face.Down, skyBoxTextureBot);
@@ -219,7 +227,7 @@ public class SceneManager {
 		skyBox.setTexture(Face.West, skyBoxTextureWest);
 		skyBox.setTexture(Face.South, skyBoxTextureBack);
 		skyBox.setZBufferStateEnabled(false);
-
+		
 		return skyBox;
 	}
 	
@@ -228,7 +236,8 @@ public class SceneManager {
 	 * 
 	 * @return
 	 */
-	public void addGameFloor(Group environmentGroup, PhysicsManager pMan) {
+	public void addGameFloor(	Group environmentGroup,
+								PhysicsManager pMan) {
 		// Create the world
 		floor = new Rectangle();
 		floor.scale(2600, 1400, 10);
@@ -241,9 +250,10 @@ public class SceneManager {
 	
 	/**
 	 * Create a hierarchical structured solar system.
+	 * 
 	 * @return
 	 */
-	public Group createSolarSystem(){
+	public Group createSolarSystem() {
 		Group temp = new Group("Solar System");
 		Group temp2 = new Group("Planet System Rotation 1");
 		Group temp3 = new Group("Planet System Rotation 2");
@@ -274,11 +284,11 @@ public class SceneManager {
 		moon.setIsTransformSpaceParent(true);
 		
 		temp2.scale(2, 2, 2);
-		temp3.scale(3,3,3);
-		temp4.rotate(20, new Vector3D(0,1,0));
+		temp3.scale(3, 3, 3);
+		temp4.rotate(20, new Vector3D(0, 1, 0));
 		
 		return temp;
-
+		
 	}
 	
 	/**
@@ -336,6 +346,19 @@ public class SceneManager {
 	
 	public TerrainBlock getHillTerrain() {
 		return hillTerrain;
+	}
+	
+	/**
+	 * Obtains a random positive/negative integer
+	 */
+	private int getRandomSignedInteger(int limit) {
+		int temp = r.nextInt(limit);
+		
+		if (r.nextBoolean()) {
+			temp = -temp;
+		}
+		
+		return temp;
 	}
 	
 }

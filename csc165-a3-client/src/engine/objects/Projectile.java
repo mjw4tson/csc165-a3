@@ -20,7 +20,7 @@ public class Projectile extends Sphere {
 
 		sourceAvatar = avatar;
 		age = 10;
-		speed = 10;
+		speed = 90;
 		
 		if (sourceAvatar != cs.localPlayer)
 			setColor(Color.RED);
