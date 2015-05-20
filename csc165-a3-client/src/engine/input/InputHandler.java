@@ -121,10 +121,10 @@ public class InputHandler {
 		this.addControl(null, Key.RSHIFT, null, setLocked, null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
 		
 		// Movement actions
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD, setSpeed);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD, setSpeed);
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed, bg.getClient());
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed, bg.getClient());
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD, setSpeed, bg.getClient());
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD, setSpeed, bg.getClient());
 
 		// Movement controls
 		this.addControl(null, Key.W, null, mvNodeForward, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
@@ -133,8 +133,8 @@ public class InputHandler {
 		this.addControl(null, Key.S, null, mvNodeBackward, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Orbit actions
-		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked, bg.localPlayer.getTriMesh());
-		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked, bg.localPlayer.getTriMesh());
+		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked, bg.localPlayer.getTriMesh(), bg.getClient());
+		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked, bg.localPlayer.getTriMesh(), bg.getClient());
 		OrbitUpDownAction orbitUp = new OrbitUpDownAction(false, true, bg.cc1);
 		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1);
 		
@@ -176,10 +176,10 @@ public class InputHandler {
 		this.addControl(Axis.Z, null, null, fAction, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
 		
 		// Move actions
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD, setSpeed);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD, setSpeed);
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed, bg.getClient());
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed, bg.getClient());
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD, setSpeed, bg.getClient());
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD, setSpeed, bg.getClient());
 		
 		// Movement controls
 		this.addControl(Axis.Y, null, null, mvNodeForward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
@@ -188,7 +188,7 @@ public class InputHandler {
 		this.addControl(Axis.Y, null, null, mvNodeBackward,	IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
 		
 		// Orbit actions
-		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1, setLocked, bg.localPlayer.getTriMesh());
+		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1, setLocked, bg.localPlayer.getTriMesh(), bg.getClient());
 		OrbitUpDownAction orbitUpDown = new OrbitUpDownAction(true, false, bg.cc1);
 		
 		// Orbit controls

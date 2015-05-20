@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.script.ScriptEngine;
@@ -54,6 +55,7 @@ import engine.scene.controller.BounceController;
 import engine.scene.controller.ScaleController;
 import engine.scene.hud.HUDNumber;
 import engine.scene.physics.PhysicsManager;
+import games.circuitshooter.network.CircuitShooterClient;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
@@ -75,7 +77,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	private IEventManager			eventManager;
 	private IRenderer				renderer;
 	private boolean					finalBuild			= true;							// Determines if final build
-	private float					time				= 0.0f;							// Stores the total time
 	private int						numCrashes			= 0;
 	private Cursor					crossHairCursor;
 	private HUDNumber				hudNumberManager;
@@ -95,8 +96,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	private Group					hudGroupTeamOne		= new Group("Team One Group");
 	private Group					environmentGroup	= new Group("Environment Group");
 	private Group					hudGroupTeamOneTime	= new Group("Team One Group Time");
-	private Group					ammoGroup			= new Group("Ammo Box Group");
-	private Group					fenceGroup			= new Group("Fence Group");
 	private Group					healthGroup			= new Group("Health Box Group");
 	private Group					projectileGroup		= new Group("Projectile Group");
 	private Group					boundaryGroup		= new Group("Boudnary Group");
@@ -193,7 +192,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		if (gameClient != null) {
 			System.out.println("Connected to server, joining...");
-			gameClient.sendJoinMsg();
+			gameClient.getOutputHandler().sendJoinMsg();
 		}
 	}
 	
@@ -303,7 +302,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	 *            - The total time that has passed in the game world.
 	 */
 	private void updateGameWorld(float elapsedTimeMS) {
-		time += elapsedTimeMS;
 		super.update(elapsedTimeMS);
 		float temp;
 		camera.setLocation(camera.getLocation());
@@ -326,13 +324,16 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 					gs = groupChildren.next();
 					
 					// Check if a bullet hit the local player.
-					if (gs.getWorldBound() != null && gs.getWorldBound().contains(locP1)
-							&& (gs instanceof Projectile)) {
+					if (gs.getWorldBound() != null && gs.getWorldBound().contains(locP1) && (gs instanceof Projectile)) {
 						Avatar bulletOwner = ((Projectile) (gs)).getSourceAvatar();
 						
 						if (bulletOwner != localPlayer) {
 							System.out.println("Damaged by: " + bulletOwner.getUUID());
 							localPlayer.setHealth(localPlayer.getHealth() - 30);
+							
+							if (gameClient != null) {
+								gameClient.getOutputHandler().sendHitMsg(bulletOwner.getUUID(), localPlayer.isDead());
+							}
 						}
 						
 					}
@@ -346,6 +347,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 						eventManager.triggerEvent(newCrash);
 						pickUp.play();
 					}
+					
 					// Check if we hit a wall, move backwards away from the wall if we do. This can be improved by utilizing the 
 					// physics engine if time permits.
 					if (locP1.getX() >= xBound) {
@@ -366,7 +368,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		}
 		
 		if (localPlayer.isDead()) {
-			respawn();
+			respawn(localPlayer);
 		}
 		
 		removeGameWorldObject(hudGroupTeamOne);
@@ -474,7 +476,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		addGameWorldObject(solarSystemGroup);
 		
 		// Add the player to the game world.
-		localPlayer = new Avatar("Player 1", sceneManager.addAvatar());
+		localPlayer = new Avatar("Player 1", sceneManager.addAvatar(), this, null);
 		localPlayer.getTriMesh().translate(50, 4.0f, 10 + origin);
 		localPlayer.getTriMesh().startAnimation("my_animation");
 		addGameWorldObject(localPlayer.getTriMesh());
@@ -530,7 +532,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		if (gameClient != null) {
 			try {
-				gameClient.sendByeMessage();
+				gameClient.getOutputHandler().sendByeMessage();
 				gameClient.shutdown();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -640,10 +642,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		return isConnected;
 	}
 	
-	public Avatar addGhostToGame(	float x,
-									float y,
-									float z) {
-		Avatar ghost = new Avatar("Ghost " + ++ghostCount, sceneManager.addAvatar());
+	public Avatar addGhostToGame(UUID uuid, float x, float y, float z) {
+		Avatar ghost = new Avatar("Ghost " + ++ghostCount, sceneManager.addAvatar(), this, uuid);
 		ghost.getTriMesh().translate(x, y, z);
 		addGameWorldObject(ghost.getTriMesh());
 		
@@ -654,10 +654,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		removeGameWorldObject(ghost.getTriMesh());
 	}
 	
-	public GhostNPC addNpcToGame(	int id,
-									float x,
-									float y,
-									float z) {
+	public GhostNPC addNpcToGame(UUID id, float x, float y, float z) {
 		GhostNPC npc = new GhostNPC(id, new Vector3D(x, y, z));
 		addGameWorldObject(npc);
 		return npc;
@@ -672,8 +669,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		projectileGroup.addChild(projectile);
 		fire.play();
 		
-		if (gameClient != null) {
-			gameClient.sendProjectileMsg();
+		if (gameClient != null && player == localPlayer) {
+			gameClient.getOutputHandler().sendProjectileMsg();
 		}
 	}
 	
@@ -702,7 +699,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	/**
 	 * Obtains a random positive/negative integer
 	 */
-	private int getRandomSignedInteger(int limit) {
+	public int getRandomSignedInteger(int limit) {
 		int temp = r.nextInt(limit);
 		
 		if (r.nextBoolean()) {
@@ -712,20 +709,15 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		return temp;
 	}
 	
-	private void respawn() {
-		dead.play();
-		localPlayer.setHealth(100);
+	private void respawn(Avatar avatar) {
+
 		
-		Point3D locP1 = new Point3D(localPlayer.getTriMesh().getLocalTranslation().getCol(3));
-		Vector3D newLoc = new Vector3D(getRandomSignedInteger(1200), locP1.getY(),
-				getRandomSignedInteger(600));
-		move(localPlayer.getTriMesh(), locP1, newLoc);
+		if (avatar == localPlayer) {
+			localPlayer.respawn();
+		}
 	}
 	
-	private void move(	TriMesh object,
-						Point3D oldLocation,
-						Vector3D newLocation) {
-		object.translate((float) (newLocation.getX() - oldLocation.getX()), 0,
-				(float) (newLocation.getZ() - oldLocation.getZ()));
+	public void playDead() {
+		dead.play();
 	}
 }

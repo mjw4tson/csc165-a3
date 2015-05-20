@@ -4,21 +4,24 @@ import net.java.games.input.Event;
 import sage.input.action.AbstractInputAction;
 import sage.scene.SceneNode;
 import engine.input.action.camera.MoveAction.Direction;
+import games.circuitshooter.network.CircuitShooterClient;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
 
 public class MoveNodeAction extends AbstractInputAction {
-	private SceneNode		avatar;
-	private Direction		direction;					// Determines which direction to move.
-	private SetSpeedAction	runAction;
+	private SceneNode				avatar;
+	private Direction				direction;					// Determines which direction to move.
+	private SetSpeedAction			runAction;
+	private CircuitShooterClient	client;
 	
 	private float			speed			= 0.1f;
 	private float			idleConstant	= 0.65f;	// Constant indicating the threshold of an idle axis value.
 														
-	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r) {
+	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, CircuitShooterClient client) {
 		avatar = n;
 		direction = d;
 		runAction = r;
+		this.client = client;
 	}
 	
 	/**
@@ -116,6 +119,10 @@ public class MoveNodeAction extends AbstractInputAction {
 			dir = dir.mult(rot);
 			dir.scale(s * t);
 			avatar.translate((float) dir.getX(), (float) dir.getY(), (float) dir.getZ());
+			
+			if (client != null) {
+				client.getOutputHandler().sendMoveMsg(avatar.getLocalTranslation().getCol(3));
+			}
 		}
 	}
 	

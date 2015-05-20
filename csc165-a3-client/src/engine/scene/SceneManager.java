@@ -165,8 +165,7 @@ public class SceneManager {
 	 * 
 	 * @param ammoGroup
 	 */
-	public void addHealthBoxes(	Group healthGroup,
-								PhysicsManager pMan) {
+	public void addHealthBoxes(Group healthGroup, PhysicsManager pMan) {
 		TriMesh healthBoxTM = loader.loadModel(directory + dirModel + "medic.obj");
 		TriMesh healthBoxTM2 = loader.loadModel(directory + dirModel + "medic.obj");
 		TriMesh healthBoxTM3 = loader.loadModel(directory + dirModel + "medic.obj");

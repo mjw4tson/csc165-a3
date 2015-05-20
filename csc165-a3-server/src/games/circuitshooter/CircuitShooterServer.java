@@ -24,8 +24,6 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
         npcCtrl = new NPCController(this);
         
         npcCtrl.spawnNpcs(10);
-        
-        //npcLoop();
     }
     
     @Override
@@ -68,6 +66,22 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
                                  Float.parseFloat(msgTokens[4]));
                     break;
                     
+                case "rot":
+                    sendRotMsgs(UUID.fromString(msgTokens[1]),
+                            Float.parseFloat(msgTokens[2]), 
+                            Float.parseFloat(msgTokens[3]), 
+                            Float.parseFloat(msgTokens[4]),
+                            Float.parseFloat(msgTokens[5]));
+                    break;
+                    
+                case "proj":
+                    sendProjMsgs(UUID.fromString(msgTokens[1]));
+                    break;
+                    
+                case "hit":
+                    sendHitMsg(UUID.fromString(msgTokens[1]), UUID.fromString(msgTokens[2]), Boolean.parseBoolean(msgTokens[2]));
+                    break;
+                    
                 case "dsfr":
                     sendDetailsMsg(UUID.fromString(msgTokens[1]),
                                    UUID.fromString(msgTokens[2]),
@@ -75,7 +89,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
                                    Float.parseFloat(msgTokens[4]), 
                                    Float.parseFloat(msgTokens[5]));
                     break;
-                
+                    
                 case "wsds":
                     sendWantsDetailsMsgs(UUID.fromString(msgTokens[1]));
                     break;
@@ -142,6 +156,45 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
         } catch (IOException e) {
             e.printStackTrace();
         }        
+    }
+    
+    public void sendRotMsgs(UUID clientID, float col0x, float col0z, float col2x, float col2z) {
+        // Format rot,clientID,rotamt
+        try {
+            String msg = new String("rot," + clientID.toString());
+            msg += "," + col0x + "," + col0z;
+            msg += "," + col2x + "," + col2z;
+            
+            System.out.println("Sending rotation message: " + msg);
+            forwardPacketToAll(msg, clientID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
+    public void sendProjMsgs(UUID clientID) {
+        // Format proj,clientID
+        try {
+            String msg = new String("proj," + clientID.toString());
+            
+            forwardPacketToAll(msg, clientID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void sendHitMsg(UUID shooterID, UUID woundedID, boolean isKilled) {
+        // Format hit,shooterID,woundedID,isKilled
+        try {
+            String msg = new String("hit," + shooterID.toString());
+            msg += "," + woundedID;
+            msg += "," + isKilled;
+            
+            sendPacket(msg, woundedID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void sendWantsDetailsMsgs(UUID clientID) {
