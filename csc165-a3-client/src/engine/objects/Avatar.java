@@ -101,12 +101,16 @@ public class Avatar implements IEventListener {
 		cs.playDead();
 		setHealth(100);
 		
-		Point3D locP1 = new Point3D(getTriMesh().getLocalTranslation().getCol(3));
+		Point3D locP1 = new Point3D(getLocation());
 		Vector3D newLoc = new Vector3D(cs.getRandomSignedInteger(1200), locP1.getY(), cs.getRandomSignedInteger(600));
 		getTriMesh().translate((float) (newLoc.getX() - locP1.getX()), 0,  (float) (newLoc.getZ() - locP1.getZ()));
 		
 		if (cs.getClient() != null) {
-			cs.getClient().getOutputHandler().sendMoveMsg(getTriMesh().getLocalTranslation().getCol(3));
+			cs.getClient().getOutputHandler().sendMoveMsg(getLocation());
 		}
+	}
+	
+	public Vector3D getLocation() {
+		return getTriMesh().getLocalRotation().getCol(3);
 	}
 }

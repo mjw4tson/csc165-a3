@@ -4,6 +4,7 @@ import net.java.games.input.Event;
 import sage.input.action.AbstractInputAction;
 import sage.scene.SceneNode;
 import engine.input.action.camera.MoveAction.Direction;
+import games.circuitshooter.CircuitShooter;
 import games.circuitshooter.network.CircuitShooterClient;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
@@ -12,16 +13,18 @@ public class MoveNodeAction extends AbstractInputAction {
 	private SceneNode				avatar;
 	private Direction				direction;					// Determines which direction to move.
 	private SetSpeedAction			runAction;
+	private CircuitShooter			cs;
 	private CircuitShooterClient	client;
 	
 	private float			speed			= 0.1f;
 	private float			idleConstant	= 0.65f;	// Constant indicating the threshold of an idle axis value.
 														
-	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, CircuitShooterClient client) {
+	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, CircuitShooter cs) {
 		avatar = n;
 		direction = d;
 		runAction = r;
-		this.client = client;
+		client = cs.getClient();
+		this.cs = cs;
 	}
 	
 	/**
@@ -118,10 +121,15 @@ public class MoveNodeAction extends AbstractInputAction {
 		if (d != Direction.IDLE) {
 			dir = dir.mult(rot);
 			dir.scale(s * t);
-			avatar.translate((float) dir.getX(), (float) dir.getY(), (float) dir.getZ());
 			
-			if (client != null) {
-				client.getOutputHandler().sendMoveMsg(avatar.getLocalTranslation().getCol(3));
+			if (isValidPosition(dir.getX(), dir.getZ())) {
+				avatar.translate((float) dir.getX(), (float) dir.getY(), (float) dir.getZ());
+				
+				System.out.println(avatar.getLocalTranslation().getCol(3));
+				
+				if (client != null) {
+					client.getOutputHandler().sendMoveMsg(avatar.getLocalTranslation().getCol(3));
+				}
 			}
 		}
 	}
@@ -132,5 +140,16 @@ public class MoveNodeAction extends AbstractInputAction {
 	 */
 	public void performAction(float time, Event e) {
 		findSpeedAndDirection(e, time);
+	}
+	
+	private boolean isValidPosition(double x, double z) {
+		Vector3D position = avatar.getLocalTranslation().getCol(3);
+		
+		System.out.println("New +X: " + (position.getX() + x) + "\tNew -X: " + (position.getX() - x) + "\tNew +Z: "+ (position.getZ() + z) + "\tNew -Z: " + (position.getZ() - z));
+		
+		if (position.getX() + x >= cs.xBound || position.getX() - x <= -cs.xBound || position.getZ() + z >= cs.yBound || position.getZ() - z <= -cs.yBound)
+			return false;
+		else 
+			return true;
 	}
 }

@@ -20,13 +20,13 @@ public class Projectile extends Sphere {
 
 		sourceAvatar = avatar;
 		age = 10;
-		speed = 90;
+		speed = 45;
 		
 		if (sourceAvatar != cs.localPlayer)
 			setColor(Color.RED);
 		
 		Matrix3D translate = new Matrix3D();
-		Vector3D translation = avatar.getTriMesh().getLocalTranslation().getCol(3);
+		Vector3D translation = avatar.getLocation();
 		translate.translate(translation.getX(), translation.getY(), translation.getZ());
 		setLocalTranslation(translate);
 		

@@ -70,6 +70,7 @@ public class ClientOutputHandler {
         try {
             String msg = new String("move," + id.toString());
             msg += "," + pos.getX() + "," + pos.getY() + "," + pos.getZ();
+            
             client.sendPacket(msg);
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,7 +87,7 @@ public class ClientOutputHandler {
     		msg += "," + col0.getX() + "," + col0.getZ();
     		msg += "," + col2.getX() + "," + col2.getZ();
     		
-    		System.out.println("Sending rotation message: " + msg);
+    		// System.out.println("Sending rotation message: " + msg);
     		client.sendPacket(msg);
     	} catch (IOException e) {
     		e.printStackTrace();
@@ -122,6 +123,7 @@ public class ClientOutputHandler {
     	// Format proj,localID
     	try {
     		String msg = new String("proj," + id.toString());
+    		
     		client.sendPacket(msg);
     	} catch (IOException e) {
     		e.printStackTrace();

@@ -94,6 +94,8 @@ public class ClientInputHandler {
     protected void processHit(UUID ghostID, UUID shooterID, boolean isKilled) {
     	Avatar ghost = ghostAvatars.get(ghostID);
     	
+    	System.out.println("Hit registered. Shooter: " + shooterID + "\tGhost Avatar ID: " + ghostID + "\tIsKilled: " + isKilled);
+    	
     	if (ghost != null) {
     		if (isKilled) {
     			ghost.respawn();

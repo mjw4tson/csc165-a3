@@ -124,8 +124,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	
 	// Environment
 	private SceneManager			sceneManager;
-	private float					xBound				= 1300f;
-	private float					yBound				= 700f;
+	public float					xBound				= 1300f;
+	public float					yBound				= 700f;
 	private Random					r					= new Random();
 	
 	// Physics
@@ -312,7 +312,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		Iterator<SceneNode> iterator = getGameWorld().iterator();
 		SceneNode s;
 		
-		Point3D locP1 = new Point3D(localPlayer.getTriMesh().getLocalTranslation().getCol(3));
+		Point3D locP1 = new Point3D(localPlayer.getLocation());
 		
 		while (iterator.hasNext()) {
 			s = iterator.next();
@@ -346,22 +346,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 						CrashEvent newCrash = new CrashEvent(numCrashes);
 						eventManager.triggerEvent(newCrash);
 						pickUp.play();
-					}
-					
-					// Check if we hit a wall, move backwards away from the wall if we do. This can be improved by utilizing the 
-					// physics engine if time permits.
-					if (locP1.getX() >= xBound) {
-						temp = (float) ((locP1.getX() - xBound) * -1);
-						localPlayer.getTriMesh().translate(temp, 0, 0);
-					} else if (locP1.getX() <= -xBound) {
-						temp = (float) ((locP1.getX() + xBound) * -1);
-						localPlayer.getTriMesh().translate(temp, 0, 0);
-					} else if (locP1.getZ() >= yBound) {
-						temp = (float) ((locP1.getZ() - yBound) * -1);
-						localPlayer.getTriMesh().translate(0, 0, temp);
-					} else if (locP1.getZ() <= -yBound) {
-						temp = (float) ((locP1.getZ() + yBound) * -1);
-						localPlayer.getTriMesh().translate(0, 0, temp);
 					}
 				}
 			}
@@ -625,9 +609,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	}
 	
 	public Vector3D getPlayerPosition() {
-		Vector3D position = localPlayer.getTriMesh().getWorldTransform().getCol(3);
-		
-		return new Vector3D(position.getX(), position.getY(), position.getZ());
+		return localPlayer.getLocation();
 	}
 	
 	public IAudioManager getAudioManager() {

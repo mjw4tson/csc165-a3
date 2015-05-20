@@ -165,7 +165,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
             msg += "," + col0x + "," + col0z;
             msg += "," + col2x + "," + col2z;
             
-            System.out.println("Sending rotation message: " + msg);
+            // System.out.println("Sending rotation message: " + msg); Commented due to verbosity
             forwardPacketToAll(msg, clientID);
         } catch (IOException e) {
             e.printStackTrace();

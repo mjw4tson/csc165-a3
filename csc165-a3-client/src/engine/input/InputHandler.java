@@ -121,10 +121,10 @@ public class InputHandler {
 		this.addControl(null, Key.RSHIFT, null, setLocked, null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
 		
 		// Movement actions
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed, bg.getClient());
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed, bg.getClient());
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD, setSpeed, bg.getClient());
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD, setSpeed, bg.getClient());
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed, bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed, bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD, setSpeed, bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD, setSpeed, bg);
 
 		// Movement controls
 		this.addControl(null, Key.W, null, mvNodeForward, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
@@ -176,10 +176,10 @@ public class InputHandler {
 		this.addControl(Axis.Z, null, null, fAction, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
 		
 		// Move actions
-		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed, bg.getClient());
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed, bg.getClient());
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD, setSpeed, bg.getClient());
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD, setSpeed, bg.getClient());
+		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.LEFT, setSpeed, bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.RIGHT, setSpeed, bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.FORWARD, setSpeed, bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer.getTriMesh(), Direction.BACKWARD, setSpeed, bg);
 		
 		// Movement controls
 		this.addControl(Axis.Y, null, null, mvNodeForward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
