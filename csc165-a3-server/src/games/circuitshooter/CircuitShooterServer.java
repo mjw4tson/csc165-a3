@@ -25,7 +25,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
         
         npcCtrl.spawnNpcs(10);
         
-        npcLoop();
+        //npcLoop();
     }
     
     @Override
@@ -177,7 +177,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
                 msg += "," + (npc.getX());
                 msg += "," + (npc.getY());
                 msg += "," + (npc.getZ());
-                System.out.println("Updating NPC location: " + msg);
+                // System.out.println("Updating NPC location: " + msg); Commented due to verbosity
                 sendPacketToAll(msg);
             } catch (IOException e) {
                 e.printStackTrace();
