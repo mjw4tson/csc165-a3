@@ -3,29 +3,22 @@ package engine.input.action.camera;
 import net.java.games.input.Event;
 import sage.input.action.AbstractInputAction;
 import sage.scene.SceneNode;
-import sage.terrain.TerrainBlock;
 import engine.input.action.camera.MoveAction.Direction;
-import games.circuitshooter.CircuitShooter;
 import graphicslib3D.Matrix3D;
-import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 
 public class MoveNodeAction extends AbstractInputAction {
 	private SceneNode		avatar;
 	private Direction		direction;					// Determines which direction to move.
 	private SetSpeedAction	runAction;
-	private TerrainBlock	terrain;
-	private CircuitShooter	bg;
 	
-	private float			speed			= 0.03f;
+	private float			speed			= 0.1f;
 	private float			idleConstant	= 0.65f;	// Constant indicating the threshold of an idle axis value.
 														
-	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, TerrainBlock terrainBlock, CircuitShooter bg) {
+	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r) {
 		avatar = n;
 		direction = d;
 		runAction = r;
-		terrain = terrainBlock;
-		this.bg = bg;
 	}
 	
 	/**
@@ -47,9 +40,9 @@ public class MoveNodeAction extends AbstractInputAction {
 		
 		// Determine if the player is running.
 		if (runAction.isRunning() && runAction.getPlayer() == this.avatar) {
-			speed = .15f *  mult;
+			speed = .4f *  mult;
 		} else {
-			speed = .087f * mult;
+			speed = .25f * mult;
 		}
 		
 		if (isXAxis) {
@@ -123,28 +116,9 @@ public class MoveNodeAction extends AbstractInputAction {
 			dir = dir.mult(rot);
 			dir.scale(s * t);
 			avatar.translate((float) dir.getX(), (float) dir.getY(), (float) dir.getZ());
-			updateVerticalPosition();
 		}
 	}
 	
-	/**
-	 * Update vertical position based upon the terrain block.
-	 */
-	private void updateVerticalPosition() {
-		Point3D avLoc = new Point3D(avatar.getLocalTranslation().getCol(3));
-		float x = (float) avLoc.getX();
-		float z = (float) avLoc.getZ();
-		float terHeight = terrain.getHeightFromWorld(new Point3D(x,0,z));
-		float desiredHeight = terHeight + (float) terrain.getOrigin().getY() + 1.5f;
-		
-		if (!Float.isNaN(desiredHeight)) {
-			avatar.getLocalTranslation().setElementAt(1, 3, desiredHeight);
-		}
-		
-		if (bg.getClient() != null) {
-			bg.getClient().sendMoveMsg(bg.getPlayerPosition());
-		}
-	}
 	
 	/*
 	 * Starts logic to move the avatar.

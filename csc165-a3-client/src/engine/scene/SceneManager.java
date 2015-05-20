@@ -11,15 +11,11 @@ import sage.model.loader.OBJLoader;
 import sage.model.loader.ogreXML.OgreXMLParser;
 import sage.scene.Group;
 import sage.scene.Model3DTriMesh;
-import sage.scene.RotationController;
 import sage.scene.SceneNode;
 import sage.scene.SceneNode.CULL_MODE;
-import sage.scene.SceneNode.RENDER_MODE;
 import sage.scene.SkyBox;
 import sage.scene.SkyBox.Face;
 import sage.scene.TriMesh;
-import sage.scene.shape.Cube;
-import sage.scene.shape.Pyramid;
 import sage.scene.shape.Rectangle;
 import sage.scene.shape.Sphere;
 import sage.scene.state.RenderState;
@@ -30,8 +26,6 @@ import sage.terrain.TerrainBlock;
 import sage.texture.Texture;
 import sage.texture.Texture.WrapMode;
 import sage.texture.TextureManager;
-import engine.event.CrashEvent;
-import engine.scene.controller.ScaleController;
 import engine.scene.physics.PhysicsManager;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
@@ -295,15 +289,14 @@ public class SceneManager {
 	 * Initializes the terrain.
 	 */
 	public TerrainBlock initTerrain(IDisplaySystem display) { // create height map and terrain block
-		HillHeightMap myHillHeightMap = new HillHeightMap(429, 2000, 40.0f, 50.0f, (byte) 2, 12345);
+		HillHeightMap myHillHeightMap = new HillHeightMap(100, 2000, 40.0f, 50.0f, (byte) 2, 12345);
 		myHillHeightMap.setHeightScale(1.1f);
 		hillTerrain = createTerBlock(myHillHeightMap);
 		
 		// create texture and texture state to color the terrain
 		TextureState terrainState;
 		sandTexture.setApplyMode(sage.texture.Texture.ApplyMode.Replace);
-		terrainState = (TextureState) display.getRenderer().createRenderState(
-				RenderState.RenderStateType.Texture);
+		terrainState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		terrainState.setTexture(sandTexture, 0);
 		terrainState.setEnabled(true);
 		

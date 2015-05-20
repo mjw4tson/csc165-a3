@@ -1,6 +1,5 @@
 package engine.scene.physics;
 
-import engine.objects.Avatar;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
 

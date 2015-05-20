@@ -38,12 +38,8 @@ import sage.networking.IGameConnection.ProtocolType;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.HUDImage;
-import sage.scene.Model3DTriMesh;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
-import sage.scene.shape.Cube;
-import sage.scene.shape.Pyramid;
-import sage.scene.shape.Rectangle;
 import sage.terrain.HillHeightMap;
 import sage.util.VersionInfo;
 import engine.event.CrashEvent;
@@ -107,8 +103,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	
 	// Directory related
 	private static String			directory			= "." + File.separator;
-	private String					dirHud				= "images" + File.separator + "hud"
-																+ File.separator;
+	private String					dirHud				= "images" + File.separator + "hud" + File.separator;
 	private String					dirScripts			= "scripts" + File.separator;
 	private String					dirAudio			= "audio" + File.separator;
 	
