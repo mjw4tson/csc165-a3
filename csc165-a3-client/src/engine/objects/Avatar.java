@@ -111,6 +111,6 @@ public class Avatar implements IEventListener {
 	}
 	
 	public Vector3D getLocation() {
-		return getTriMesh().getLocalRotation().getCol(3);
+		return getTriMesh().getLocalTranslation().getCol(3);
 	}
 }

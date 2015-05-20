@@ -303,7 +303,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	 */
 	private void updateGameWorld(float elapsedTimeMS) {
 		super.update(elapsedTimeMS);
-		float temp;
 		camera.setLocation(camera.getLocation());
 		localPlayer.getTriMesh().updateAnimation(elapsedTimeMS * 4);
 		
@@ -355,6 +354,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 			respawn(localPlayer);
 		}
 		
+		removeOldProjectiles();
 		removeGameWorldObject(hudGroupTeamOne);
 		removeGameWorldObject(hudGroupTeamOneTime);
 		
@@ -366,6 +366,23 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		addGameWorldObject(hudGroupTeamOne);
 		addGameWorldObject(hudGroupTeamOneTime);
 		
+	}
+	
+	private void removeOldProjectiles() {
+		Iterator<SceneNode> projectiles = projectileGroup.getChildren();
+		ArrayList<Projectile> toRemove = new ArrayList<Projectile>();
+		
+		while (projectiles.hasNext()) {
+			Projectile proj = (Projectile)projectiles.next();
+			
+			if (proj.isExpired()) {
+				toRemove.add(proj);
+			}
+		}
+		
+		for (Projectile proj : toRemove) {
+			projectileGroup.removeChild(proj);
+		}
 	}
 	
 	/**

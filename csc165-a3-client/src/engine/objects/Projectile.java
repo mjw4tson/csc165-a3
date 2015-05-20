@@ -10,17 +10,17 @@ import sage.renderer.IRenderer;
 import sage.scene.shape.Sphere;
 
 public class Projectile extends Sphere {
-	private int				age;
-	private float 			speed;
-	private Avatar			sourceAvatar;
+	private int		updates;
+	private float	speed;
+	private Avatar	sourceAvatar;
 	
 	public Projectile(CircuitShooter cs, Avatar avatar) {
 		super(1, 10, 10, Color.GREEN);
 		super.scale(.5f, .7f, 1);
 
 		sourceAvatar = avatar;
-		age = 10;
 		speed = 45;
+		updates = 0;
 		
 		if (sourceAvatar != cs.localPlayer)
 			setColor(Color.RED);
@@ -29,12 +29,9 @@ public class Projectile extends Sphere {
 		Vector3D translation = avatar.getLocation();
 		translate.translate(translation.getX(), translation.getY(), translation.getZ());
 		setLocalTranslation(translate);
+		System.out.println(avatar.getLocation());
 		
 		setLocalRotation((Matrix3D)avatar.getTriMesh().getLocalRotation().clone());
-	}
-	
-	public boolean isDead() {
-		return age <= 0 ? true : false;
 	}
 	
     /**
@@ -49,6 +46,7 @@ public class Projectile extends Sphere {
         dir = dir.mult(rot);
         dir.scale((double) (speed * .1));
         translate((float)dir.getX(), (float)dir.getY(), (float)dir.getZ());
+        updates++;
     }
 
 	public Avatar getSourceAvatar() {
@@ -57,5 +55,9 @@ public class Projectile extends Sphere {
 
 	public void setSourceAvatar(Avatar sourceAvatar) {
 		this.sourceAvatar = sourceAvatar;
+	}
+	
+	public boolean isExpired() {
+		return updates > 1000 ? true : false;
 	}
 }

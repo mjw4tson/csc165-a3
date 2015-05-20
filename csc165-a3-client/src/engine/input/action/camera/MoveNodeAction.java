@@ -125,8 +125,6 @@ public class MoveNodeAction extends AbstractInputAction {
 			if (isValidPosition(dir.getX(), dir.getZ())) {
 				avatar.translate((float) dir.getX(), (float) dir.getY(), (float) dir.getZ());
 				
-				System.out.println(avatar.getLocalTranslation().getCol(3));
-				
 				if (client != null) {
 					client.getOutputHandler().sendMoveMsg(avatar.getLocalTranslation().getCol(3));
 				}
@@ -144,8 +142,6 @@ public class MoveNodeAction extends AbstractInputAction {
 	
 	private boolean isValidPosition(double x, double z) {
 		Vector3D position = avatar.getLocalTranslation().getCol(3);
-		
-		System.out.println("New +X: " + (position.getX() + x) + "\tNew -X: " + (position.getX() - x) + "\tNew +Z: "+ (position.getZ() + z) + "\tNew -Z: " + (position.getZ() - z));
 		
 		if (position.getX() + x >= cs.xBound || position.getX() - x <= -cs.xBound || position.getZ() + z >= cs.yBound || position.getZ() - z <= -cs.yBound)
 			return false;
