@@ -35,7 +35,7 @@ public class InputHandler {
 	private String					kbName;
 	private String					moName;
 	private ArrayList<Controller>	devices;
-	private boolean					finalBuild	= false;
+	private boolean					finalBuild	= true;
 	private FireAction				fAction;
 	
 	public InputHandler(IInputManager inmanager) {
