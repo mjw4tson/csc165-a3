@@ -1,65 +1,40 @@
 package event;
 
-import graphicslib3D.Matrix3D;
 import graphicslib3D.Point3D;
 
 import java.util.Random;
+import java.util.UUID;
 
-import sage.scene.shape.Sphere;
+public class NPC {
+    private static final float RESTING_HEIGHT = 24.0f;
 
-public class NPC extends Sphere {
-    private static int     NEXT_ID          = 0;
-    private static Point3D DEFAULT_LOCATION = new Point3D(50, 14.0f, 75);
-
-    private boolean        isSmall          = false;
-
-    private int            id;
+    private Point3D location;
+    private UUID    uuid;
 
     public NPC() {
-        id = ++NEXT_ID;
-
+        uuid = UUID.randomUUID();
+        
         Random rand = new Random();
-
-        Matrix3D trans = new Matrix3D();
-        trans.translate(DEFAULT_LOCATION.getX() + (rand.nextInt(10) - 20), DEFAULT_LOCATION.getY(), DEFAULT_LOCATION.getZ() + (rand.nextInt(10) - 20));
-        setLocalTranslation(trans);
+        location = new Point3D(50 + (rand.nextInt(10) - 20), RESTING_HEIGHT, 75 +(rand.nextInt(10) - 20));
     }
 
-    public int getId() {
-        return id;
+    public UUID getId() {
+        return uuid;
     }
 
     public double getX() {
-        return getWorldTransform().getCol(3).getX();
+        return location.getX();
     }
 
     public double getY() {
-        return getWorldTransform().getCol(3).getY();
+        return location.getY();
     }
 
     public double getZ() {
-        return getWorldTransform().getCol(3).getZ();
+        return location.getZ();
     }
 
-    public void updateLocation() {
+    public void updateLocation(float elapsedTimeMS) {
         // TODO
-    }
-
-    public void getSmall() {
-        if (isSmall) {
-
-        } else {
-            this.scale(.5f, .5f, .5f);
-            isSmall = !isSmall;
-        }
-    }
-
-    public void getBig() {
-        if (!isSmall) {
-
-        } else {
-            this.scale(2f, 2f, 2f);
-            isSmall = !isSmall;
-        }
     }
 }

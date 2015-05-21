@@ -101,7 +101,7 @@ public class ClientOutputHandler {
     		msg += "," + id;
     		msg += "," + isDead;
     		
-    		System.out.println("Hit msg: " + msg);
+    		// System.out.println("Hit msg: " + msg);
     		client.sendPacket(msg);
     	} catch (Exception e) {
     		e.printStackTrace();

@@ -351,6 +351,5 @@ public class SceneManager {
 		}
 		
 		return temp;
-	}
-	
+	}	
 }

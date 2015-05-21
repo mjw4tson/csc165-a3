@@ -7,6 +7,7 @@ import engine.objects.Avatar;
 import engine.objects.GhostNPC;
 import games.circuitshooter.CircuitShooter;
 import graphicslib3D.Matrix3D;
+import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 
 public class ClientInputHandler {
@@ -91,14 +92,11 @@ public class ClientInputHandler {
     	}
     }
     
-    protected void processHit(UUID ghostID, UUID shooterID, boolean isKilled) {
+    protected void processHit(UUID shooterID, UUID ghostID, boolean isKilled) {
     	Avatar ghost = ghostAvatars.get(ghostID);
     	
-    	System.out.println("Hit registered. Shooter: " + shooterID + "\tGhost Avatar ID: " + ghostID + "\tIsKilled: " + isKilled);
-    	
     	if (ghost != null) {
-    		if (isKilled && shooterID == output.getUUID()) {
-    			System.out.println("You killed someone!");
+    		if (isKilled && shooterID.equals(output.getUUID())) {
     			ghost.respawn();
     		} else {
     			ghost.setHealth(ghost.getHealth() - 30);
@@ -110,7 +108,7 @@ public class ClientInputHandler {
     	GhostNPC npc = ghostNPCs.get(id);
     	
     	if (npc != null) {
-    		npc.setPosition(new Vector3D(x, y, z));
+    		npc.setPosition(new Point3D(x, y, z));
     	} else {
     		npc = game.addNpcToGame(id, x, y, z);
     		ghostNPCs.put(id, npc);

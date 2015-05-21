@@ -10,7 +10,6 @@ public class GetBig {
     }
 
     protected BTStatus update( float elapsedTime ) {
-        npc.getBig();
         return BTStatus.BH_SUCCESS;
     }
 }

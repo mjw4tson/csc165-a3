@@ -307,7 +307,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		Iterator<SceneNode> iterator = getGameWorld().iterator();
 		SceneNode s;
 		
-		Point3D locP1 = new Point3D(localPlayer.getLocation());
 		BoundingVolume avatarVol = localPlayer.getTriMesh().getWorldBound();
 		
 		while (iterator.hasNext()) {
@@ -336,7 +335,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 					}
 					
 					// Check if we hit a medic kit.
-					if ((gs instanceof TriMesh && s.getName().equals("Health Box Group")) && gs.getWorldBound() != null && gs.getWorldBound().contains(locP1)) {
+					if ((gs instanceof TriMesh && s.getName().equals("Health Box Group")) && gs.getWorldBound() != null && gs.getWorldBound().intersects(avatarVol)) {
 						CrashEvent newCrash = new CrashEvent(++numCrashes);
 						eventManager.triggerEvent(newCrash);
 						groupChildren.remove();
@@ -359,9 +358,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		addGameWorldObject(hudGroupTeamOne);
 		addGameWorldObject(hudGroupTeamOneTime);
-		
-		System.out.println(localPlayer.getLocation().toString());
-		
 	}
 	
 	private void removeOldProjectiles() {
@@ -474,8 +470,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		addGameWorldObject(solarSystemGroup);
 		
 		// Add the player to the game world.
-		localPlayer = new Avatar("Player 1", sceneManager.addAvatar(), this, null);
-		localPlayer.getTriMesh().translate(50, 2.0f, 10 + origin);
+		localPlayer = new Avatar("Player 1", sceneManager.addAvatar(), this, gameClient != null ? gameClient.getUUID() : null);
+		localPlayer.getTriMesh().translate(50, 4.0f, 10 + origin);
 		localPlayer.getTriMesh().startAnimation("my_animation");
 		addGameWorldObject(localPlayer.getTriMesh());
 	}
@@ -594,7 +590,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		System.out.println("Script Engine Factories found:");
 		for (ScriptEngineFactory f : list) {
-			System.out.println(" Name = " + f.getEngineName() + " language = "
+			System.out.println("Name = " + f.getEngineName() + " language = "
 					+ f.getLanguageName() + " extensions = " + f.getExtensions());
 		}
 		
@@ -665,8 +661,9 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	}
 	
 	public GhostNPC addNpcToGame(UUID id, float x, float y, float z) {
-		GhostNPC npc = new GhostNPC(id, new Vector3D(x, y, z));
+		GhostNPC npc = new GhostNPC(id, new Point3D(x, y, z));
 		addGameWorldObject(npc);
+		System.out.println("Adding NPC: " + id + "\tat point: " + new Point3D(x,y,z));
 		return npc;
 	}
 	

@@ -9,21 +9,14 @@ import sage.networking.server.IClientInfo;
 import event.NPC;
 
 public class CircuitShooterServer extends GameConnectionServer<UUID> {
-    private long startTime;
-    private long lastUpdateTime;
     private NPCController npcCtrl;
-    
-    
+        
     public CircuitShooterServer(int localPort, ProtocolType protocolType) throws IOException {
         super(localPort, protocolType);
         System.out.println("Listening for clients on port: " + localPort);
         
-        startTime = System.nanoTime();
-        lastUpdateTime = startTime;
-        
-        npcCtrl = new NPCController(this);
-        
-        npcCtrl.spawnNpcs(10);
+         npcCtrl = new NPCController(this);
+         npcCtrl.spawnNpcs(3);
     }
     
     @Override
@@ -38,6 +31,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
                 System.out.println("Adding client: " + clientID);
                 addClient(ci, clientID);
                 sendJoinedMsg(clientID, true);
+                sendNPCInfo();
             }
         }
     }
@@ -79,7 +73,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
                     break;
                     
                 case "hit":
-                    sendHitMsg(UUID.fromString(msgTokens[1]), UUID.fromString(msgTokens[2]), Boolean.parseBoolean(msgTokens[2]));
+                    sendHitMsg(UUID.fromString(msgTokens[1]), UUID.fromString(msgTokens[2]), Boolean.parseBoolean(msgTokens[3]));
                     break;
                     
                 case "dsfr":
@@ -95,6 +89,8 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
                     break;
             }
         }
+
+        Thread.yield();
     }
     
     public void sendJoinedMsg(UUID clientID, boolean success) {
@@ -170,7 +166,6 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
     }
     
     public void sendProjMsgs(UUID clientID) {
@@ -191,7 +186,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
             msg += "," + woundedID;
             msg += "," + isKilled;
             
-            sendPacket(msg, woundedID);
+            sendPacket(msg, shooterID);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -223,14 +218,15 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
     }
     
     public void sendNPCInfo() {
-        // Format mnpc,id,x,y,z
+        // Format mnpc,uuid,x,y,z
         for (NPC npc : npcCtrl.getNPCs()) {
             try {
-                String msg = new String("mnpc," + Integer.toString(npc.getId()));
+                String msg = new String("mnpc," + npc.getId());
                 msg += "," + (npc.getX());
                 msg += "," + (npc.getY());
                 msg += "," + (npc.getZ());
-                // System.out.println("Updating NPC location: " + msg); Commented due to verbosity
+
+                // System.out.println("Updating NPC location: " + msg); // Commented due to verbosity
                 sendPacketToAll(msg);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -240,19 +236,5 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
     
     public void sendCheckForPlayerNear(){
         
-    }
-    
-    public void npcLoop() {
-        while(true) {
-            long frameStartTime = System.nanoTime();
-            float elapMilSecs = (frameStartTime - lastUpdateTime)/(1000000.0f);
-            
-            if (elapMilSecs >= 50.0f) {
-                npcCtrl.updateNPCs();
-                sendNPCInfo();
-            }
-            
-            Thread.yield();
-        }
     }
 }

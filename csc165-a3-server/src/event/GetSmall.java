@@ -12,7 +12,6 @@ public class GetSmall extends BTAction
     }
 
     protected BTStatus update( float elapsedTime ) {
-        npc.getSmall();
         return BTStatus.BH_SUCCESS;
     }
 }

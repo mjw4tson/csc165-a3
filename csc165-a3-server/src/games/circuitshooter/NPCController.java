@@ -7,7 +7,7 @@ import sage.ai.behaviortrees.BTCompositeType;
 import sage.ai.behaviortrees.BehaviorTree;
 import event.NPC;
 
-public class NPCController {
+public class NPCController implements Runnable {
     private ArrayList<NPC> npcs;
     private BehaviorTree bt;
     private CircuitShooterServer server;
@@ -25,9 +25,9 @@ public class NPCController {
         setupBehaviorTree();
     }
     
-    public void updateNPCs() {
+    public void updateNPCs(float elapsedTimeMS) {
         for (NPC npc : npcs) {
-            npc.updateLocation();
+            npc.updateLocation(elapsedTimeMS);
         }
     }
     
@@ -53,20 +53,21 @@ public class NPCController {
 //        bt.insert(20, new PlayerNear(server, this, npc, false));
 //        bt.insert(20, new GetBig(npc));
     }
-    
-    public void npcLoop() {
+
+    @Override
+    public void run() {
         while (true) {
             long frameStartTime = System.nanoTime();
             float elapsedMilliSecs = (frameStartTime - lastUpdateTime) / (1000000.0f);
             if (elapsedMilliSecs >= 50.0f) {
                 lastUpdateTime = frameStartTime;
                 
-                for (NPC npc : npcs)
-                    npc.updateLocation();
-                
+                updateNPCs(50.0f);
                 server.sendNPCInfo();
-                bt.update(elapsedMilliSecs);
+
+                //bt.update(elapsedMilliSecs);
             }
+
             Thread.yield();
         }
     }

@@ -9,16 +9,20 @@ import java.util.UUID;
 import sage.networking.client.GameConnectionClient;
 
 public class CircuitShooterClient extends GameConnectionClient {
-    private UUID id;
+    private UUID uuid;
     private ClientInputHandler input;
     private ClientOutputHandler output;
     
     public CircuitShooterClient(InetAddress remAddr, int remPort, ProtocolType pType, CircuitShooter game) throws IOException {
         super(remAddr, remPort, pType);
         
-        this.id = UUID.randomUUID();
-        this.output = new ClientOutputHandler(id, this);
+        this.uuid = UUID.randomUUID();
+        this.output = new ClientOutputHandler(uuid, this);
         this.input = new ClientInputHandler(game, output);
+    }
+    
+    public UUID getUUID() {
+    	return uuid;
     }
     
     @Override
@@ -80,7 +84,7 @@ public class CircuitShooterClient extends GameConnectionClient {
                 case "hit":
                 	input.processHit(UUID.fromString(msgTokens[1]),
                 			   UUID.fromString(msgTokens[2]), 
-                			   Boolean.parseBoolean(msgTokens[2]));
+                			   Boolean.parseBoolean(msgTokens[3]));
                 	break;
                 	
                 case "mnpc":
