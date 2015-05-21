@@ -1,0 +1,8 @@
+C:\Users\Kevin\workspace\csc165-a3\csc165-a3-server\src\a3\Starter.java
+C:\Users\Kevin\workspace\csc165-a3\csc165-a3-server\src\event\GetBig.java
+C:\Users\Kevin\workspace\csc165-a3\csc165-a3-server\src\event\GetSmall.java
+C:\Users\Kevin\workspace\csc165-a3\csc165-a3-server\src\event\NPC.java
+C:\Users\Kevin\workspace\csc165-a3\csc165-a3-server\src\event\OneSecPassed.java
+C:\Users\Kevin\workspace\csc165-a3\csc165-a3-server\src\event\PlayerNear.java
+C:\Users\Kevin\workspace\csc165-a3\csc165-a3-server\src\games\circuitshooter\CircuitShooterServer.java
+C:\Users\Kevin\workspace\csc165-a3\csc165-a3-server\src\games\circuitshooter\NPCController.java
