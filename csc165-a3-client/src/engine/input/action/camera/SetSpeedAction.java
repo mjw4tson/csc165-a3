@@ -2,7 +2,7 @@ package engine.input.action.camera;
 
 import net.java.games.input.Event;
 import sage.input.action.AbstractInputAction;
-import sage.scene.SceneNode;
+import engine.objects.Avatar;
 
 /**
  * IAction for toggling sprinting on the camera world.
@@ -12,9 +12,9 @@ import sage.scene.SceneNode;
  */
 public class SetSpeedAction extends AbstractInputAction {
 	private boolean		running	= false;
-	private SceneNode	player;
+	private Avatar	player;
 
-	public SetSpeedAction( SceneNode n ) {
+	public SetSpeedAction(Avatar n) {
 		player = n;
 	}
 
@@ -32,7 +32,7 @@ public class SetSpeedAction extends AbstractInputAction {
 	 *
 	 * @return
 	 */
-	public SceneNode getPlayer() {
+	public Avatar getPlayer() {
 		return player;
 	}
 

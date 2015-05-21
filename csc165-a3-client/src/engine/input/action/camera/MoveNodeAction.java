@@ -2,15 +2,15 @@ package engine.input.action.camera;
 
 import net.java.games.input.Event;
 import sage.input.action.AbstractInputAction;
-import sage.scene.SceneNode;
 import engine.input.action.camera.MoveAction.Direction;
+import engine.objects.Avatar;
 import games.circuitshooter.CircuitShooter;
 import games.circuitshooter.network.CircuitShooterClient;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
 
 public class MoveNodeAction extends AbstractInputAction {
-	private SceneNode				avatar;
+	private Avatar					avatar;
 	private Direction				direction;					// Determines which direction to move.
 	private SetSpeedAction			runAction;
 	private CircuitShooter			cs;
@@ -19,7 +19,7 @@ public class MoveNodeAction extends AbstractInputAction {
 	private float			speed			= 0.1f;
 	private float			idleConstant	= 0.65f;	// Constant indicating the threshold of an idle axis value.
 														
-	public MoveNodeAction(SceneNode n, Direction d, SetSpeedAction r, CircuitShooter cs) {
+	public MoveNodeAction(Avatar n, Direction d, SetSpeedAction r, CircuitShooter cs) {
 		avatar = n;
 		direction = d;
 		runAction = r;
@@ -109,7 +109,7 @@ public class MoveNodeAction extends AbstractInputAction {
 	 * @return - A Vector3D that contains the new location of the camera.
 	 */
 	private void moveDirection(	Direction d, float t, float s) {
-		Matrix3D rot = avatar.getLocalRotation();
+		Matrix3D rot = avatar.getTriMesh().getLocalRotation();
 		Vector3D dir;
 		
 		if (d == Direction.FORWARD || d == Direction.BACKWARD) {
@@ -123,10 +123,10 @@ public class MoveNodeAction extends AbstractInputAction {
 			dir.scale(s * t);
 			
 			if (isValidPosition(dir.getX(), dir.getZ())) {
-				avatar.translate((float) dir.getX(), (float) dir.getY(), (float) dir.getZ());
+				avatar.getTriMesh().translate((float) dir.getX(), (float) dir.getY(), (float) dir.getZ());
 				
 				if (client != null) {
-					client.getOutputHandler().sendMoveMsg(avatar.getLocalTranslation().getCol(3));
+					client.getOutputHandler().sendMoveMsg(avatar.getLocation());
 				}
 			}
 		}
@@ -141,7 +141,7 @@ public class MoveNodeAction extends AbstractInputAction {
 	}
 	
 	private boolean isValidPosition(double x, double z) {
-		Vector3D position = avatar.getLocalTranslation().getCol(3);
+		Vector3D position = avatar.getLocation();
 		
 		if (position.getX() + x >= cs.xBound || position.getX() - x <= -cs.xBound || position.getZ() + z >= cs.yBound || position.getZ() - z <= -cs.yBound)
 			return false;
