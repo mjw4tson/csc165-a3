@@ -77,7 +77,13 @@ public class InputHandler {
 	/**
 	 * Adds a specified control with the provided IAction
 	 */
-	public void addControl(	Identifier gpKey, Identifier kbKey, Identifier moKey, IAction action, INPUT_ACTION_TYPE gpActionType, INPUT_ACTION_TYPE kbActionType, INPUT_ACTION_TYPE moActionType) {
+	public void addControl(	Identifier gpKey,
+							Identifier kbKey,
+							Identifier moKey,
+							IAction action,
+							INPUT_ACTION_TYPE gpActionType,
+							INPUT_ACTION_TYPE kbActionType,
+							INPUT_ACTION_TYPE moActionType) {
 		// Add key mappings for each input type if bindings are supplied.
 		if (gpName != null && gpKey != null) {
 			im.associateAction(gpName, gpKey, action, gpActionType);
@@ -95,119 +101,167 @@ public class InputHandler {
 			im.associateAction(moName, moKey, action, moActionType);
 		}
 	}
-
+	
 	/**
 	 * Controls for the local player, using mouse and keyboard.
-	 * @param bg base game
-	 * @param sm scene manager
+	 * 
+	 * @param bg
+	 *            base game
+	 * @param sm
+	 *            scene manager
 	 */
-	private void setupKeyboard(CircuitShooter bg, SceneManager sm) {
+	private void setupKeyboard(	CircuitShooter bg,
+								SceneManager sm) {
+		// Fire action
+		fAction = new FireAction(bg, bg.localPlayer);
+		
+		// Fire control
+		this.addControl(null, Key.SPACE, null, fAction, null,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
+		
 		// Quit game action
 		QuitGameAction qgAction = new QuitGameAction(bg);
-				
+		
 		// Quit game control
-		this.addControl(null, Key.ESCAPE, null, qgAction, null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
+		this.addControl(null, Key.ESCAPE, null, qgAction, null,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
 		
 		// Speed action
 		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer);
 		
 		// Set speed control
-		this.addControl(null, Key.LSHIFT, null, setSpeed, null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
+		this.addControl(null, Key.LSHIFT, null, setSpeed, null,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
 		
 		// Set locked action
 		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer.getTriMesh());
 		
 		// Set Locked control
-		this.addControl(null, Key.RSHIFT, null, setLocked, null, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
+		this.addControl(null, Key.RSHIFT, null, setLocked, null,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null);
 		
 		// Movement actions
 		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed, bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed, bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD, setSpeed, bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD, setSpeed, bg);
-
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed,
+				bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD,
+				setSpeed, bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD,
+				setSpeed, bg);
+		
 		// Movement controls
-		this.addControl(null, Key.W, null, mvNodeForward, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
-		this.addControl(null, Key.A, null, mvNodeLeft, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);		
-		this.addControl(null, Key.D, null, mvNodeRight, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
-		this.addControl(null, Key.S, null, mvNodeBackward, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		this.addControl(null, Key.W, null, mvNodeForward, null,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		this.addControl(null, Key.A, null, mvNodeLeft, null,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		this.addControl(null, Key.D, null, mvNodeRight, null,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		this.addControl(null, Key.S, null, mvNodeBackward, null,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 		
 		// Orbit actions
-		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked, bg.localPlayer.getTriMesh(), bg.getClient());
-		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked, bg.localPlayer.getTriMesh(), bg.getClient());
+		OrbitLeftRightAction orbitRight = new OrbitLeftRightAction(false, true, bg.cc1, setLocked,
+				bg.localPlayer.getTriMesh(), bg.getClient());
+		OrbitLeftRightAction orbitLeft = new OrbitLeftRightAction(false, false, bg.cc1, setLocked,
+				bg.localPlayer.getTriMesh(), bg.getClient());
 		OrbitUpDownAction orbitUp = new OrbitUpDownAction(false, true, bg.cc1);
 		OrbitUpDownAction orbitDown = new OrbitUpDownAction(false, false, bg.cc1);
 		
 		// Orbit controls
-		this.addControl(null, Key.UP, null, orbitUp, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
-		this.addControl(null, Key.DOWN, null, orbitDown, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
-		this.addControl(null, Key.RIGHT, null, orbitRight, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
-		this.addControl(null, Key.LEFT, null, orbitLeft, null, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		this.addControl(null, Key.UP, null, orbitUp, null,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		this.addControl(null, Key.DOWN, null, orbitDown, null,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		this.addControl(null, Key.RIGHT, null, orbitRight, null,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
+		this.addControl(null, Key.LEFT, null, orbitLeft, null,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null);
 	}
 	
 	/**
 	 * Controls for local player using gamepad controller
+	 * 
 	 * @param bg
 	 * @param sm
 	 */
-	private void setupController(CircuitShooter bg, SceneManager sm) {
+	private void setupController(	CircuitShooter bg,
+									SceneManager sm) {
 		// Quit game action
 		QuitGameAction qgAction = new QuitGameAction(bg);
-				
+		
 		// Quit game control
-		this.addControl(Button._7, null, null, qgAction, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null, null);
+		this.addControl(Button._7, null, null, qgAction,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null, null);
 		
 		// Set speed action
 		SetSpeedAction setSpeed = new SetSpeedAction(bg.localPlayer);
 		
 		// Set speed control
-		this.addControl(Button._0, null, null, setSpeed, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null, null);
+		this.addControl(Button._0, null, null, setSpeed,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null, null);
 		
 		// Set locked action
 		SetLockedAction setLocked = new SetLockedAction(bg.localPlayer.getTriMesh());
 		
 		// Set locked control
-		this.addControl(Button._1, null, null, setLocked, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY,	null, null);
+		this.addControl(Button._1, null, null, setLocked,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY, null, null);
 		
 		// Fire action
 		fAction = new FireAction(bg, bg.localPlayer);
 		
 		// Fire control
-		this.addControl(Axis.Z, null, null, fAction, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Axis.Z, null, null, fAction,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
 		
 		// Move actions
 		MoveNodeAction mvNodeLeft = new MoveNodeAction(bg.localPlayer, Direction.LEFT, setSpeed, bg);
-		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed, bg);
-		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD, setSpeed, bg);
-		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD, setSpeed, bg);
+		MoveNodeAction mvNodeRight = new MoveNodeAction(bg.localPlayer, Direction.RIGHT, setSpeed,
+				bg);
+		MoveNodeAction mvNodeForward = new MoveNodeAction(bg.localPlayer, Direction.FORWARD,
+				setSpeed, bg);
+		MoveNodeAction mvNodeBackward = new MoveNodeAction(bg.localPlayer, Direction.BACKWARD,
+				setSpeed, bg);
 		
 		// Movement controls
-		this.addControl(Axis.Y, null, null, mvNodeForward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
-		this.addControl(Axis.X, null, null, mvNodeLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
-		this.addControl(Axis.X, null, null, mvNodeRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
-		this.addControl(Axis.Y, null, null, mvNodeBackward,	IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Axis.Y, null, null, mvNodeForward,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Axis.X, null, null, mvNodeLeft,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Axis.X, null, null, mvNodeRight,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Axis.Y, null, null, mvNodeBackward,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
 		
 		// Orbit actions
-		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1, setLocked, bg.localPlayer.getTriMesh(), bg.getClient());
+		OrbitLeftRightAction orbitLeftRight = new OrbitLeftRightAction(true, true, bg.cc1,
+				setLocked, bg.localPlayer.getTriMesh(), bg.getClient());
 		OrbitUpDownAction orbitUpDown = new OrbitUpDownAction(true, false, bg.cc1);
 		
 		// Orbit controls
-		this.addControl(Axis.RY, null, null, orbitUpDown, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
-		this.addControl(Axis.RX, null, null, orbitLeftRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
-
+		this.addControl(Axis.RY, null, null, orbitUpDown,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Axis.RX, null, null, orbitLeftRight,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		
 		// Zoom actions
 		ZoomAction zoomOutP2 = new ZoomAction(bg.cc1, true, 2);
 		ZoomAction zoomInP2 = new ZoomAction(bg.cc1, false, 2);
-
+		
 		// Zoom controls
-		this.addControl(Button._4, null, null, zoomInP2, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN,	null, null);
-		this.addControl(Button._5, null, null, zoomOutP2, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Button._4, null, null, zoomInP2,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
+		this.addControl(Button._5, null, null, zoomOutP2,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN, null, null);
 	}
 	
-	public IInputManager setupControls(ICamera camera1, IInputManager im, CircuitShooter bg, SceneManager sm) {
+	public IInputManager setupControls(	ICamera camera1,
+										IInputManager im,
+										CircuitShooter bg,
+										SceneManager sm) {
 		setupKeyboard(bg, sm);
 		setupController(bg, sm);
-
+		
 		return im;
 	}
 	

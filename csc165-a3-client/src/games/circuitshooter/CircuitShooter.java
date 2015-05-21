@@ -65,8 +65,7 @@ import graphicslib3D.Vector3D;
  *
  * @author ktajeran
  */
-public class CircuitShooter extends BaseGame implements MouseWheelListener,
-		java.awt.event.MouseListener {
+public class CircuitShooter extends BaseGame implements MouseWheelListener {
 	
 	// Engine objects.
 	public Camera3PController		cc1;
@@ -89,7 +88,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	public Vector<Avatar>			ghostPlayers;
 	
 	// SceneNode Controllers
-	private ProjectileController	projCtrl = new ProjectileController();
+	private ProjectileController	projCtrl			= new ProjectileController();
 	
 	// SceneNode Groups
 	private Group					hudGroupTeamOne		= new Group("Team One Group");
@@ -101,7 +100,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	
 	// Directory related
 	private static String			directory			= "." + File.separator;
-	private String					dirHud				= "images" + File.separator + "hud" + File.separator;
+	private String					dirHud				= "images" + File.separator + "hud"
+																+ File.separator;
 	private String					dirScripts			= "scripts" + File.separator;
 	private String					dirAudio			= "audio" + File.separator;
 	
@@ -132,8 +132,9 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	
 	// Audio
 	IAudioManager					audioMgr;
-	AudioResource					ambientResource, pickUpResource, fireResource, deadResource, hitResource;
-	private Sound					ambientSound;								// static and moving sound sources
+	AudioResource					ambientResource, pickUpResource, fireResource, deadResource,
+			hitResource;
+	private Sound					ambientSound;											// static and moving sound sources
 	private Group					solarSystemGroup;
 	
 	/**
@@ -238,11 +239,16 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 			return;
 		}
 		
-		ambientResource = audioMgr.createAudioResource(directory + dirAudio + "test.wav", AudioResourceType.AUDIO_SAMPLE);
-		fireResource = audioMgr.createAudioResource(directory + dirAudio + "fire.wav", AudioResourceType.AUDIO_SAMPLE);
-		hitResource = audioMgr.createAudioResource(directory + dirAudio + "hit.wav", AudioResourceType.AUDIO_SAMPLE);
-		pickUpResource = audioMgr.createAudioResource(directory + dirAudio + "get.wav", AudioResourceType.AUDIO_SAMPLE);
-		deadResource = audioMgr.createAudioResource(directory + dirAudio + "dead.wav", AudioResourceType.AUDIO_SAMPLE);
+		ambientResource = audioMgr.createAudioResource(directory + dirAudio + "test.wav",
+				AudioResourceType.AUDIO_SAMPLE);
+		fireResource = audioMgr.createAudioResource(directory + dirAudio + "fire.wav",
+				AudioResourceType.AUDIO_SAMPLE);
+		hitResource = audioMgr.createAudioResource(directory + dirAudio + "hit.wav",
+				AudioResourceType.AUDIO_SAMPLE);
+		pickUpResource = audioMgr.createAudioResource(directory + dirAudio + "get.wav",
+				AudioResourceType.AUDIO_SAMPLE);
+		deadResource = audioMgr.createAudioResource(directory + dirAudio + "dead.wav",
+				AudioResourceType.AUDIO_SAMPLE);
 		
 		ambientSound = new Sound(ambientResource, SoundType.SOUND_MUSIC, 5, true);
 		ambientSound.initialize(audioMgr);
@@ -319,7 +325,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 					gs = groupChildren.next();
 					
 					// Check if a bullet hit the local player.
-					if (gs instanceof Projectile && gs.getWorldBound() != null && gs.getWorldBound().intersects(avatarVol)) {
+					if (gs instanceof Projectile && gs.getWorldBound() != null
+							&& gs.getWorldBound().intersects(avatarVol)) {
 						Avatar bulletOwner = ((Projectile) (gs)).getSourceAvatar();
 						
 						if (bulletOwner != localPlayer) {
@@ -328,14 +335,17 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 							localPlayer.playHit();
 							
 							if (gameClient != null) {
-								gameClient.getOutputHandler().sendHitMsg(bulletOwner.getUUID(), localPlayer.isDead());
+								gameClient.getOutputHandler().sendHitMsg(bulletOwner.getUUID(),
+										localPlayer.isDead());
 							}
 						}
 						
 					}
 					
 					// Check if we hit a medic kit.
-					if ((gs instanceof TriMesh && s.getName().equals("Health Box Group")) && gs.getWorldBound() != null && gs.getWorldBound().intersects(avatarVol)) {
+					if ((gs instanceof TriMesh && s.getName().equals("Health Box Group"))
+							&& gs.getWorldBound() != null
+							&& gs.getWorldBound().intersects(avatarVol)) {
 						CrashEvent newCrash = new CrashEvent(++numCrashes);
 						eventManager.triggerEvent(newCrash);
 						groupChildren.remove();
@@ -353,8 +363,10 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		removeGameWorldObject(hudGroupTeamOne);
 		removeGameWorldObject(hudGroupTeamOneTime);
 		
-		hudGroupTeamOne = hudNumberManager.printValues((int) localPlayer.getHealth(), -0.850f, -0.88f);
-		hudGroupTeamOneTime = hudNumberManager.printValues(localPlayer.getTotalKills(), 0.050f, 0.90f);
+		hudGroupTeamOne = hudNumberManager.printValues((int) localPlayer.getHealth(), -0.850f,
+				-0.88f);
+		hudGroupTeamOneTime = hudNumberManager.printValues(localPlayer.getTotalKills(), 0.050f,
+				0.90f);
 		
 		addGameWorldObject(hudGroupTeamOne);
 		addGameWorldObject(hudGroupTeamOneTime);
@@ -365,7 +377,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		ArrayList<Projectile> toRemove = new ArrayList<Projectile>();
 		
 		while (projectiles.hasNext()) {
-			Projectile proj = (Projectile)projectiles.next();
+			Projectile proj = (Projectile) projectiles.next();
 			
 			if (proj.isExpired()) {
 				toRemove.add(proj);
@@ -470,7 +482,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		addGameWorldObject(solarSystemGroup);
 		
 		// Add the player to the game world.
-		localPlayer = new Avatar("Player 1", sceneManager.addAvatar(), this, gameClient != null ? gameClient.getUUID() : null);
+		localPlayer = new Avatar("Player 1", sceneManager.addAvatar(), this,
+				gameClient != null ? gameClient.getUUID() : null);
 		localPlayer.getTriMesh().translate(50, 4.0f, 10 + origin);
 		localPlayer.getTriMesh().startAnimation("my_animation");
 		addGameWorldObject(localPlayer.getTriMesh());
@@ -509,7 +522,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		VersionInfo version = new VersionInfo();
 		System.out.println("SAGE: " + version.getSystemVersionInfo());
 		this.getDisplaySystem().getRenderer().getCanvas().addMouseWheelListener(this);
-		this.getDisplaySystem().getRenderer().getCanvas().addMouseListener(this);
 		// Set the directory to empty if the build is not final, as everything will be located on a
 		// flat level in this case.
 		if (!finalBuild) {
@@ -526,7 +538,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		cleanupGameClient();
 		cleanupAudio();
 	}
-
+	
 	private void cleanupGameClient() {
 		if (gameClient != null) {
 			try {
@@ -590,8 +602,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		System.out.println("Script Engine Factories found:");
 		for (ScriptEngineFactory f : list) {
-			System.out.println("Name = " + f.getEngineName() + " language = "
-					+ f.getLanguageName() + " extensions = " + f.getExtensions());
+			System.out.println("Name = " + f.getEngineName() + " language = " + f.getLanguageName()
+					+ " extensions = " + f.getExtensions());
 		}
 		
 		//Get the JS engine
@@ -648,7 +660,10 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		return isConnected;
 	}
 	
-	public Avatar addGhostToGame(UUID uuid, float x, float y, float z) {
+	public Avatar addGhostToGame(	UUID uuid,
+									float x,
+									float y,
+									float z) {
 		Avatar ghost = new Avatar("Ghost " + ++ghostCount, sceneManager.addAvatar(), this, uuid);
 		ghost.getTriMesh().translate(x, y, z);
 		addGameWorldObject(ghost.getTriMesh());
@@ -660,10 +675,13 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		removeGameWorldObject(ghost.getTriMesh());
 	}
 	
-	public GhostNPC addNpcToGame(UUID id, float x, float y, float z) {
+	public GhostNPC addNpcToGame(	UUID id,
+									float x,
+									float y,
+									float z) {
 		GhostNPC npc = new GhostNPC(id, new Point3D(x, y, z));
 		addGameWorldObject(npc);
-		System.out.println("Adding NPC: " + id + "\tat point: " + new Point3D(x,y,z));
+		System.out.println("Adding NPC: " + id + "\tat point: " + new Point3D(x, y, z));
 		return npc;
 	}
 	
@@ -679,28 +697,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		if (gameClient != null && player == localPlayer) {
 			gameClient.getOutputHandler().sendProjectileMsg();
 		}
-	}
-	
-	@Override
-	public void mouseClicked(java.awt.event.MouseEvent e) {
-		ih.getFireAction().performAction(0, null);
-	}
-	
-	// Unused interface methods
-	@Override
-	public void mouseEntered(java.awt.event.MouseEvent e) {
-	}
-	
-	@Override
-	public void mouseExited(java.awt.event.MouseEvent e) {
-	}
-	
-	@Override
-	public void mousePressed(java.awt.event.MouseEvent e) {
-	}
-	
-	@Override
-	public void mouseReleased(java.awt.event.MouseEvent e) {
 	}
 	
 	/**
