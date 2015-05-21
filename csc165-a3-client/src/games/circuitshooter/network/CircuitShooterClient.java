@@ -24,8 +24,6 @@ public class CircuitShooterClient extends GameConnectionClient {
     @Override
     protected void processPacket(Object o) {
         String msg = (String)o;
-
-        System.out.println(msg);
         
         if (msg == null)
         	return;

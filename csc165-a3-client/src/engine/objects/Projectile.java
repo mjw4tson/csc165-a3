@@ -6,7 +6,6 @@ import graphicslib3D.Vector3D;
 
 import java.awt.Color;
 
-import sage.renderer.IRenderer;
 import sage.scene.shape.Sphere;
 
 public class Projectile extends Sphere {
@@ -19,7 +18,7 @@ public class Projectile extends Sphere {
 		super.scale(.5f, .7f, 1);
 
 		sourceAvatar = avatar;
-		speed = 45;
+		speed = 0.5f;
 		updates = 0;
 		
 		if (sourceAvatar != cs.localPlayer)
@@ -33,21 +32,6 @@ public class Projectile extends Sphere {
 		
 		setLocalRotation((Matrix3D)avatar.getTriMesh().getLocalRotation().clone());
 	}
-	
-    /**
-     * Custom draw method to rotate and flash the treasure
-     */
-    @Override
-    public void draw(IRenderer r) {
-        super.draw(r);
-
-        Matrix3D rot = getLocalRotation();
-        Vector3D dir = new Vector3D(0, 0, 1);
-        dir = dir.mult(rot);
-        dir.scale((double) (speed * .1));
-        translate((float)dir.getX(), (float)dir.getY(), (float)dir.getZ());
-        updates++;
-    }
 
 	public Avatar getSourceAvatar() {
 		return sourceAvatar;
@@ -55,6 +39,14 @@ public class Projectile extends Sphere {
 
 	public void setSourceAvatar(Avatar sourceAvatar) {
 		this.sourceAvatar = sourceAvatar;
+	}
+	
+	public float getSpeed() {
+		return speed;
+	}
+	
+	public void incrementUpdates() {
+		updates++;
 	}
 	
 	public boolean isExpired() {

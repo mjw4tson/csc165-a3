@@ -90,6 +90,8 @@ public class Avatar implements IEventListener {
 			if (cs.getClient() != null) {
 				cs.getClient().getOutputHandler().sendMoveMsg(getLocation());
 			}
+		} else {
+			cs.localPlayer.incrementKills();
 		}
 	}
 
@@ -164,27 +166,21 @@ public class Avatar implements IEventListener {
 	}
 	
 	public void playFire() {
-		System.out.println("Playing fire!");
-		System.out.println("Old Location: " + fire.getLocation());
 		updateSoundLocation(fire);
-		System.out.println("New Location: " + fire.getLocation());
 		fire.play();
 	}
 	
 	public void playHit() {
-		System.out.println("Playing hit!");
 		updateSoundLocation(hit);
 		hit.play();
 	}
 	
 	public void playDead() {
-		System.out.println("Playing dead!");
 		updateSoundLocation(dead);
 		dead.play();
 	}
 	
 	public void playPickUp() {
-		System.out.println("Playing Pickup!");
 		updateSoundLocation(pickUp);
 		pickUp.play();
 	}

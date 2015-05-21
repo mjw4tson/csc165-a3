@@ -97,9 +97,9 @@ public class ClientInputHandler {
     	System.out.println("Hit registered. Shooter: " + shooterID + "\tGhost Avatar ID: " + ghostID + "\tIsKilled: " + isKilled);
     	
     	if (ghost != null) {
-    		if (isKilled) {
+    		if (isKilled && shooterID == output.getUUID()) {
+    			System.out.println("You killed someone!");
     			ghost.respawn();
-    			game.localPlayer.incrementKills();
     		} else {
     			ghost.setHealth(ghost.getHealth() - 30);
     		}

@@ -101,6 +101,7 @@ public class ClientOutputHandler {
     		msg += "," + id;
     		msg += "," + isDead;
     		
+    		System.out.println("Hit msg: " + msg);
     		client.sendPacket(msg);
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -128,5 +129,9 @@ public class ClientOutputHandler {
     	} catch (IOException e) {
     		e.printStackTrace();
     	}
+    }
+    
+    protected UUID getUUID() {
+    	return id;
     }
 }

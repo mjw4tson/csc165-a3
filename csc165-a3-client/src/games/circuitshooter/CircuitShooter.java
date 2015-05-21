@@ -52,8 +52,7 @@ import engine.objects.Avatar;
 import engine.objects.GhostNPC;
 import engine.objects.Projectile;
 import engine.scene.SceneManager;
-import engine.scene.controller.BounceController;
-import engine.scene.controller.ScaleController;
+import engine.scene.controller.ProjectileController;
 import engine.scene.hud.HUDNumber;
 import engine.scene.physics.PhysicsManager;
 import games.circuitshooter.network.CircuitShooterClient;
@@ -90,8 +89,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	public Vector<Avatar>			ghostPlayers;
 	
 	// SceneNode Controllers
-	private BounceController		roSNController		= new BounceController();
-	private ScaleController			scSNController		= new ScaleController();
+	private ProjectileController	projCtrl = new ProjectileController();
 	
 	// SceneNode Groups
 	private Group					hudGroupTeamOne		= new Group("Team One Group");
@@ -209,7 +207,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		setEarParameters();
 		
 		updateGameWorld(elapsedTimeMS);
-		updateSceneNodeControllers();
+		updateSceneNodeControllers(elapsedTimeMS);
 		cc1.update(elapsedTimeMS);
 		
 		super.update(elapsedTimeMS);
@@ -218,10 +216,9 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 	/**
 	 * Updates all SceneNode controllers.
 	 */
-	private void updateSceneNodeControllers() {
-		roSNController.update(0.4f);
-		scSNController.update(1.072f);
+	private void updateSceneNodeControllers(float elapsedTimeMS) {
 		solarSystemGroup.rotate(1.01f, new Vector3D(0, 1, 0));
+		projCtrl.update(elapsedTimeMS);
 	}
 	
 	/**
@@ -248,10 +245,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		deadResource = audioMgr.createAudioResource(directory + dirAudio + "dead.wav", AudioResourceType.AUDIO_SAMPLE);
 		
 		ambientSound = new Sound(ambientResource, SoundType.SOUND_MUSIC, 5, true);
-		
 		ambientSound.initialize(audioMgr);
-		ambientSound.play();
-		
+		//ambientSound.play();
 	}
 	
 	public void setEarParameters() {
@@ -352,7 +347,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		}
 		
 		if (localPlayer.isDead()) {
-			respawn(localPlayer);
+			localPlayer.respawn();
 		}
 		
 		removeOldProjectiles();
@@ -465,6 +460,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		// Add projectile group to game world
 		addGameWorldObject(projectileGroup);
+		projectileGroup.addController(projCtrl);
+		projCtrl.addControlledNode(projectileGroup);
 		
 		addGameWorldObject(boundaryGroup);
 		sceneManager.updateBoundaryEnvironment(boundaryGroup);
@@ -718,13 +715,5 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		}
 		
 		return temp;
-	}
-	
-	private void respawn(Avatar avatar) {
-
-		
-		if (avatar == localPlayer) {
-			localPlayer.respawn();
-		}
 	}
 }
