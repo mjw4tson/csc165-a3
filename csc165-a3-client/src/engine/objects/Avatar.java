@@ -113,10 +113,7 @@ public class Avatar implements IEventListener {
 	
 	@Override
 	public boolean handleEvent(IGameEvent event) {
-		CrashEvent cevent = (CrashEvent) event;
-		int crashCount = cevent.getWhichCrash();
-		
-		if (crashCount % 2 == 0) {
+		if (event instanceof CrashEvent) {
 			setHealth(100);
 			playPickUp();
 			System.out.println("Obtained a health pack, player health is now at 100HP");

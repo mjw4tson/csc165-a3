@@ -41,6 +41,7 @@ import sage.scene.Group;
 import sage.scene.HUDImage;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
+import sage.scene.bounding.BoundingVolume;
 import sage.terrain.HillHeightMap;
 import sage.util.VersionInfo;
 import engine.event.CrashEvent;
@@ -312,6 +313,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		SceneNode s;
 		
 		Point3D locP1 = new Point3D(localPlayer.getLocation());
+		BoundingVolume avatarVol = localPlayer.getTriMesh().getWorldBound();
 		
 		while (iterator.hasNext()) {
 			s = iterator.next();
@@ -323,7 +325,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 					gs = groupChildren.next();
 					
 					// Check if a bullet hit the local player.
-					if (gs.getWorldBound() != null && gs.getWorldBound().contains(locP1) && (gs instanceof Projectile)) {
+					if (gs instanceof Projectile && gs.getWorldBound() != null && gs.getWorldBound().intersects(avatarVol)) {
 						Avatar bulletOwner = ((Projectile) (gs)).getSourceAvatar();
 						
 						if (bulletOwner != localPlayer) {
@@ -339,12 +341,11 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 					}
 					
 					// Check if we hit a medic kit.
-					if (gs.getWorldBound() != null && gs.getWorldBound().contains(locP1)
-							&& (gs instanceof TriMesh && s.getName().equals("Health Box Group"))) {
-						groupChildren.remove();
-						this.removeGameWorldObject(gs);
+					if ((gs instanceof TriMesh && s.getName().equals("Health Box Group")) && gs.getWorldBound() != null && gs.getWorldBound().contains(locP1)) {
 						CrashEvent newCrash = new CrashEvent(++numCrashes);
 						eventManager.triggerEvent(newCrash);
+						groupChildren.remove();
+						this.removeGameWorldObject(gs);
 					}
 				}
 			}
