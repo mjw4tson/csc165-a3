@@ -9,8 +9,8 @@ with (JavaPackages){
 	var origin = 65;
 	
 	// Set the wall boundaries
-	var xBound = 1298;
-	var yBound = 698;
+	var xBound = 1298.0;
+	var yBound = 698.0;
 	
 	// Adds the game boundaries to the world.
 	var cu1 = new Rectangle("1300",2600, 120);

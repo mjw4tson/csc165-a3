@@ -123,8 +123,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 	
 	// Environment
 	private SceneManager			sceneManager;
-	public float					xBound				= 1300f;
-	public float					yBound				= 700f;
+	public double					xBound				= 1300f;
+	public double					yBound				= 700f;
 	private Random					r					= new Random();
 	
 	// Physics
@@ -412,7 +412,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 		renderer.getCanvas().setCursor(crossHairCursor);
 		
 		camera = new JOGLCamera(renderer);
-		camera.setPerspectiveFrustum(60, 2, 1, 1000);
+		camera.setPerspectiveFrustum(60, 2, 1, 2800);
 		camera.setViewport(0.0, 1.0, 0.0, 1.0);
 	}
 	
@@ -614,8 +614,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 		this.executeScript(jsEngine, scriptFileName);
 		
 		boundaryGroup = (Group) jsEngine.get("boundaryGroup");
-		xBound = (int) jsEngine.get("xBound");
-		yBound = (int) jsEngine.get("yBound");
+		xBound = (double) jsEngine.get("xBound");
+		yBound = (double) jsEngine.get("yBound");
 		
 	}
 	
