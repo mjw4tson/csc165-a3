@@ -171,13 +171,13 @@ public class SceneManager {
 		TriMesh healthBoxTM3 = loader.loadModel(directory + dirModel + "medic.obj");
 		healthBoxTM.updateLocalBound();
 		healthBoxTM.setTexture(medicTexture);
-		healthBoxTM.translate(getRandomSignedInteger(1300), 0.5f, getRandomSignedInteger(700));
+		healthBoxTM.translate(getRandomSignedInteger(1300), 0.0f, getRandomSignedInteger(700));
 		healthBoxTM2.updateLocalBound();
 		healthBoxTM2.setTexture(medicTexture);
-		healthBoxTM2.translate(getRandomSignedInteger(1300), 0.5f, getRandomSignedInteger(700));
+		healthBoxTM2.translate(getRandomSignedInteger(1300), 0.0f, getRandomSignedInteger(700));
 		healthBoxTM3.updateLocalBound();
 		healthBoxTM3.setTexture(medicTexture);
-		healthBoxTM3.translate(getRandomSignedInteger(1300), 0.5f, getRandomSignedInteger(700));
+		healthBoxTM3.translate(getRandomSignedInteger(1300), 0.0f, getRandomSignedInteger(700));
 		
 		pMan.bindPhysicsProperty(healthBoxTM, 5.0f);
 		pMan.bindPhysicsProperty(healthBoxTM2, 5.0f);

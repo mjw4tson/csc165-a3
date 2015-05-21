@@ -15,7 +15,7 @@ public class Projectile extends Sphere {
 	
 	public Projectile(CircuitShooter cs, Avatar avatar) {
 		super(1, 10, 10, Color.GREEN);
-		super.scale(.5f, .7f, 1);
+		super.scale(2f, 1.7f, 3f);
 
 		sourceAvatar = avatar;
 		speed = 0.5f;

@@ -246,7 +246,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		ambientSound = new Sound(ambientResource, SoundType.SOUND_MUSIC, 5, true);
 		ambientSound.initialize(audioMgr);
-		//ambientSound.play();
+		ambientSound.play();
 	}
 	
 	public void setEarParameters() {
@@ -360,6 +360,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		addGameWorldObject(hudGroupTeamOne);
 		addGameWorldObject(hudGroupTeamOneTime);
 		
+		System.out.println(localPlayer.getLocation().toString());
+		
 	}
 	
 	private void removeOldProjectiles() {
@@ -455,7 +457,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		// Adding health box to the game world.
 		sceneManager.addHealthBoxes(healthGroup, phyManager);
-		healthGroup.scale(10, 10, 10);
+		healthGroup.scale(4, 4, 4);
 		addGameWorldObject(healthGroup);
 		
 		// Add projectile group to game world
@@ -473,7 +475,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener,
 		
 		// Add the player to the game world.
 		localPlayer = new Avatar("Player 1", sceneManager.addAvatar(), this, null);
-		localPlayer.getTriMesh().translate(50, 4.0f, 10 + origin);
+		localPlayer.getTriMesh().translate(50, 2.0f, 10 + origin);
 		localPlayer.getTriMesh().startAnimation("my_animation");
 		addGameWorldObject(localPlayer.getTriMesh());
 	}
