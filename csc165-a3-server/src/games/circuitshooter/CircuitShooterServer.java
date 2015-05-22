@@ -14,8 +14,6 @@ import sage.networking.server.IClientInfo;
 public class CircuitShooterServer extends GameConnectionServer<UUID> {
     private NPCController npcCtrl;
     private HashMap<UUID, Point3D> playerLocations;
-    private long lastMoveMessageTime;
-    private long lastRotateMessageTime;
     
     public CircuitShooterServer(int localPort, ProtocolType protocolType, boolean enableAI) throws IOException {
         super(localPort, protocolType);
@@ -29,9 +27,6 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
             System.out.println("Starting NPC Loop");
             npcCtrl.npcLoop();
         }
-        
-        lastMoveMessageTime = System.nanoTime();
-        lastRotateMessageTime = System.nanoTime();
     }
     
     @Override
@@ -173,10 +168,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
             
             // System.out.println("Forwarding move: " + msg); Commented due to verbosity
             // Only send messages every 50ms to reduce network traffic
-            if ((System.nanoTime() - lastMoveMessageTime) / 1000000.0f > 20) {
-                forwardPacketToAll(msg, clientID);
-                lastMoveMessageTime = System.nanoTime();
-            }
+            forwardPacketToAll(msg, clientID);
         } catch (IOException e) {
             e.printStackTrace();
         }        
@@ -190,10 +182,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
             msg += "," + col2x + "," + col2z;
             
             // System.out.println("Sending rotation message: " + msg); Commented due to verbosity
-            if ((System.nanoTime() - lastRotateMessageTime) / 1000000.0f > 20) {
-                forwardPacketToAll(msg, clientID);
-                lastRotateMessageTime = System.nanoTime();
-            }
+            forwardPacketToAll(msg, clientID);
         } catch (IOException e) {
             e.printStackTrace();
         }
