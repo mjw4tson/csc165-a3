@@ -52,10 +52,6 @@ public class NPC {
     }
 
     public void updateLocation(float elapsedTimeMS) {
-        if (moveMode == MoveMode.CHASING)
-            System.out.println("MOVEMODE: CHASING");
-        
-        System.out.println("Mode: " + moveMode);
         if (moveMode == MoveMode.CHASING && chaseAvatar != null) {
             System.out.println("CHASING");
             moveTowardsPoint(server.getPlayerLocations().get(chaseAvatar), elapsedTimeMS);
