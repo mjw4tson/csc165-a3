@@ -28,8 +28,6 @@ public class Projectile extends Sphere {
 		Vector3D translation = avatar.getLocation();
 		translate.translate(translation.getX(), translation.getY(), translation.getZ());
 		setLocalTranslation(translate);
-		System.out.println(avatar.getLocation());
-		
 		setLocalRotation((Matrix3D)avatar.getTriMesh().getLocalRotation().clone());
 	}
 

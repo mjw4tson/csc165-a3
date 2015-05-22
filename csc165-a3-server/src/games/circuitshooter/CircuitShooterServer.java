@@ -1,22 +1,37 @@
 package games.circuitshooter;
 
+import event.NPC;
+import graphicslib3D.Point3D;
+
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.UUID;
 
 import sage.networking.server.GameConnectionServer;
 import sage.networking.server.IClientInfo;
-import event.NPC;
 
 public class CircuitShooterServer extends GameConnectionServer<UUID> {
     private NPCController npcCtrl;
-        
-    public CircuitShooterServer(int localPort, ProtocolType protocolType) throws IOException {
+    private HashMap<UUID, Point3D> playerLocations;
+    private long lastMoveMessageTime;
+    private long lastRotateMessageTime;
+    
+    public CircuitShooterServer(int localPort, ProtocolType protocolType, boolean enableAI) throws IOException {
         super(localPort, protocolType);
         System.out.println("Listening for clients on port: " + localPort);
         
-         npcCtrl = new NPCController(this);
-         npcCtrl.spawnNpcs(3);
+        playerLocations = new HashMap<UUID, Point3D>();
+        
+        npcCtrl = new NPCController(this);
+        
+        if (enableAI) {
+            System.out.println("Starting NPC Loop");
+            npcCtrl.npcLoop();
+        }
+        
+        lastMoveMessageTime = System.nanoTime();
+        lastRotateMessageTime = System.nanoTime();
     }
     
     @Override
@@ -117,6 +132,7 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
             msg += "," + y;
             msg += "," + z;
 
+            playerLocations.put(clientID, new Point3D(x, y, z));
             System.out.println("Forwarding create: " + msg);
             forwardPacketToAll(msg, clientID);
         } catch (IOException e) {
@@ -147,8 +163,20 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
             msg += "," + y;
             msg += "," + z;
 
+            Point3D playerLoc = playerLocations.get(clientID);
+            
+            if (playerLoc != null) {
+                playerLoc.setX(x);
+                playerLoc.setY(x);
+                playerLoc.setZ(x);
+            }
+            
             // System.out.println("Forwarding move: " + msg); Commented due to verbosity
-            forwardPacketToAll(msg, clientID);
+            // Only send messages every 50ms to reduce network traffic
+            if ((System.nanoTime() - lastMoveMessageTime) / 1000000.0f > 20) {
+                forwardPacketToAll(msg, clientID);
+                lastMoveMessageTime = System.nanoTime();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }        
@@ -162,7 +190,10 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
             msg += "," + col2x + "," + col2z;
             
             // System.out.println("Sending rotation message: " + msg); Commented due to verbosity
-            forwardPacketToAll(msg, clientID);
+            if ((System.nanoTime() - lastRotateMessageTime) / 1000000.0f > 20) {
+                forwardPacketToAll(msg, clientID);
+                lastRotateMessageTime = System.nanoTime();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -218,23 +249,23 @@ public class CircuitShooterServer extends GameConnectionServer<UUID> {
     }
     
     public void sendNPCInfo() {
-        // Format mnpc,uuid,x,y,z
-        for (NPC npc : npcCtrl.getNPCs()) {
-            try {
-                String msg = new String("mnpc," + npc.getId());
-                msg += "," + (npc.getX());
-                msg += "," + (npc.getY());
-                msg += "," + (npc.getZ());
+        NPC npc = npcCtrl.getNPC();
 
-                // System.out.println("Updating NPC location: " + msg); // Commented due to verbosity
-                sendPacketToAll(msg);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        // Format mnpc,uuid,x,y,z
+        try {
+            String msg = new String("mnpc," + npc.getId());
+            msg += "," + (npc.getX());
+            msg += "," + (npc.getY());
+            msg += "," + (npc.getZ());
+
+            // System.out.println("Updating NPC location: " + msg); // Commented due to verbosity
+            sendPacketToAll(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     
-    public void sendCheckForPlayerNear(){
-        
+    public HashMap<UUID, Point3D> getPlayerLocations() {
+        return playerLocations;
     }
 }

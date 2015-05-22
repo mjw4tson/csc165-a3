@@ -69,8 +69,6 @@ public class HUDNumber {
 		int tens = (value / 10) % 10;
 		int ones = (value % 10);
 		
-		System.out.println(value + "h" + hundreds + "t" + tens + "o" + ones);
-		
 		while(children.hasNext()){
 			temp = (HUDImage) children.next();
 			if(temp.getName().equals("hundredsPlace")){
@@ -81,7 +79,5 @@ public class HUDNumber {
 				temp.setImage(directory + dirHud + ones + ".png");
 			}
 		}
-		
 	}
-	
 }

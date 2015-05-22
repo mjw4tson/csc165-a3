@@ -78,7 +78,6 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 	private boolean					finalBuild			= true;							// Determines if final build
 	private int						numCrashes			= 0;
 	private Cursor					crossHairCursor;
-	private HUDNumber				hudNumberManager;
 	
 	private HUDNumber				hScore;
 	private HUDNumber				hHealth;
@@ -94,9 +93,7 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 	private ProjectileController	projCtrl			= new ProjectileController();
 	
 	// SceneNode Groups
-	private Group					hudGroupTeamOne		= new Group("Team One Group");
 	private Group					environmentGroup	= new Group("Environment Group");
-	private Group					hudGroupTeamOneTime	= new Group("Team One Group Time");
 	private Group					healthGroup			= new Group("Health Box Group");
 	private Group					projectileGroup		= new Group("Projectile Group");
 	private Group					boundaryGroup		= new Group("Boudnary Group");

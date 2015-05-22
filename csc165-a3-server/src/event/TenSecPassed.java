@@ -3,25 +3,27 @@ package event;
 import games.circuitshooter.NPCController;
 import sage.ai.behaviortrees.BTCondition;
 
-public class OneSecPassed extends BTCondition {
-    private NPCController npcc;
+public class TenSecPassed extends BTCondition {
     private NPC npc;
     private long lastUpdateTime;
 
-    public OneSecPassed( NPCController c, NPC n, boolean toNegate ) {
+    public TenSecPassed( NPCController ctrl, NPC npc, boolean toNegate ) {
         super(toNegate);
-        npcc = c;
-        npc = n;
+        
+        this.npc = npc;
         lastUpdateTime = System.nanoTime();
     }
 
     protected boolean check() {
         float elapsedMilliSecs = (System.nanoTime() - lastUpdateTime) / (1000000.0f);
-        if (elapsedMilliSecs >= 500.0f) {
+
+        if (elapsedMilliSecs >= 10000.0f) {
             lastUpdateTime = System.nanoTime();
-            //npcc.setNearFlag(false);
+            npc.resetMode();
+        
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 }

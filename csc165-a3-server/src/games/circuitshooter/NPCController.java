@@ -1,23 +1,25 @@
 package games.circuitshooter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import sage.ai.behaviortrees.BTCompositeType;
+import sage.ai.behaviortrees.BTSequence;
 import sage.ai.behaviortrees.BehaviorTree;
+import event.ChaseAvatar;
 import event.NPC;
+import event.PlayerNear;
+import event.ReturnHome;
+import event.TenSecPassed;
 
-public class NPCController implements Runnable {
-    private ArrayList<NPC> npcs;
+public class NPCController {
+    private NPC npc;
     private BehaviorTree bt;
     private CircuitShooterServer server;
     private long startTime;
     private long lastUpdateTime;
     
     public NPCController(CircuitShooterServer server) {
-        npcs = new ArrayList<NPC>();
-        bt = new BehaviorTree(BTCompositeType.SELECTOR);
         this.server = server;
+        bt = new BehaviorTree(BTCompositeType.SELECTOR);
+        npc = new NPC(server);
         
         startTime = System.nanoTime();
         lastUpdateTime = startTime;
@@ -25,47 +27,33 @@ public class NPCController implements Runnable {
         setupBehaviorTree();
     }
     
-    public void updateNPCs(float elapsedTimeMS) {
-        for (NPC npc : npcs) {
-            npc.updateLocation(elapsedTimeMS);
-        }
+    public void updateNPC(float elapsedTimeMS) {
+        npc.updateLocation(elapsedTimeMS);
     }
     
-    public int getNumNPCs() {
-        return npcs.size();
-    }
-    
-    public List<NPC> getNPCs() {
-        return npcs;
-    }
-    
-    public void spawnNpcs(int num) {
-        for (int i = 0; i < num; i++) {
-            npcs.add(new NPC());
-        }
+    public NPC getNPC() {
+        return npc;
     }
     
     public void setupBehaviorTree() {
-//        bt.insertAtRoot(new BTSequence(10));
-//        bt.insertAtRoot(new BTSequence(20));
-//        bt.insert(10, new OneSecPassed(this, npc, false));
-//        bt.insert(10, new GetSmall(npc));
-//        bt.insert(20, new PlayerNear(server, this, npc, false));
-//        bt.insert(20, new GetBig(npc));
+        bt.insertAtRoot(new BTSequence(10));
+        bt.insertAtRoot(new BTSequence(20));
+        bt.insertAtRoot(new BTSequence(30));
+        bt.insert(10, new TenSecPassed(this, npc, false));
+        bt.insert(10, new ReturnHome(npc));
+        bt.insert(20, new PlayerNear(server, npc, false));
+        bt.insert(20, new ChaseAvatar(npc));
     }
 
-    @Override
-    public void run() {
+    public void npcLoop() {
         while (true) {
             long frameStartTime = System.nanoTime();
             float elapsedMilliSecs = (frameStartTime - lastUpdateTime) / (1000000.0f);
             if (elapsedMilliSecs >= 50.0f) {
                 lastUpdateTime = frameStartTime;
-                
-                updateNPCs(50.0f);
+                updateNPC(50.0f);
+                bt.update(elapsedMilliSecs);
                 server.sendNPCInfo();
-
-                //bt.update(elapsedMilliSecs);
             }
 
             Thread.yield();

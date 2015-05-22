@@ -10,7 +10,6 @@ import sage.display.IDisplaySystem;
 import sage.model.loader.OBJLoader;
 import sage.model.loader.ogreXML.OgreXMLParser;
 import sage.scene.Group;
-import sage.scene.HUDString;
 import sage.scene.Model3DTriMesh;
 import sage.scene.SceneNode;
 import sage.scene.SceneNode.CULL_MODE;
