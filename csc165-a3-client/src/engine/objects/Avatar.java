@@ -25,8 +25,10 @@ public class Avatar implements IEventListener {
 	private Sound			fire;
 	private Sound			dead;
 	private Sound			pickUp;
+	private boolean			hasChanged	= true;
 	
-	protected Avatar() {}
+	protected Avatar() {
+	}
 	
 	public Avatar(String name, Model3DTriMesh triMesh, CircuitShooter cs, UUID id) {
 		this.triMesh = triMesh;
@@ -59,6 +61,9 @@ public class Avatar implements IEventListener {
 		if (this.health > 100.0f) {
 			this.health = 100.0f;
 		}
+		if (this.hasChanged != true) {
+			this.hasChanged = true;
+		}
 	}
 	
 	public int getTotalKills() {
@@ -71,10 +76,16 @@ public class Avatar implements IEventListener {
 	
 	public void incrementKills() {
 		totalKills++;
+		if (this.hasChanged != true) {
+			this.hasChanged = true;
+		}
 	}
 	
 	public void setTotalKills(int totalKills) {
 		this.totalKills = totalKills;
+		if (this.hasChanged != true) {
+			this.hasChanged = true;
+		}
 	}
 	
 	public void respawn() {
@@ -83,8 +94,10 @@ public class Avatar implements IEventListener {
 		
 		if (this == cs.localPlayer) {
 			Point3D locP1 = new Point3D(getLocation());
-			Vector3D newLoc = new Vector3D(cs.getRandomSignedInteger(1200), locP1.getY(), cs.getRandomSignedInteger(600));
-			triMesh.translate((float) (newLoc.getX() - locP1.getX()), 0,  (float) (newLoc.getZ() - locP1.getZ()));
+			Vector3D newLoc = new Vector3D(cs.getRandomSignedInteger(1200), locP1.getY(),
+					cs.getRandomSignedInteger(600));
+			triMesh.translate((float) (newLoc.getX() - locP1.getX()), 0,
+					(float) (newLoc.getZ() - locP1.getZ()));
 			
 			if (cs.getClient() != null) {
 				cs.getClient().getOutputHandler().sendMoveMsg(getLocation());
@@ -93,7 +106,7 @@ public class Avatar implements IEventListener {
 			cs.localPlayer.incrementKills();
 		}
 	}
-
+	
 	/**
 	 * Model Methods
 	 */
@@ -127,7 +140,6 @@ public class Avatar implements IEventListener {
 		return triMesh.getLocalTranslation().getCol(3);
 	}
 	
-	
 	/**
 	 * Sound Related Methods
 	 */
@@ -136,7 +148,7 @@ public class Avatar implements IEventListener {
 		fire = new Sound(cs.getFireResource(), SoundType.SOUND_EFFECT, 5, false);
 		dead = new Sound(cs.getDeadResource(), SoundType.SOUND_EFFECT, 5, false);
 		hit = new Sound(cs.getHitResource(), SoundType.SOUND_EFFECT, 5, false);
-
+		
 		pickUp.initialize(cs.getAudioManager());
 		fire.initialize(cs.getAudioManager());
 		dead.initialize(cs.getAudioManager());
@@ -160,7 +172,8 @@ public class Avatar implements IEventListener {
 	}
 	
 	public void updateSoundLocation(Sound sound) {
-		Point3D newLoc = new Point3D(getLocation().getX(), getLocation().getY(), getLocation().getZ());
+		Point3D newLoc = new Point3D(getLocation().getX(), getLocation().getY(), getLocation()
+				.getZ());
 		sound.setLocation(newLoc);
 	}
 	
@@ -182,5 +195,13 @@ public class Avatar implements IEventListener {
 	public void playPickUp() {
 		updateSoundLocation(pickUp);
 		pickUp.play();
+	}
+
+	public boolean isHasChanged() {
+		return hasChanged;
+	}
+
+	public void setHasChanged(boolean hasChanged) {
+		this.hasChanged = hasChanged;
 	}
 }

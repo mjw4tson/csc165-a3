@@ -80,6 +80,9 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 	private Cursor					crossHairCursor;
 	private HUDNumber				hudNumberManager;
 	
+	private HUDNumber				hScore;
+	private HUDNumber				hHealth;
+	
 	// Game World Objects
 	public HillHeightMap			myHillHeightMap;
 	
@@ -359,17 +362,14 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 			localPlayer.respawn();
 		}
 		
+		if(localPlayer.isHasChanged()){
+			hHealth.updateValue((int) localPlayer.getHealth());
+			hScore.updateValue((int) localPlayer.getTotalKills());
+			localPlayer.setHasChanged(false);
+		}
+		
 		removeOldProjectiles();
-		removeGameWorldObject(hudGroupTeamOne);
-		removeGameWorldObject(hudGroupTeamOneTime);
-		
-		hudGroupTeamOne = hudNumberManager.printValues((int) localPlayer.getHealth(), -0.850f,
-				-0.88f);
-		hudGroupTeamOneTime = hudNumberManager.printValues(localPlayer.getTotalKills(), 0.050f,
-				0.90f);
-		
-		addGameWorldObject(hudGroupTeamOne);
-		addGameWorldObject(hudGroupTeamOneTime);
+
 	}
 	
 	private void removeOldProjectiles() {
@@ -420,8 +420,9 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 	 * Builds the HUD.
 	 */
 	private void buildHUD() {
-		hudNumberManager = new HUDNumber("HUD Number Manager", directory);
-		hudGroupTeamOne = hudNumberManager.printValues(0, -0.9f, -0.90f);
+
+		hHealth = new HUDNumber("Health", directory, -0.845f, -0.878f);
+		hScore = new HUDNumber("Score", directory, 0.05f, .902f);
 		
 		// Add P1 Time
 		p1Time = new HUDImage(directory + dirHud + "player1.png");
@@ -441,11 +442,8 @@ public class CircuitShooter extends BaseGame implements MouseWheelListener {
 		p1Score.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
 		camera.addToHUD(p1Score);
 		
-		hudGroupTeamOne = hudNumberManager.printValues(0, -0.850f, -0.88f);
-		hudGroupTeamOneTime = hudNumberManager.printValues(0, 0.050f, 0.90f);
-		
-		addGameWorldObject(hudGroupTeamOne);
-		addGameWorldObject(hudGroupTeamOneTime);
+		addGameWorldObject(hScore.getHUDNumber());
+		addGameWorldObject(hHealth.getHUDNumber());
 		
 	}
 	
